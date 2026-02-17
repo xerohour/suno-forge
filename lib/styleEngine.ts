@@ -1,5 +1,8 @@
 import { PromptDNA } from "@/types/prompt"
 
+// The GENRE_DATA can be used for more advanced logic in the future,
+// but for now, we'll build the prompt from the user's direct input,
+// following the Compendium's principles.
 const GENRE_DATA: Record<
   string,
   {
@@ -32,28 +35,29 @@ export function getMusicalStyle(styleName: string) {
   return style
 }
 
+/**
+ * Builds a style prompt string from a configuration object,
+ * following the best practices from the Suno Prompting Compendium.
+ * It prioritizes core descriptors and filters out empty values.
+ */
 export function buildStyle(config: PromptDNA): string {
+  // 1. Front-load non-negotiables as per the Compendium's priority order.
   const parts = [
-    config.genre,
-    config.mood,
-    config.tempo ? `${config.tempo} BPM` : null,
-    config.energy
-      ? config.energy > 0.7
-        ? "high energy"
-        : "low energy"
-      : null,
-    config.vocalStyle,
-    "studio quality",
-    "clear vocals",
-  ].filter((p): p is string => !!p)
+    config.genre, // Core genre / sub-genre
+    config.mood, // Primary mood / energy
+    config.instrumentation, // Lead instrument or key sonic elements
+    config.vocalStyle, // Vocal identity is crucial
+    config.tempo ? `${config.tempo} BPM` : null, // Tempo / feel
+    config.production, // Production treatment (e.g., lo-fi, studio quality)
 
-  const uniqueParts = [
-    ...new Set(
-      parts
-        .map((p) => p.trim())
-        .filter((p) => p.length > 0)
-    ),
-  ]
+    // 2. Add high-leverage production hints if not specified.
+    config.production ? null : "studio quality",
+    config.vocalStyle ? null : "clear vocals",
+  ].filter((p): p is string => !!p && p.trim().length > 0) // Filter out null, undefined, and empty strings.
 
+  // 3. Remove duplicates while preserving order for the most part.
+  const uniqueParts = [...new Set(parts.map((p) => p.trim()))]
+
+  // 4. Join into a comma-separated list for balanced weighting.
   return uniqueParts.join(", ")
 }

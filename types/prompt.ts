@@ -1,18 +1,15 @@
-export interface PromptDNA {
-  genre?: string
-  mood?: string
-  energy?: number
+export interface PromptConfig {
+  genre: string
+  mood: string
   tempo?: number
+  instrumentation?: string
+  vocalStyle?: string;
+  production?: string;
+  energy?: number
   theme?: string
-  vocalStyle?: string
-  structure?: string[]
+  lyrics?: string
 }
 
-export interface GenerateRequest extends PromptDNA {}
+export interface PromptDNA extends PromptConfig {}
 
-export interface MutateRequest {
-  prompt: string
-  type: "viral" | "emotional" | "energy"
-}
-
-export type PromptConfig = PromptDNA
+export interface GenerateRequest extends PromptConfig {}

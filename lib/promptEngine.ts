@@ -1,15 +1,20 @@
 import { buildStyle } from "./styleEngine"
-import { generateLyrics } from "./lyricsEngine"
 import { PromptDNA } from "@/types/prompt"
 
-export async function buildPrompt(config: PromptDNA) {
-  const style = buildStyle(config)
-  const lyrics = await generateLyrics(config)
+/**
+ * Builds a complete Suno prompt object, separating the style
+ * from the lyrics, ready for generation or API submission.
+ * It uses the provided config to generate a style prompt and 
+ * directly uses the provided lyrics.
+ */
+export async function buildPrompt(config: PromptDNA): Promise<{ style: string; lyrics: string }> {
+  const style = buildStyle(config);
 
-  return `
-STYLE: ${style}
+  // Use lyrics directly from the config, or provide a default if empty.
+  const lyrics = config.lyrics || "[Verse]\\n...\\n[Chorus]\\n...";
 
-LYRICS:
-${lyrics}
-`
+  return {
+    style,
+    lyrics,
+  };
 }
