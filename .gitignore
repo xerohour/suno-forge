@@ -16,7 +16,7 @@ node_modules/
 .env.*.local
 
 # IDEs and other
-.vscode/
+.vscode/*.code-workspace
 *.log
 *.tsbuildinfo
 .DS_Store

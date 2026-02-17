@@ -15,22 +15,26 @@ export const VOCAL_FX = [
 
 export const INSTRUMENTS = [
   // Lead
-  "guitar lead", "sax lead", "synth lead", "vocal lead",
+  "guitar lead", "sax lead", "synth lead", "vocal lead", "electric guitar solo", "flute lead", "trumpet melody",
   // Support
-  "piano hooks", "string lines", "arp", "countermelody",
+  "piano hooks", "string lines", "arp", "countermelody", "synth strings", "organ chords", "rhodes piano", "wah guitar",
   // Bed
-  "pads", "rhythm guitar", "drones", "bass", "drums",
+  "pads", "rhythm guitar", "drones", "bass", "drums", "synth bass", "sub bass", "upright bass", "acoustic drums", "electronic drums",
   // Specifics
-  "acoustic guitar", "palm-muted guitar", "warm Rhodes", "felt piano", "analog polysynth", "supersaw", "violin", "cello", "brass swells", "brushed kit", "trap 808s", "sub 808", "percussion", "congas", "shaker", "clave"
+  "acoustic guitar", "palm-muted guitar", "warm Rhodes", "felt piano", "analog polysynth", "supersaw", "violin", "cello", "brass swells", "brushed kit", "trap 808s", "sub 808", "percussion", "congas", "shaker", "clave",
+  "distorted electric guitar", "clean electric guitar", "jazz drums", "trap drums", "orchestral strings", "brass section", "woodwind ensemble", "flute", "clarinet", "trumpet", "harmonica", "banjo", "mandolin", "accordion", "percussion ensemble", "tabla", "sitar", "gamelan"
 ];
 
 export const MOODS = [
-  "nostalgic", "melancholic", "moody", "dreamy", "euphoric", "triumphant", "ominous", "hopeful", "reflective"
+  "nostalgic", "melancholic", "moody", "dreamy", "euphoric", "triumphant", "ominous", "hopeful", "reflective",
+  "intense", "playful", "mysterious", "serene", "powerful", "groovy", "chill", "uplifting", "dark", "light", "ethereal"
 ];
 
 export const PRODUCTION_TERMS = [
   "tape-saturated", "crunchy", "airy top", "subby low end", "warm mids", "glassy highs", "side-chained", "pumping", "ducked pads", "lo-fi", "vinyl hiss",
-  "dry/close", "room", "hall", "plate shimmer", "tape delay", "slapback"
+  "dry/close", "room", "hall", "plate shimmer", "tape delay", "slapback",
+  "reverberant", "echoey", "dry", "compressed", "autotuned", "vocoder", "sidechain compression", "gated reverb", "vinyl crackle", "tape saturation", "delay throws", "pitch shifted",
+  "wide stereo", "mono", "punchy", "smooth attack", "crisp transients", "muddy mix", "clear mix"
 ];
 
 
@@ -73,6 +77,78 @@ const GENRE_DATA: Record<
     minTempo: 70,
     maxTempo: 90,
     descriptor: "Chill vibes, lo-fi, relaxed",
+  },
+  "hip-hop": {
+    instruments: ["808s", "sampled drums", "synth pads", "turntable scratches"],
+    minTempo: 80,
+    maxTempo: 110,
+    descriptor: "urban, rhythmic, storytelling, gritty",
+  },
+  "r&b": {
+    instruments: ["smooth synths", "electric piano", "finger-snaps", "sub bass"],
+    minTempo: 60,
+    maxTempo: 90,
+    descriptor: "soulful, smooth, vocal-focused, sensual",
+  },
+  "electronic": {
+    instruments: ["driving synth arps", "four-on-the-floor drums", "sweeping filters", "deep bassline"],
+    minTempo: 120,
+    maxTempo: 140,
+    descriptor: "driving, synthetic, energetic, pulsating",
+  },
+  "rock": {
+    instruments: ["distorted electric guitar", "heavy drums", "driving bass", "powerful vocals"],
+    minTempo: 100,
+    maxTempo: 180,
+    descriptor: "powerful, guitar-driven, raw, anthemic",
+  },
+  "ambient": {
+    instruments: ["pads", "drones", "field recordings", "sparse piano"],
+    minTempo: 40,
+    maxTempo: 70,
+    descriptor: "expansive, atmospheric, calming, meditative",
+  },
+  "classical": {
+    instruments: ["orchestral strings", "brass section", "woodwinds", "timpani"],
+    minTempo: 50,
+    maxTempo: 160,
+    descriptor: "orchestral, intricate, timeless, majestic",
+  },
+  "country": {
+    instruments: ["acoustic guitar", "steel guitar", "fiddle", "upright bass", "harmonica"],
+    minTempo: 60,
+    maxTempo: 130,
+    descriptor: "storytelling, acoustic, heartfelt, rustic",
+  },
+  "jazz": {
+    instruments: ["saxophone", "trumpet", "jazz guitar", "upright bass", "swing drums", "piano improvisation"],
+    minTempo: 80,
+    maxTempo: 200,
+    descriptor: "improvisational, sophisticated, swing, smooth",
+  },
+  "folk": {
+    instruments: ["acoustic guitar", "mandolin", "banjo", "harmonica", "light percussion"],
+    minTempo: 70,
+    maxTempo: 120,
+    descriptor: "acoustic, narrative, organic, traditional",
+  },
+  "metal": {
+    instruments: ["heavy distorted guitar riffs", "double bass drumming", "growling vocals", "shredding solos"],
+    minTempo: 120,
+    maxTempo: 240,
+    descriptor: "heavy, aggressive, technical, powerful",
+  },
+  "reggae": {
+    instruments: ["skank guitar", "dub bassline", "one-drop drums", "organ bubbles"],
+    minTempo: 60,
+    maxTempo: 100,
+    descriptor: "irie, laid-back, dubby, rhythmic",
+  },
+  "latin": {
+    instruments: ["percussion ensemble", "acoustic guitar", "brass section", "flute", "piano montuno"],
+    minTempo: 90,
+    maxTempo: 180,
+    descriptor: "rhythmic, vibrant, danceable, passionate",
   },
 };
 

@@ -1,0 +1,24 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/.next": true,
+        "**/out": true,
+        "**/coverage": true,
+        "**/*.tsbuildinfo": true
+    },
+    "files.associations": {
+        "*.ts": "typescript",
+        "*.tsx": "typescriptreact",
+        "*.js": "javascript",
+        "*.jsx": "javascriptreact"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "search.useIgnoreFiles": true,
+    "search.followSymlinks": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/.next": true
+    }
+}
