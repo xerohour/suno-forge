@@ -6,8 +6,16 @@ export async function POST(req: Request) {
   try {
     const { config, count } = await req.json()
 
+    // Validate and clamp count to prevent DoS
+    let batchSize = Number(count)
+    if (isNaN(batchSize) || batchSize < 1) {
+      batchSize = 1
+    } else if (batchSize > 50) {
+      batchSize = 50
+    }
+
     const prompts = await Promise.all(
-      Array.from({ length: count || 1 }).map(() => buildPrompt(config || {}))
+      Array.from({ length: batchSize }).map(() => buildPrompt(config || {}))
     )
 
     return Response.json({ prompts })
