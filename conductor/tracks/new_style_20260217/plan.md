@@ -2,15 +2,15 @@
 
 ## Phase 1: Engine and Core Logic [checkpoint: ]
 
-- [ ] **Task: Update Style Engine**
-    - [ ] **Write Failing Tests (Red Phase):**
+- [x] **Task: Update Style Engine**
+    - [x] **Write Failing Tests (Red Phase):**
         - Create a new test file for the `styleEngine.ts`.
         - Write a unit test that attempts to use a new, non-existent musical style and asserts that it fails as expected.
         - Write another test to ensure that the new style, once added, returns the correct set of descriptors.
-    - [ ] **Implement to Pass Tests (Green Phase):**
+    - [x] **Implement to Pass Tests (Green Phase):**
         - Modify `styleEngine.ts` to include the new musical style with its unique characteristics (e.g., 'Synthwave').
         - Ensure the new style is correctly integrated into the engine's data structures.
-    - [ ] **Refactor (Optional):**
+    - [x] **Refactor (Optional):**
         - Refactor the `styleEngine.ts` to improve clarity and maintainability.
 - [ ] **Task: Update Prompt Engine**
     - [ ] **Write Failing Tests (Red Phase):**

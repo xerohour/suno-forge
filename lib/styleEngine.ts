@@ -11,6 +11,16 @@ const GENRE_DATA: Record<string, { instruments: string[], minTempo: number, maxT
   "metal": { instruments: ["distorted guitar", "double bass drum", "bass"], minTempo: 140, maxTempo: 200, descriptor: "aggressive" },
   "trap": { instruments: ["808", "hi-hats", "synth", "autotune"], minTempo: 130, maxTempo: 160, descriptor: "bouncy" },
   "lofi": { instruments: ["piano", "vinyl crackle", "slow drums"], minTempo: 70, maxTempo: 90, descriptor: "chill" },
+  "synthwave": { instruments: ["synthesizer", "drum machine", "bass guitar", "retro pads"], minTempo: 100, maxTempo: 140, descriptor: "retro 80s" },
+}
+
+export function getMusicalStyle(styleName: string) {
+  const normalizedStyleName = styleName.toLowerCase().trim();
+  const style = GENRE_DATA[normalizedStyleName];
+  if (!style) {
+    throw new Error(`Musical style "${styleName}" not found.`);
+  }
+  return style;
 }
 
 export function buildStyle(config: any) {
