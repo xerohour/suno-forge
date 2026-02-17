@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Music, Sparkles, Image, BookOpen } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -60,17 +61,50 @@ export default function HomePage() {
             </Button>
           </CardContent>
         </Card>
-        <Card>
+        <Card
+          className="group hover:shadow-xl hover:scale-105 transition-all duration-300 border-2 hover:border-primary/50 animate-in"
+          style={{ animationDelay: "0.3s" }}
+        >
           <CardHeader>
-            <CardTitle>Prompting Compendium</CardTitle>
-            <CardDescription>
-              A technical guide for AI-assisted music generation.
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-xl">AI Chatbot</CardTitle>
+            <CardDescription className="text-sm">
+              Chat with AI to generate custom Suno prompts instantly
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button asChild>
+            <Button
+              asChild
+              className="w-full group-hover:shadow-lg transition-shadow"
+            >
+              <Link href="/chatbot">Chat Now</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="group hover:shadow-xl hover:scale-105 transition-all duration-300 border-2 hover:border-primary/50 animate-in"
+          style={{ animationDelay: "0.4s" }}
+        >
+          <CardHeader>
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <BookOpen className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-xl">Compendium</CardTitle>
+            <CardDescription className="text-sm">
+              A technical guide for AI-assisted music generation
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              asChild
+              variant="outline"
+              className="w-full group-hover:shadow-lg transition-shadow"
+            >
               <Link href="/suno-prompting-compendium.md" target="_blank">
-                Read the Guide
+                Read Guide
               </Link>
             </Button>
           </CardContent>
