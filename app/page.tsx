@@ -18,7 +18,7 @@ export default function HomePage() {
         Your AI music prompt engineering co-pilot.
       </p>
 
-      <div className="grid md:grid-cols-3 gap-8 mt-16">
+      <div className="grid md:grid-cols-2 gap-8 mt-16">
         <Card>
           <CardHeader>
             <CardTitle>Studio</CardTitle>
@@ -57,6 +57,21 @@ export default function HomePage() {
           <CardContent>
             <Button asChild>
               <Link href="/vision">Go to Vision</Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Prompting Compendium</CardTitle>
+            <CardDescription>
+              A technical guide for AI-assisted music generation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild>
+              <Link href="/suno-prompting-compendium.md" target="_blank">
+                Read the Guide
+              </Link>
             </Button>
           </CardContent>
         </Card>

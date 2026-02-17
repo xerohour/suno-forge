@@ -13,6 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  MOODS,
+  INSTRUMENTS,
+  PRODUCTION_TERMS,
+  VOCAL_TONE_TEXTURE,
+  VOCAL_DELIVERY,
+} from '@/lib/styleEngine';
 
 const structuralTags = [
   '[Intro]',
@@ -23,16 +30,20 @@ const structuralTags = [
   '[Solo]',
   '[Outro]',
   '[End]',
+  '[Build]',
+  '[Drop]',
 ];
 
+const vocalOptions = [...VOCAL_TONE_TEXTURE, ...VOCAL_DELIVERY];
+
 export default function Studio() {
-  const [style, setStyle] = useState('');
-  const [mood, setMood] = useState('');
+  const [genre, setGenre] = useState('synthwave');
+  const [mood, setMood] = useState('nostalgic');
   const [tempo, setTempo] = useState('90');
-  const [instrumentation, setInstrumentation] = useState('');
-  const [vocalStyle, setVocalStyle] = useState('');
-  const [production, setProduction] = useState('');
-  const [lyrics, setLyrics] = useState('[Verse 1]\n...\n[Chorus]\n...');
+  const [instrumentation, setInstrumentation] = useState('analog polysynth pads');
+  const [vocalStyle, setVocalStyle] = useState('airy female vocal');
+  const [production, setProduction] = useState('tape-saturated');
+  const [lyrics, setLyrics] = useState('[Verse 1]\nCrystal canyons in the night\n[Chorus]\nNeon dreams take flight');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const lyricsRef = useRef<HTMLTextAreaElement>(null);
@@ -62,7 +73,7 @@ export default function Studio() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          genre: style,
+          genre: genre,
           mood: mood,
           tempo: parseInt(tempo, 10),
           instrumentation: instrumentation,
@@ -80,6 +91,16 @@ export default function Studio() {
       const data = await res.json();
 
       const formattedOutput = `
+Display Name:
+\`\`\`
+${data.prompt.title}
+\`\`\`
+
+Technical Name:
+\`\`\`
+${data.prompt.technicalName}
+\`\`\`
+
 Style Prompt:
 \`\`\`
 ${data.prompt.style}
@@ -114,18 +135,20 @@ ${data.prompt.lyrics}
                 <Input
                   id="style"
                   placeholder="e.g., synthwave, indie folk"
-                  value={style}
-                  onChange={(e) => setStyle(e.target.value)}
+                  value={genre}
+                  onChange={(e) => setGenre(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="mood">Mood / Energy</Label>
-                <Input
-                  id="mood"
-                  placeholder="e.g., nostalgic, high energy"
-                  value={mood}
-                  onChange={(e) => setMood(e.target.value)}
-                />
+                 <Select onValueChange={setMood} value={mood}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a mood..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -141,16 +164,18 @@ ${data.prompt.lyrics}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="instrumentation">Key Instruments</Label>
-                <Input
-                  id="instrumentation"
-                  placeholder="e.g., warm analog pads, soft drums"
-                  value={instrumentation}
-                  onChange={(e) => setInstrumentation(e.target.value)}
-                />
+                 <Select onValueChange={setInstrumentation} value={instrumentation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an instrument..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INSTRUMENTS.map((i) => <SelectItem key={i} value={i}>{i}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+               <div className="space-y-2">
                 <Label htmlFor="vocal-style">Vocal Style</Label>
                 <Input
                   id="vocal-style"
@@ -166,10 +191,7 @@ ${data.prompt.lyrics}
                     <SelectValue placeholder="e.g., lo-fi, studio quality" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="lo-fi">Lo-fi</SelectItem>
-                    <SelectItem value="tape-saturated">Tape Saturated</SelectItem>
-                    <SelectItem value="hi-fi">Hi-fi</SelectItem>
-                    <SelectItem value="studio quality">Studio Quality</SelectItem>
+                     {PRODUCTION_TERMS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -208,7 +230,7 @@ ${data.prompt.lyrics}
             className="w-full text-lg">
             {loading ? 'Generating...' : 'Generate Prompt'}
           </Button>
-          <Card className="h-full">
+          <Card className="h-full min-h-[400px]">
             <CardHeader>
               <CardTitle>Generated Prompt</CardTitle>
             </CardHeader>
