@@ -39,15 +39,7 @@ export const PRODUCTION_TERMS = [
 
 
 // Based on Part 5.2: Genre & Fusion Playbooks
-const GENRE_DATA: Record<
-  string,
-  {
-    instruments: string[]; // Changed from string to string[]
-    minTempo: number;
-    maxTempo: number;
-    descriptor: string;
-  }
-> = {
+const RAW_GENRE_DATA = {
   pop: {
     instruments: ["synth", "bass", "drums", "vocal chops"], // Converted to array
     minTempo: 100,
@@ -152,6 +144,25 @@ const GENRE_DATA: Record<
   },
 };
 
+type GenreStyle = {
+  instruments: string[];
+  instrumentsString: string;
+  minTempo: number;
+  maxTempo: number;
+  descriptor: string;
+};
+
+// Pre-compute instrument strings to avoid joining arrays on every call
+const GENRE_DATA: Record<string, GenreStyle> = Object.fromEntries(
+  Object.entries(RAW_GENRE_DATA).map(([key, value]) => [
+    key,
+    {
+      ...value,
+      instrumentsString: value.instruments.join(", "),
+    },
+  ])
+);
+
 export function getMusicalStyle(styleName: string) {
   const normalizedStyleName = styleName.toLowerCase().trim();
   const style = GENRE_DATA[normalizedStyleName];
@@ -216,7 +227,7 @@ export function buildStyle(config: PromptDNA): string {
   addPart(tempoString); // Tempo / feel
   addPart(energyDescriptor);
   addPart(genreData.descriptor);
-  addPart(genreData.instruments.join(", ")); // Changed to join the array
+  addPart(genreData.instrumentsString); // Use pre-computed string
   addPart(config.instrumentation); // Lead instrument or key sonic elements
   addPart(config.vocalStyle); // Vocal identity is crucial
 
