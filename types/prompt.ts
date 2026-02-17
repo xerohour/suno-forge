@@ -1,6 +1,6 @@
 export interface PromptConfig {
-  genre: string
-  mood: string
+  genre?: string
+  mood?: string
   tempo?: number
   instrumentation?: string
   vocalStyle?: string;
@@ -13,3 +13,15 @@ export interface PromptConfig {
 export interface PromptDNA extends PromptConfig {}
 
 export interface GenerateRequest extends PromptConfig {}
+
+export interface Prompt {
+  title: string
+  technicalName: string
+  style: string
+  lyrics: string
+}
+
+export interface MutateRequest {
+  prompt: string
+  type: string
+}
