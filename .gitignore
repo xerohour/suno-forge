@@ -1,0 +1,29 @@
+# Next.js build output
+.next/
+out/
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+/coverage
+/.nyc_output
+
+# Environments
+.env.local
+.env.*.local
+
+# IDEs and other
+.vscode/
+*.log
+*.tsbuildinfo
+.DS_Store
+*.tmp
+
+# GitHub workflows and settings
+.github/
+
+.gemini/
+gha-creds-*.json
