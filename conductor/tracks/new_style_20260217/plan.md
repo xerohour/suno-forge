@@ -12,11 +12,11 @@
         - Ensure the new style is correctly integrated into the engine's data structures.
     - [x] **Refactor (Optional):**
         - Refactor the `styleEngine.ts` to improve clarity and maintainability.
-- [ ] **Task: Update Prompt Engine**
-    - [ ] **Write Failing Tests (Red Phase):**
+- [x] **Task: Update Prompt Engine**
+    - [x] **Write Failing Tests (Red Phase):**
         - Create a new test file or update an existing one for `promptEngine.ts`.
         - Write a unit test that passes the new musical style to the prompt engine and asserts that the generated prompt contains the correct descriptors for that style.
-    - [ ] **Implement to Pass Tests (Green Phase):**
+    - [x] **Implement to Pass Tests (Green Phase):**
         - Modify `promptEngine.ts` to correctly handle the new musical style when generating prompts.
     - [ ] **Refactor (Optional):**
         - Refactor the `promptEngine.ts` for better readability.
