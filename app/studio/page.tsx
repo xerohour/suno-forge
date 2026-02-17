@@ -19,6 +19,7 @@ export default function Studio() {
     genre: "trap",
     mood: "dark",
     energy: 0.8,
+    tempo: 140,
     theme: "neon city loneliness",
   });
 
@@ -75,6 +76,18 @@ export default function Studio() {
               min="0.1"
               max="1.0"
               value={config.energy}
+              onChange={handleConfigChange}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tempo">Tempo (BPM)</Label>
+            <Input
+              id="tempo"
+              name="tempo"
+              type="number"
+              min="50"
+              max="200"
+              value={config.tempo}
               onChange={handleConfigChange}
             />
           </div>

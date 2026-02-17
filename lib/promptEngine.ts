@@ -6,9 +6,11 @@ export function buildPrompt(config: any) {
   const lyrics = generateLyrics(config)
 
   return `
-STYLE: ${style}
+[Style of Music]
+${style}
 
-LYRICS:
+[Lyrics]
+[Title: ${config.theme || "Untitled Song"}]
 ${lyrics}
 `
 }
