@@ -42,38 +42,38 @@ export const PRODUCTION_TERMS = [
 const GENRE_DATA: Record<
   string,
   {
-    instruments: string;
+    instruments: string[]; // Changed from string to string[]
     minTempo: number;
     maxTempo: number;
     descriptor: string;
   }
 > = {
   pop: {
-    instruments: "synth, bass, drums, vocal chops",
+    instruments: ["synth", "bass", "drums", "vocal chops"], // Converted to array
     minTempo: 100,
     maxTempo: 130,
     descriptor: "catchy, modern, radio-friendly",
   },
   "synthwave": {
-    instruments: "Analog polysynth pads, bass arps, tom fills, gated reverb drums",
+    instruments: ["Analog polysynth pads", "bass arps", "tom fills", "gated reverb drums"], // Converted to array
     minTempo: 84,
     maxTempo: 104,
     descriptor: "nostalgic 80s, neon dreamy, night drive",
   },
   "indie-folk": {
-    instruments: "Fingerstyle acoustic guitar, soft brush kit, upright bass, light pads",
+    instruments: ["Fingerstyle acoustic guitar", "soft brush kit", "upright bass", "light pads"], // Converted to array
     minTempo: 82,
     maxTempo: 96,
     descriptor: "Earthy, reflective, hopeful, intimate",
   },
   "gospel-trap": {
-    instruments: "Clap patterns, 808 sub, choir pads, stacked choir hooks",
+    instruments: ["Clap patterns", "808 sub", "choir pads", "stacked choir hooks"], // Converted to array
     minTempo: 80,
     maxTempo: 92,
     descriptor: "Uplifting, triumphant, powerful",
   },
   "lofi": {
-    instruments: "lo-fi beats, jazz piano, soft guitar, vinyl crackle",
+    instruments: ["lo-fi beats", "jazz piano", "soft guitar", "vinyl crackle"], // Converted to array
     minTempo: 70,
     maxTempo: 90,
     descriptor: "Chill vibes, lo-fi, relaxed",
@@ -216,7 +216,7 @@ export function buildStyle(config: PromptDNA): string {
   addPart(tempoString); // Tempo / feel
   addPart(energyDescriptor);
   addPart(genreData.descriptor);
-  addPart(genreData.instruments);
+  addPart(genreData.instruments.join(", ")); // Changed to join the array
   addPart(config.instrumentation); // Lead instrument or key sonic elements
   addPart(config.vocalStyle); // Vocal identity is crucial
 
