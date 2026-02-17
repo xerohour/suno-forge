@@ -1,11 +1,11 @@
 // lib/promptEngine.test.ts
 
 import { buildPrompt } from './promptEngine';
-import * as styleEngine from './styleEngine'; // Import as a namespace to mock
+import * as styleEngine from './styleEngine';
 
 // Mock the styleEngine.buildStyle function
 jest.mock('./styleEngine', () => ({
-  ...jest.requireActual('./styleEngine'), // Keep original non-mocked exports
+  ...jest.requireActual('./styleEngine'),
   buildStyle: jest.fn(),
 }));
 
@@ -15,7 +15,7 @@ jest.mock('./lyricsEngine', () => ({
 }));
 
 describe('promptEngine', () => {
-  it('should include the correct style descriptors for "Synthwave" in the generated prompt', () => {
+  it('should include the correct style descriptors for \'Synthwave\' in the generated prompt', () => {
     // Mock buildStyle to return a predictable string for Synthwave
     (styleEngine.buildStyle as jest.Mock).mockReturnValueOnce(
       'synthwave, retro 80s, 120 BPM, mid energy, synthesizer, drum machine, bass guitar, retro pads, studio quality, clear vocals'

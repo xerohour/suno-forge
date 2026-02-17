@@ -1,9 +1,9 @@
-import { buildPrompt } from "@/lib/promptEngine"
+import { buildPrompt } from '@/lib/promptEngine';
 
 export async function POST(req: Request) {
-  const body = await req.json()
+  const body = await req.json();
 
-  const prompt = buildPrompt(body)
+  const prompt = buildPrompt(body);
 
-  return Response.json({ prompt })
+  return Response.json({ prompt });
 }
