@@ -42,38 +42,38 @@ export const PRODUCTION_TERMS = [
 const GENRE_DATA: Record<
   string,
   {
-    instruments: string[];
+    instruments: string;
     minTempo: number;
     maxTempo: number;
     descriptor: string;
   }
 > = {
   pop: {
-    instruments: ["synth", "bass", "drums", "vocal chops"],
+    instruments: "synth, bass, drums, vocal chops",
     minTempo: 100,
     maxTempo: 130,
     descriptor: "catchy, modern, radio-friendly",
   },
   "synthwave": {
-    instruments: ["Analog polysynth pads", "bass arps", "tom fills", "gated reverb drums"],
+    instruments: "Analog polysynth pads, bass arps, tom fills, gated reverb drums",
     minTempo: 84,
     maxTempo: 104,
     descriptor: "nostalgic 80s, neon dreamy, night drive",
   },
   "indie-folk": {
-    instruments: ["Fingerstyle acoustic guitar", "soft brush kit", "upright bass", "light pads"],
+    instruments: "Fingerstyle acoustic guitar, soft brush kit, upright bass, light pads",
     minTempo: 82,
     maxTempo: 96,
     descriptor: "Earthy, reflective, hopeful, intimate",
   },
   "gospel-trap": {
-    instruments: ["Clap patterns", "808 sub", "choir pads", "stacked choir hooks"],
+    instruments: "Clap patterns, 808 sub, choir pads, stacked choir hooks",
     minTempo: 80,
     maxTempo: 92,
     descriptor: "Uplifting, triumphant, powerful",
   },
   "lofi": {
-    instruments: ["lo-fi beats", "jazz piano", "soft guitar", "vinyl crackle"],
+    instruments: "lo-fi beats, jazz piano, soft guitar, vinyl crackle",
     minTempo: 70,
     maxTempo: 90,
     descriptor: "Chill vibes, lo-fi, relaxed",
@@ -200,26 +200,37 @@ export function buildStyle(config: PromptDNA): string {
   }
 
   // 4. Build parts list
-  const parts = [
-    config.genre, // Core genre / sub-genre
-    config.mood, // Primary mood / energy
-    tempoString, // Tempo / feel
-    energyDescriptor,
-    genreData.descriptor,
-    genreData.instruments.join(", "),
-    config.instrumentation, // Lead instrument or key sonic elements
-    config.vocalStyle, // Vocal identity is crucial
-    config.production || (config.instrumental ? null : "studio quality, clear vocals"), // Production treatment (e.g., lo-fi, studio quality)
-  ].filter((p): p is string => !!p && p.trim().length > 0); // Filter out null, undefined, and empty strings.
+  const parts = new Set<string>();
 
-  // 5. Remove duplicates while preserving order for the most part.
-  const uniqueParts = [...new Set(parts.map((p) => p.trim()))];
+  const addPart = (part: string | null | undefined) => {
+    if (part) {
+      const trimmed = part.trim();
+      if (trimmed.length > 0) {
+        parts.add(trimmed);
+      }
+    }
+  };
 
-  // 6. Join into a comma-separated list for balanced weighting.
-  // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && uniqueParts.length > 1) {
-      return `${uniqueParts.join(", ")}, ${config.genre}`;
+  addPart(config.genre); // Core genre / sub-genre
+  addPart(config.mood); // Primary mood / energy
+  addPart(tempoString); // Tempo / feel
+  addPart(energyDescriptor);
+  addPart(genreData.descriptor);
+  addPart(genreData.instruments);
+  addPart(config.instrumentation); // Lead instrument or key sonic elements
+  addPart(config.vocalStyle); // Vocal identity is crucial
+
+  if (config.production) {
+    addPart(config.production);
+  } else if (!config.instrumental) {
+    addPart("studio quality, clear vocals");
   }
 
-  return uniqueParts.join(", ");
+  // 5. Join into a comma-separated list for balanced weighting.
+  // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
+  if (config.genre && parts.size > 1) {
+      return `${Array.from(parts).join(", ")}, ${config.genre}`;
+  }
+
+  return Array.from(parts).join(", ");
 }
