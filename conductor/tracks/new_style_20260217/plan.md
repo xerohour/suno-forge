@@ -20,7 +20,7 @@
         - Modify `promptEngine.ts` to correctly handle the new musical style when generating prompts.
     - [ ] **Refactor (Optional):**
         - Refactor the `promptEngine.ts` for better readability.
-- [ ] **Task: Conductor - User Manual Verification 'Engine and Core Logic' (Protocol in workflow.md)**
+- [~] **Task: Conductor - User Manual Verification 'Engine and Core Logic' (Protocol in workflow.md)**
 
 ## Phase 2: UI Integration [checkpoint: ]
 
