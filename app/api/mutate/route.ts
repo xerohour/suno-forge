@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const mutated = mutatePrompt(prompt, type)
 
     return Response.json({ mutated })
-  } catch {
+  } catch (error) {
+    console.error("Mutation failed:", error)
     return Response.json({ error: "Mutation failed" }, { status: 500 })
   }
 }

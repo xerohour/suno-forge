@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     )
 
     return Response.json({ prompts })
-  } catch {
+  } catch (error) {
+    console.error("Batch failed:", error)
     return Response.json({ error: "Batch failed" }, { status: 500 })
   }
 }
