@@ -83,6 +83,23 @@ export function validateBatchRequest(data: unknown): data is { config: PromptCon
 }
 
 /**
+ * Validates vision request parameters
+ */
+export function validateVisionRequest(data: unknown): data is { description: string } {
+    if (!data || typeof data !== 'object') {
+        return false;
+    }
+
+    const d = data as Record<string, unknown>;
+
+    if (!d.description || typeof d.description !== 'string' || d.description.trim().length === 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Creates a standardized error response
  */
 export function createErrorResponse(
