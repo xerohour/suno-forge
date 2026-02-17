@@ -1,15 +1,15 @@
 export interface PromptPack {
-  id: string
-  name: string
-  genre: string
-  mood: string
-  tempo: number
-  instrumentation: string
-  vocalStyle: string
-  production: string
-  lyricsSeed: string
-  energyLabel: "low" | "medium" | "high" | "very high"
-  useCase: string
+  id: string;
+  name: string;
+  genre: string;
+  mood: string;
+  tempo: number;
+  instrumentation: string;
+  vocalStyle: string;
+  production: string;
+  lyricsSeed: string;
+  energyLabel: "low" | "medium" | "high" | "very high";
+  useCase: string;
 }
 
 // Inspired by community "awesome prompt" collections:
@@ -66,8 +66,7 @@ export const PROMPT_PACKS: PromptPack[] = [
     instrumentation: "guitar lead",
     vocalStyle: "belting lead with gang-style hooks",
     production: "room",
-    lyricsSeed:
-      "[Verse]\nSteel and thunder under my feet\n[Chorus]\nHands up, we own the night",
+    lyricsSeed: "[Verse]\nSteel and thunder under my feet\n[Chorus]\nHands up, we own the night",
     energyLabel: "very high",
     useCase: "sports edits and cinematic hype videos",
   },
@@ -183,9 +182,9 @@ export const PROMPT_PACKS: PromptPack[] = [
     energyLabel: "medium",
     useCase: "cinematic lounge and late-evening ambience",
   },
-]
+];
 
 export function getRandomPromptPack(): PromptPack {
-  const index = Math.floor(Math.random() * PROMPT_PACKS.length)
-  return PROMPT_PACKS[index]
+  const index = Math.floor(Math.random() * PROMPT_PACKS.length);
+  return PROMPT_PACKS[index];
 }

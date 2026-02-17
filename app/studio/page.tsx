@@ -1,245 +1,251 @@
-'use client'
+"use client";
 
-import { useMemo, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 import {
   MOODS,
   INSTRUMENTS,
   PRODUCTION_TERMS,
   VOCAL_TONE_TEXTURE,
   VOCAL_DELIVERY,
-} from '@/lib/styleEngine'
-import { PROMPT_PACKS, getRandomPromptPack, type PromptPack } from '@/lib/promptPacks'
-import type { Prompt } from '@/types/prompt'
+} from "@/lib/styleEngine";
+import { PROMPT_PACKS, getRandomPromptPack, type PromptPack } from "@/lib/promptPacks";
+import type { Prompt } from "@/types/prompt";
 
 const structuralTags = [
-  '[Intro]',
-  '[Verse]',
-  '[Pre-Chorus]',
-  '[Chorus]',
-  '[Bridge]',
-  '[Solo]',
-  '[Outro]',
-  '[End]',
-  '[Build]',
-  '[Drop]',
-]
+  "[Intro]",
+  "[Verse]",
+  "[Pre-Chorus]",
+  "[Chorus]",
+  "[Bridge]",
+  "[Solo]",
+  "[Outro]",
+  "[End]",
+  "[Build]",
+  "[Drop]",
+];
 
-const vocalOptions = [...VOCAL_TONE_TEXTURE, ...VOCAL_DELIVERY]
-const vocalSelectOptions = Array.from(new Set([...vocalOptions, ...PROMPT_PACKS.map((pack) => pack.vocalStyle)]))
+const vocalOptions = [...VOCAL_TONE_TEXTURE, ...VOCAL_DELIVERY];
+const vocalSelectOptions = Array.from(
+  new Set([...vocalOptions, ...PROMPT_PACKS.map((pack) => pack.vocalStyle)])
+);
 
 const languages = [
-  'English',
-  'Spanish',
-  'French',
-  'German',
-  'Italian',
-  'Portuguese',
-  'Japanese',
-  'Korean',
-  'Hindi',
-  'Arabic',
-  'Turkish',
-  'Russian',
-  'Dutch',
-  'Swedish',
-  'Indonesian',
-  'Vietnamese',
-]
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Italian",
+  "Portuguese",
+  "Japanese",
+  "Korean",
+  "Hindi",
+  "Arabic",
+  "Turkish",
+  "Russian",
+  "Dutch",
+  "Swedish",
+  "Indonesian",
+  "Vietnamese",
+];
 
 const styleTagPool = [
-  'catchy hook',
-  'viral-ready chorus',
-  'cinematic intro',
-  'emotional lyrics',
-  'big drop',
-  'anthemic',
-  'club-ready',
-  'radio-friendly',
-  'storytelling',
-  'minimal production',
-  'experimental',
-  'uplifting',
-]
+  "catchy hook",
+  "viral-ready chorus",
+  "cinematic intro",
+  "emotional lyrics",
+  "big drop",
+  "anthemic",
+  "club-ready",
+  "radio-friendly",
+  "storytelling",
+  "minimal production",
+  "experimental",
+  "uplifting",
+];
 
 const inspirationIdeas = [
-  'A late-night drive through neon rain while trying to forget someone.',
-  'Small-town dreamer chasing a bigger life in the city.',
-  'Post-breakup glow-up anthem with confident energy.',
-  'A calm study track that feels like warm coffee and rain.',
-  'Festival drop song built around one unforgettable hook.',
-]
+  "A late-night drive through neon rain while trying to forget someone.",
+  "Small-town dreamer chasing a bigger life in the city.",
+  "Post-breakup glow-up anthem with confident energy.",
+  "A calm study track that feels like warm coffee and rain.",
+  "Festival drop song built around one unforgettable hook.",
+];
 
 const templateLibrary: Array<{
-  id: string
-  name: string
-  description: string
-  genre: string
-  mood: string
-  tempo: string
-  styleTags: string[]
-  negativePrompt: string
+  id: string;
+  name: string;
+  description: string;
+  genre: string;
+  mood: string;
+  tempo: string;
+  styleTags: string[];
+  negativePrompt: string;
 }> = [
   {
-    id: 'viral-hook',
-    name: 'Viral Hook Template',
-    description: 'Fast, memorable phrasing with an immediate chorus payoff.',
-    genre: 'dance pop',
-    mood: 'euphoric',
-    tempo: '126',
-    styleTags: ['catchy hook', 'viral-ready chorus', 'radio-friendly'],
-    negativePrompt: 'no long intro, no abstract lyrics, no low-energy sections',
+    id: "viral-hook",
+    name: "Viral Hook Template",
+    description: "Fast, memorable phrasing with an immediate chorus payoff.",
+    genre: "dance pop",
+    mood: "euphoric",
+    tempo: "126",
+    styleTags: ["catchy hook", "viral-ready chorus", "radio-friendly"],
+    negativePrompt: "no long intro, no abstract lyrics, no low-energy sections",
   },
   {
-    id: 'cinematic-trailer',
-    name: 'Cinematic Trailer',
-    description: 'Build and release structure designed for trailers and edits.',
-    genre: 'cinematic',
-    mood: 'triumphant',
-    tempo: '110',
-    styleTags: ['cinematic intro', 'big drop', 'anthemic'],
-    negativePrompt: 'avoid lo-fi texture, avoid tiny dynamic range',
+    id: "cinematic-trailer",
+    name: "Cinematic Trailer",
+    description: "Build and release structure designed for trailers and edits.",
+    genre: "cinematic",
+    mood: "triumphant",
+    tempo: "110",
+    styleTags: ["cinematic intro", "big drop", "anthemic"],
+    negativePrompt: "avoid lo-fi texture, avoid tiny dynamic range",
   },
   {
-    id: 'lofi-focus',
-    name: 'Lo-Fi Focus',
-    description: 'Calm, repeatable, low-distraction sound design.',
-    genre: 'lofi hip hop',
-    mood: 'reflective',
-    tempo: '84',
-    styleTags: ['minimal production', 'storytelling'],
-    negativePrompt: 'no hard clipping, no sharp high end, no abrupt drops',
+    id: "lofi-focus",
+    name: "Lo-Fi Focus",
+    description: "Calm, repeatable, low-distraction sound design.",
+    genre: "lofi hip hop",
+    mood: "reflective",
+    tempo: "84",
+    styleTags: ["minimal production", "storytelling"],
+    negativePrompt: "no hard clipping, no sharp high end, no abrupt drops",
   },
   {
-    id: 'alt-ballad',
-    name: 'Alt Ballad',
-    description: 'Emotion-forward songwriting with space for lyrical detail.',
-    genre: 'indie pop',
-    mood: 'melancholic',
-    tempo: '78',
-    styleTags: ['emotional lyrics', 'storytelling'],
-    negativePrompt: 'avoid repetitive empty lines, avoid over-compression',
+    id: "alt-ballad",
+    name: "Alt Ballad",
+    description: "Emotion-forward songwriting with space for lyrical detail.",
+    genre: "indie pop",
+    mood: "melancholic",
+    tempo: "78",
+    styleTags: ["emotional lyrics", "storytelling"],
+    negativePrompt: "avoid repetitive empty lines, avoid over-compression",
   },
-]
+];
 
 type MetaTagCategory =
-  | 'all'
-  | 'genre'
-  | 'mood'
-  | 'vocal'
-  | 'instrument'
-  | 'production'
-  | 'structure'
+  | "all"
+  | "genre"
+  | "mood"
+  | "vocal"
+  | "instrument"
+  | "production"
+  | "structure";
 
 const metaTagLibrary: Array<{ tag: string; category: MetaTagCategory }> = [
-  { tag: 'synthwave', category: 'genre' },
-  { tag: 'indie pop', category: 'genre' },
-  { tag: 'trap', category: 'genre' },
-  { tag: 'cinematic', category: 'genre' },
-  { tag: 'nostalgic', category: 'mood' },
-  { tag: 'euphoric', category: 'mood' },
-  { tag: 'melancholic', category: 'mood' },
-  { tag: 'triumphant', category: 'mood' },
-  { tag: 'airy vocal', category: 'vocal' },
-  { tag: 'gritty vocal', category: 'vocal' },
-  { tag: 'harmonized', category: 'vocal' },
-  { tag: 'rap delivery', category: 'vocal' },
-  { tag: 'analog polysynth', category: 'instrument' },
-  { tag: '808 bass', category: 'instrument' },
-  { tag: 'felt piano', category: 'instrument' },
-  { tag: 'guitar lead', category: 'instrument' },
-  { tag: 'tape saturated', category: 'production' },
-  { tag: 'wide stereo', category: 'production' },
-  { tag: 'side-chained', category: 'production' },
-  { tag: 'lo-fi texture', category: 'production' },
-  { tag: 'intro build', category: 'structure' },
-  { tag: 'pre-chorus lift', category: 'structure' },
-  { tag: 'anthemic chorus', category: 'structure' },
-  { tag: 'final drop', category: 'structure' },
-]
+  { tag: "synthwave", category: "genre" },
+  { tag: "indie pop", category: "genre" },
+  { tag: "trap", category: "genre" },
+  { tag: "cinematic", category: "genre" },
+  { tag: "nostalgic", category: "mood" },
+  { tag: "euphoric", category: "mood" },
+  { tag: "melancholic", category: "mood" },
+  { tag: "triumphant", category: "mood" },
+  { tag: "airy vocal", category: "vocal" },
+  { tag: "gritty vocal", category: "vocal" },
+  { tag: "harmonized", category: "vocal" },
+  { tag: "rap delivery", category: "vocal" },
+  { tag: "analog polysynth", category: "instrument" },
+  { tag: "808 bass", category: "instrument" },
+  { tag: "felt piano", category: "instrument" },
+  { tag: "guitar lead", category: "instrument" },
+  { tag: "tape saturated", category: "production" },
+  { tag: "wide stereo", category: "production" },
+  { tag: "side-chained", category: "production" },
+  { tag: "lo-fi texture", category: "production" },
+  { tag: "intro build", category: "structure" },
+  { tag: "pre-chorus lift", category: "structure" },
+  { tag: "anthemic chorus", category: "structure" },
+  { tag: "final drop", category: "structure" },
+];
 
 type TimelineBlock = {
-  id: string
-  section: string
-  cue: string
-}
+  id: string;
+  section: string;
+  cue: string;
+};
 
-const sectionOptions = ['Intro', 'Verse', 'Pre-Chorus', 'Chorus', 'Bridge', 'Outro', 'Drop']
+const sectionOptions = ["Intro", "Verse", "Pre-Chorus", "Chorus", "Bridge", "Outro", "Drop"];
 
-const MAX_TITLE = 80
-const MAX_DESCRIPTION = 400
+const MAX_TITLE = 80;
+const MAX_DESCRIPTION = 400;
 
-type BuildMode = 'simple' | 'custom'
+type BuildMode = "simple" | "custom";
 
 export default function Studio() {
-  const defaultPack = PROMPT_PACKS[0]
-  const [mode, setMode] = useState<BuildMode>('simple')
-  const [isTemplateLibraryOpen, setIsTemplateLibraryOpen] = useState(false)
-  const [selectedPackId, setSelectedPackId] = useState(defaultPack.id)
-  const [title, setTitle] = useState('')
-  const [songIdea, setSongIdea] = useState(inspirationIdeas[0])
-  const [language, setLanguage] = useState('English')
-  const [instrumental, setInstrumental] = useState(false)
-  const [selectedTags, setSelectedTags] = useState<string[]>(['catchy hook'])
-  const [negativePrompt, setNegativePrompt] = useState('')
-  const [metaCategory, setMetaCategory] = useState<MetaTagCategory>('all')
-  const [metaSearch, setMetaSearch] = useState('')
-  const [genre, setGenre] = useState(defaultPack.genre)
-  const [mood, setMood] = useState(defaultPack.mood)
-  const [tempo, setTempo] = useState(String(defaultPack.tempo))
-  const [instrumentation, setInstrumentation] = useState(defaultPack.instrumentation)
-  const [vocalStyle, setVocalStyle] = useState(defaultPack.vocalStyle)
-  const [production, setProduction] = useState(defaultPack.production)
-  const [lyrics, setLyrics] = useState(defaultPack.lyricsSeed)
+  const defaultPack = PROMPT_PACKS[0];
+  const [mode, setMode] = useState<BuildMode>("simple");
+  const [isTemplateLibraryOpen, setIsTemplateLibraryOpen] = useState(false);
+  const [selectedPackId, setSelectedPackId] = useState(defaultPack.id);
+  const [title, setTitle] = useState("");
+  const [songIdea, setSongIdea] = useState(inspirationIdeas[0]);
+  const [language, setLanguage] = useState("English");
+  const [instrumental, setInstrumental] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(["catchy hook"]);
+  const [negativePrompt, setNegativePrompt] = useState("");
+  const [metaCategory, setMetaCategory] = useState<MetaTagCategory>("all");
+  const [metaSearch, setMetaSearch] = useState("");
+  const [genre, setGenre] = useState(defaultPack.genre);
+  const [mood, setMood] = useState(defaultPack.mood);
+  const [tempo, setTempo] = useState(String(defaultPack.tempo));
+  const [instrumentation, setInstrumentation] = useState(defaultPack.instrumentation);
+  const [vocalStyle, setVocalStyle] = useState(defaultPack.vocalStyle);
+  const [production, setProduction] = useState(defaultPack.production);
+  const [lyrics, setLyrics] = useState(defaultPack.lyricsSeed);
   const [timelineBlocks, setTimelineBlocks] = useState<TimelineBlock[]>([
-    { id: 'intro-1', section: 'Intro', cue: 'Set the mood in one strong image.' },
-    { id: 'verse-1', section: 'Verse', cue: 'Introduce the story conflict.' },
-    { id: 'chorus-1', section: 'Chorus', cue: 'Repeat the core hook phrase.' },
-  ])
-  const [generatedResult, setGeneratedResult] = useState<Prompt | null>(null)
-  const [generationError, setGenerationError] = useState('')
-  const [copiedField, setCopiedField] = useState<'style' | 'lyrics' | ''>('')
-  const [loading, setLoading] = useState(false)
-  const lyricsRef = useRef<HTMLTextAreaElement>(null)
+    {
+      id: "intro-1",
+      section: "Intro",
+      cue: "Set the mood in one strong image.",
+    },
+    { id: "verse-1", section: "Verse", cue: "Introduce the story conflict." },
+    { id: "chorus-1", section: "Chorus", cue: "Repeat the core hook phrase." },
+  ]);
+  const [generatedResult, setGeneratedResult] = useState<Prompt | null>(null);
+  const [generationError, setGenerationError] = useState("");
+  const [copiedField, setCopiedField] = useState<"style" | "lyrics" | "">("");
+  const [loading, setLoading] = useState(false);
+  const lyricsRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedPack = useMemo(
     () => PROMPT_PACKS.find((pack) => pack.id === selectedPackId),
     [selectedPackId]
-  )
+  );
 
   const filteredMetaTags = useMemo(() => {
     return metaTagLibrary.filter((item) => {
-      const byCategory = metaCategory === 'all' || item.category === metaCategory
-      const bySearch = item.tag.toLowerCase().includes(metaSearch.toLowerCase())
-      return byCategory && bySearch
-    })
-  }, [metaCategory, metaSearch])
+      const byCategory = metaCategory === "all" || item.category === metaCategory;
+      const bySearch = item.tag.toLowerCase().includes(metaSearch.toLowerCase());
+      return byCategory && bySearch;
+    });
+  }, [metaCategory, metaSearch]);
 
   const livePromptPreview = useMemo(() => {
     const parts = [
       genre,
       mood,
-      tempo ? `${tempo} BPM` : '',
+      tempo ? `${tempo} BPM` : "",
       instrumentation,
       vocalStyle,
       production,
-      language ? `language: ${language}` : '',
-      instrumental ? 'instrumental only, no vocals' : '',
-      selectedTags.length > 0 ? `style tags: ${selectedTags.join(', ')}` : '',
-      negativePrompt.trim() ? `avoid: ${negativePrompt.trim()}` : '',
-    ].filter((part) => part && part.trim().length > 0)
-    return parts.join(', ')
+      language ? `language: ${language}` : "",
+      instrumental ? "instrumental only, no vocals" : "",
+      selectedTags.length > 0 ? `style tags: ${selectedTags.join(", ")}` : "",
+      negativePrompt.trim() ? `avoid: ${negativePrompt.trim()}` : "",
+    ].filter((part) => part && part.trim().length > 0);
+    return parts.join(", ");
   }, [
     genre,
     mood,
@@ -251,171 +257,171 @@ export default function Studio() {
     instrumental,
     selectedTags,
     negativePrompt,
-  ])
+  ]);
 
   const applyPack = (pack: PromptPack) => {
-    setGenre(pack.genre)
-    setMood(pack.mood)
-    setTempo(String(pack.tempo))
-    setInstrumentation(pack.instrumentation)
-    setVocalStyle(pack.vocalStyle)
-    setProduction(pack.production)
-    setLyrics(pack.lyricsSeed)
-    if (!title) setTitle(pack.name)
-  }
+    setGenre(pack.genre);
+    setMood(pack.mood);
+    setTempo(String(pack.tempo));
+    setInstrumentation(pack.instrumentation);
+    setVocalStyle(pack.vocalStyle);
+    setProduction(pack.production);
+    setLyrics(pack.lyricsSeed);
+    if (!title) setTitle(pack.name);
+  };
 
   const applySelectedPack = () => {
-    if (selectedPack) applyPack(selectedPack)
-  }
+    if (selectedPack) applyPack(selectedPack);
+  };
 
   const applyRandomPack = () => {
-    const randomPack = getRandomPromptPack()
-    setSelectedPackId(randomPack.id)
-    applyPack(randomPack)
-  }
+    const randomPack = getRandomPromptPack();
+    setSelectedPackId(randomPack.id);
+    applyPack(randomPack);
+  };
 
   const applyInspiration = () => {
-    const idea = inspirationIdeas[Math.floor(Math.random() * inspirationIdeas.length)]
-    setSongIdea(idea)
-  }
+    const idea = inspirationIdeas[Math.floor(Math.random() * inspirationIdeas.length)];
+    setSongIdea(idea);
+  };
 
   const applyTemplate = (templateId: string) => {
-    const template = templateLibrary.find((item) => item.id === templateId)
-    if (!template) return
-    setGenre(template.genre)
-    setMood(template.mood)
-    setTempo(template.tempo)
-    setSelectedTags(template.styleTags)
-    setNegativePrompt(template.negativePrompt)
-  }
+    const template = templateLibrary.find((item) => item.id === templateId);
+    if (!template) return;
+    setGenre(template.genre);
+    setMood(template.mood);
+    setTempo(template.tempo);
+    setSelectedTags(template.styleTags);
+    setNegativePrompt(template.negativePrompt);
+  };
 
   const toggleStyleTag = (tag: string) => {
     setSelectedTags((prev) => {
-      if (prev.includes(tag)) return prev.filter((item) => item !== tag)
-      return [...prev, tag]
-    })
-  }
+      if (prev.includes(tag)) return prev.filter((item) => item !== tag);
+      return [...prev, tag];
+    });
+  };
 
   const addMetaTagToStyle = (tag: string) => {
-    setSelectedTags((prev) => (prev.includes(tag) ? prev : [...prev, tag]))
-  }
+    setSelectedTags((prev) => (prev.includes(tag) ? prev : [...prev, tag]));
+  };
 
   const addMetaTagToLyrics = (tag: string) => {
-    setLyrics((prev) => `${prev}\n[${tag}]\n`)
-  }
+    setLyrics((prev) => `${prev}\n[${tag}]\n`);
+  };
 
   const addTimelineBlock = () => {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
-    setTimelineBlocks((prev) => [...prev, { id, section: 'Verse', cue: 'Add your cue...' }])
-  }
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setTimelineBlocks((prev) => [...prev, { id, section: "Verse", cue: "Add your cue..." }]);
+  };
 
-  const updateTimelineBlock = (id: string, key: 'section' | 'cue', value: string) => {
+  const updateTimelineBlock = (id: string, key: "section" | "cue", value: string) => {
     setTimelineBlocks((prev) =>
       prev.map((block) => (block.id === id ? { ...block, [key]: value } : block))
-    )
-  }
+    );
+  };
 
   const removeTimelineBlock = (id: string) => {
-    setTimelineBlocks((prev) => prev.filter((block) => block.id !== id))
-  }
+    setTimelineBlocks((prev) => prev.filter((block) => block.id !== id));
+  };
 
-  const moveTimelineBlock = (id: string, direction: 'up' | 'down') => {
+  const moveTimelineBlock = (id: string, direction: "up" | "down") => {
     setTimelineBlocks((prev) => {
-      const index = prev.findIndex((block) => block.id === id)
-      if (index < 0) return prev
-      const target = direction === 'up' ? index - 1 : index + 1
-      if (target < 0 || target >= prev.length) return prev
-      const next = [...prev]
-      ;[next[index], next[target]] = [next[target], next[index]]
-      return next
-    })
-  }
+      const index = prev.findIndex((block) => block.id === id);
+      if (index < 0) return prev;
+      const target = direction === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  };
 
   const applyTimelineToLyrics = () => {
     const built = timelineBlocks
-      .map((block) => `[${block.section}]\n${block.cue.trim() || '...'}\n`)
-      .join('\n')
-    setLyrics(built.trim())
-  }
+      .map((block) => `[${block.section}]\n${block.cue.trim() || "..."}\n`)
+      .join("\n");
+    setLyrics(built.trim());
+  };
 
   const buildLyricsFromIdea = () => {
     if (instrumental) {
-      setLyrics('')
-      return
+      setLyrics("");
+      return;
     }
-    const seed = songIdea.trim() || 'A vivid emotional story'
+    const seed = songIdea.trim() || "A vivid emotional story";
     setLyrics(
-      `[Verse]\n${seed}\n\n[Pre-Chorus]\nPull the tension higher, one line at a time\n\n[Chorus]\n${title || 'Main hook'}\n`
-    )
-  }
+      `[Verse]\n${seed}\n\n[Pre-Chorus]\nPull the tension higher, one line at a time\n\n[Chorus]\n${title || "Main hook"}\n`
+    );
+  };
 
   const insertTag = (tag: string) => {
-    const textarea = lyricsRef.current
-    if (!textarea) return
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const text = textarea.value
-    const newText = `${text.substring(0, start)}\n${tag}\n${text.substring(end)}`
-    setLyrics(newText)
-    textarea.focus()
-  }
+    const textarea = lyricsRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const newText = `${text.substring(0, start)}\n${tag}\n${text.substring(end)}`;
+    setLyrics(newText);
+    textarea.focus();
+  };
 
-  const copyText = async (value: string, field: 'style' | 'lyrics') => {
-    await navigator.clipboard.writeText(value)
-    setCopiedField(field)
-    window.setTimeout(() => setCopiedField(''), 1200)
-  }
+  const copyText = async (value: string, field: "style" | "lyrics") => {
+    await navigator.clipboard.writeText(value);
+    setCopiedField(field);
+    window.setTimeout(() => setCopiedField(""), 1200);
+  };
 
   const exportText = (value: string, filePrefix: string) => {
-    const blob = new Blob([value], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = `${filePrefix}.txt`
-    anchor.click()
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${filePrefix}.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
 
   async function generate() {
-    setLoading(true)
-    setGeneratedResult(null)
-    setGenerationError('')
+    setLoading(true);
+    setGeneratedResult(null);
+    setGenerationError("");
 
     try {
       const payload = {
         title: title.trim() || undefined,
-        genre: genre || 'pop',
-        mood: mood || 'dreamy',
-        tempo: Number.parseInt(tempo || '0', 10) || undefined,
+        genre: genre || "pop",
+        mood: mood || "dreamy",
+        tempo: Number.parseInt(tempo || "0", 10) || undefined,
         instrumentation,
         vocalStyle,
         production,
-        lyrics: instrumental ? '' : lyrics,
+        lyrics: instrumental ? "" : lyrics,
         language,
         instrumental,
         styleTags: selectedTags,
         theme: songIdea.trim() || undefined,
         negativePrompt: negativePrompt.trim() || undefined,
-      }
+      };
 
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      })
+      });
 
       if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || 'Generation failed')
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Generation failed");
       }
 
-      const data = await res.json()
-      setGeneratedResult(data.prompt as Prompt)
+      const data = await res.json();
+      setGeneratedResult(data.prompt as Prompt);
     } catch (e: any) {
-      setGenerationError(`Error: ${e.message}`)
+      setGenerationError(`Error: ${e.message}`);
     }
 
-    setLoading(false)
+    setLoading(false);
   }
 
   return (
@@ -431,10 +437,18 @@ export default function Studio() {
             <div className="space-y-2 rounded-md border p-3">
               <Label>Generator Mode</Label>
               <div className="flex flex-wrap gap-2">
-                <Button type="button" variant={mode === 'simple' ? 'default' : 'outline'} onClick={() => setMode('simple')}>
+                <Button
+                  type="button"
+                  variant={mode === "simple" ? "default" : "outline"}
+                  onClick={() => setMode("simple")}
+                >
                   Simple Mode
                 </Button>
-                <Button type="button" variant={mode === 'custom' ? 'default' : 'outline'} onClick={() => setMode('custom')}>
+                <Button
+                  type="button"
+                  variant={mode === "custom" ? "default" : "outline"}
+                  onClick={() => setMode("custom")}
+                >
                   Custom Mode
                 </Button>
               </div>
@@ -443,17 +457,33 @@ export default function Studio() {
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="title">Song Title</Label>
-                <span className="text-xs text-muted-foreground">{title.length}/{MAX_TITLE}</span>
+                <span className="text-xs text-muted-foreground">
+                  {title.length}/{MAX_TITLE}
+                </span>
               </div>
-              <Input id="title" maxLength={MAX_TITLE} placeholder="Optional title override" value={title} onChange={(e) => setTitle(e.target.value)} />
+              <Input
+                id="title"
+                maxLength={MAX_TITLE}
+                placeholder="Optional title override"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="idea">Song Description</Label>
-                <span className="text-xs text-muted-foreground">{songIdea.length}/{MAX_DESCRIPTION}</span>
+                <span className="text-xs text-muted-foreground">
+                  {songIdea.length}/{MAX_DESCRIPTION}
+                </span>
               </div>
-              <Textarea id="idea" rows={3} maxLength={MAX_DESCRIPTION} value={songIdea} onChange={(e) => setSongIdea(e.target.value)} />
+              <Textarea
+                id="idea"
+                rows={3}
+                maxLength={MAX_DESCRIPTION}
+                value={songIdea}
+                onChange={(e) => setSongIdea(e.target.value)}
+              />
               <Button type="button" variant="outline" size="sm" onClick={applyInspiration}>
                 Get Inspired
               </Button>
@@ -478,10 +508,18 @@ export default function Studio() {
               <div className="space-y-2">
                 <Label>Instrumental</Label>
                 <div className="flex gap-2">
-                  <Button type="button" variant={instrumental ? 'default' : 'outline'} onClick={() => setInstrumental(true)}>
+                  <Button
+                    type="button"
+                    variant={instrumental ? "default" : "outline"}
+                    onClick={() => setInstrumental(true)}
+                  >
                     Yes
                   </Button>
-                  <Button type="button" variant={!instrumental ? 'default' : 'outline'} onClick={() => setInstrumental(false)}>
+                  <Button
+                    type="button"
+                    variant={!instrumental ? "default" : "outline"}
+                    onClick={() => setInstrumental(false)}
+                  >
                     No
                   </Button>
                 </div>
@@ -496,7 +534,7 @@ export default function Studio() {
                     key={tag}
                     type="button"
                     size="sm"
-                    variant={selectedTags.includes(tag) ? 'default' : 'outline'}
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
                     onClick={() => toggleStyleTag(tag)}
                   >
                     {tag}
@@ -519,7 +557,9 @@ export default function Studio() {
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
                 <Label>Meta Tag Creator</Label>
-                <span className="text-xs text-muted-foreground">Inspired by SunoMetaTagCreator</span>
+                <span className="text-xs text-muted-foreground">
+                  Inspired by SunoMetaTagCreator
+                </span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <Input
@@ -528,7 +568,10 @@ export default function Studio() {
                   onChange={(e) => setMetaSearch(e.target.value)}
                   aria-label="Search meta tags"
                 />
-                <Select value={metaCategory} onValueChange={(value) => setMetaCategory(value as MetaTagCategory)}>
+                <Select
+                  value={metaCategory}
+                  onValueChange={(value) => setMetaCategory(value as MetaTagCategory)}
+                >
                   <SelectTrigger aria-label="Select meta tag category">
                     <SelectValue />
                   </SelectTrigger>
@@ -546,10 +589,20 @@ export default function Studio() {
               <div className="flex flex-wrap gap-2">
                 {filteredMetaTags.slice(0, 18).map((item) => (
                   <div key={item.tag} className="flex gap-1">
-                    <Button type="button" size="sm" variant="outline" onClick={() => addMetaTagToStyle(item.tag)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => addMetaTagToStyle(item.tag)}
+                    >
                       +Style {item.tag}
                     </Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => addMetaTagToLyrics(item.tag)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => addMetaTagToLyrics(item.tag)}
+                    >
                       +Lyrics
                     </Button>
                   </div>
@@ -560,8 +613,13 @@ export default function Studio() {
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
                 <Label>Template Library</Label>
-                <Button type="button" variant="outline" size="sm" onClick={() => setIsTemplateLibraryOpen((prev) => !prev)}>
-                  {isTemplateLibraryOpen ? 'Close Library' : 'Open Library'}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsTemplateLibraryOpen((prev) => !prev)}
+                >
+                  {isTemplateLibraryOpen ? "Close Library" : "Open Library"}
                 </Button>
               </div>
               {isTemplateLibraryOpen && (
@@ -570,7 +628,12 @@ export default function Studio() {
                     <div key={template.id} className="rounded border p-2">
                       <p className="text-sm font-medium">{template.name}</p>
                       <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
-                      <Button type="button" variant="outline" size="sm" onClick={() => applyTemplate(template.id)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => applyTemplate(template.id)}
+                      >
                         Apply Template
                       </Button>
                     </div>
@@ -579,7 +642,7 @@ export default function Studio() {
               )}
             </div>
 
-            {mode === 'custom' && (
+            {mode === "custom" && (
               <div className="space-y-4">
                 <div className="space-y-2 rounded-md border p-3">
                   <Label htmlFor="pack-select">Awesome Prompt Packs</Label>
@@ -603,7 +666,9 @@ export default function Studio() {
                       Random Pack
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Use case: {selectedPack?.useCase || 'custom'}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Use case: {selectedPack?.useCase || "custom"}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -631,7 +696,12 @@ export default function Studio() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="tempo">Tempo (BPM)</Label>
-                    <Input id="tempo" type="number" value={tempo} onChange={(e) => setTempo(e.target.value)} />
+                    <Input
+                      id="tempo"
+                      type="number"
+                      value={tempo}
+                      onChange={(e) => setTempo(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="instrumentation-select">Key Instruments</Label>
@@ -705,8 +775,14 @@ export default function Studio() {
                   </Button>
                 </div>
                 {timelineBlocks.map((block) => (
-                  <div key={block.id} className="grid grid-cols-1 md:grid-cols-[170px_1fr_auto] gap-2 items-start">
-                    <Select value={block.section} onValueChange={(value) => updateTimelineBlock(block.id, 'section', value)}>
+                  <div
+                    key={block.id}
+                    className="grid grid-cols-1 md:grid-cols-[170px_1fr_auto] gap-2 items-start"
+                  >
+                    <Select
+                      value={block.section}
+                      onValueChange={(value) => updateTimelineBlock(block.id, "section", value)}
+                    >
                       <SelectTrigger aria-label="Section type">
                         <SelectValue />
                       </SelectTrigger>
@@ -720,7 +796,7 @@ export default function Studio() {
                     </Select>
                     <Input
                       value={block.cue}
-                      onChange={(e) => updateTimelineBlock(block.id, 'cue', e.target.value)}
+                      onChange={(e) => updateTimelineBlock(block.id, "cue", e.target.value)}
                       aria-label="Section cue"
                     />
                     <div className="flex gap-1">
@@ -728,7 +804,7 @@ export default function Studio() {
                         type="button"
                         size="sm"
                         variant="outline"
-                        onClick={() => moveTimelineBlock(block.id, 'up')}
+                        onClick={() => moveTimelineBlock(block.id, "up")}
                         aria-label="Move section up"
                       >
                         ↑
@@ -737,7 +813,7 @@ export default function Studio() {
                         type="button"
                         size="sm"
                         variant="outline"
-                        onClick={() => moveTimelineBlock(block.id, 'down')}
+                        onClick={() => moveTimelineBlock(block.id, "down")}
                         aria-label="Move section down"
                       >
                         ↓
@@ -757,7 +833,13 @@ export default function Studio() {
               </div>
               <div className="flex flex-wrap gap-2 mb-2">
                 {structuralTags.map((tag) => (
-                  <Button key={tag} type="button" variant="outline" size="sm" onClick={() => insertTag(tag)}>
+                  <Button
+                    key={tag}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => insertTag(tag)}
+                  >
                     {tag}
                   </Button>
                 ))}
@@ -784,14 +866,14 @@ export default function Studio() {
               <Textarea
                 readOnly
                 rows={5}
-                value={livePromptPreview || 'Start filling fields to preview...'}
+                value={livePromptPreview || "Start filling fields to preview..."}
                 className="font-mono"
               />
             </CardContent>
           </Card>
 
           <Button onClick={generate} disabled={loading} className="w-full text-lg">
-            {loading ? 'Generating...' : 'Generate Prompt'}
+            {loading ? "Generating..." : "Generate Prompt"}
           </Button>
           <Card className="h-full min-h-[400px]">
             <CardHeader>
@@ -814,20 +896,35 @@ export default function Studio() {
                     <div className="flex items-center justify-between gap-2">
                       <Label>Style Prompt</Label>
                       <div className="flex gap-2">
-                        <Button type="button" size="sm" variant="outline" onClick={() => copyText(generatedResult.style, 'style')}>
-                          {copiedField === 'style' ? 'Copied' : 'Copy'}
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => copyText(generatedResult.style, "style")}
+                        >
+                          {copiedField === "style" ? "Copied" : "Copy"}
                         </Button>
                         <Button
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => exportText(generatedResult.style, `${generatedResult.technicalName}_style`)}
+                          onClick={() =>
+                            exportText(
+                              generatedResult.style,
+                              `${generatedResult.technicalName}_style`
+                            )
+                          }
                         >
                           Export
                         </Button>
                       </div>
                     </div>
-                    <Textarea readOnly rows={5} value={generatedResult.style} className="font-mono" />
+                    <Textarea
+                      readOnly
+                      rows={5}
+                      value={generatedResult.style}
+                      className="font-mono"
+                    />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
@@ -837,21 +934,33 @@ export default function Studio() {
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => copyText(generatedResult.lyrics || '[Instrumental mode]', 'lyrics')}
+                          onClick={() =>
+                            copyText(generatedResult.lyrics || "[Instrumental mode]", "lyrics")
+                          }
                         >
-                          {copiedField === 'lyrics' ? 'Copied' : 'Copy'}
+                          {copiedField === "lyrics" ? "Copied" : "Copy"}
                         </Button>
                         <Button
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => exportText(generatedResult.lyrics || '[Instrumental mode]', `${generatedResult.technicalName}_lyrics`)}
+                          onClick={() =>
+                            exportText(
+                              generatedResult.lyrics || "[Instrumental mode]",
+                              `${generatedResult.technicalName}_lyrics`
+                            )
+                          }
                         >
                           Export
                         </Button>
                       </div>
                     </div>
-                    <Textarea readOnly rows={8} value={generatedResult.lyrics || '[Instrumental mode]'} className="font-mono" />
+                    <Textarea
+                      readOnly
+                      rows={8}
+                      value={generatedResult.lyrics || "[Instrumental mode]"}
+                      className="font-mono"
+                    />
                   </div>
                 </>
               )}
@@ -860,5 +969,5 @@ export default function Studio() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-
 /**
  * Cleans a "blueprint" lyric string into a "production" string
  * by removing comments and normalizing whitespace.
@@ -8,10 +7,10 @@
  */
 export function cleanLyricsForProduction(blueprintLyrics: string): string {
   if (!blueprintLyrics) {
-    return '';
+    return "";
   }
 
-  const lines = blueprintLyrics.split('\n');
+  const lines = blueprintLyrics.split("\n");
   const cleanedLines: string[] = [];
   let lastLineWasBlank = false;
 
@@ -19,14 +18,14 @@ export function cleanLyricsForProduction(blueprintLyrics: string): string {
     const trimmedLine = line.trim();
 
     // Rule 3: Remove Narrative Noise (by stripping comment lines)
-    if (trimmedLine.startsWith('//')) {
+    if (trimmedLine.startsWith("//")) {
       continue;
     }
 
     // Ensure blank lines are respected for model separation but not duplicated
-    if (trimmedLine === '') {
+    if (trimmedLine === "") {
       if (!lastLineWasBlank) {
-        cleanedLines.push('');
+        cleanedLines.push("");
         lastLineWasBlank = true;
       }
     } else {
@@ -37,5 +36,5 @@ export function cleanLyricsForProduction(blueprintLyrics: string): string {
   }
 
   // Join the cleaned lines and trim any leading/trailing whitespace from the whole block
-  return cleanedLines.join('\n').trim();
+  return cleanedLines.join("\n").trim();
 }

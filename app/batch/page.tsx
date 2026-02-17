@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Batch() {
@@ -31,9 +25,7 @@ export default function Batch() {
     <Card>
       <CardHeader>
         <CardTitle>Batch Generation</CardTitle>
-        <CardDescription>
-          Generate multiple prompt variations at once.
-        </CardDescription>
+        <CardDescription>Generate multiple prompt variations at once.</CardDescription>
       </CardHeader>
       <CardContent>
         <Button onClick={generateBatch} className="mb-4">

@@ -1,9 +1,9 @@
 // jest.config.js
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  preset: "ts-jest",
+  testEnvironment: "node",
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    "^@/(.*)$": "<rootDir>/$1",
   },
-  testMatch: ['<rootDir>/**/*.test.ts'],
+  testMatch: ["<rootDir>/**/*.test.ts"],
 };

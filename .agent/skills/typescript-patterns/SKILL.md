@@ -10,7 +10,9 @@ This skill covers TypeScript conventions and patterns used in suno-forge.
 ## Type Definitions
 
 ### Location
+
 All shared types are in `types/` directory:
+
 - `types/prompt.ts` - Prompt configuration and API types
 
 ### Creating New Types
@@ -31,14 +33,11 @@ export interface StyleConfig {
   instruments?: string[];
 }
 
-export type MutationType = 
-  | 'instrumental'
-  | 'tempo-shift'
-  | 'mood-invert'
-  | 'genre-blend';
+export type MutationType = "instrumental" | "tempo-shift" | "mood-invert" | "genre-blend";
 ```
 
 ### Type vs Interface
+
 ```typescript
 // Use interface for object shapes (extendable)
 interface UserConfig {
@@ -47,7 +46,7 @@ interface UserConfig {
 }
 
 // Use type for unions, intersections, primitives
-type Status = 'idle' | 'loading' | 'success' | 'error';
+type Status = "idle" | "loading" | "success" | "error";
 type ID = string | number;
 type ConfigWithMeta = Config & { metadata: Meta };
 ```
@@ -55,6 +54,7 @@ type ConfigWithMeta = Config & { metadata: Meta };
 ## Strict Mode Patterns
 
 The project uses TypeScript strict mode (`tsconfig.json`):
+
 ```json
 {
   "compilerOptions": {
@@ -66,6 +66,7 @@ The project uses TypeScript strict mode (`tsconfig.json`):
 ```
 
 ### Handling Null/Undefined
+
 ```typescript
 // Bad: Assumes value exists
 function processConfig(config: Config) {
@@ -74,24 +75,21 @@ function processConfig(config: Config) {
 
 // Good: Check for existence
 function processConfig(config: Config) {
-  if (!config.style) return 'default';
+  if (!config.style) return "default";
   return config.style.genre;
 }
 
 // Better: Use optional chaining
 function processConfig(config: Config) {
-  return config.style?.genre ?? 'default';
+  return config.style?.genre ?? "default";
 }
 ```
 
 ### Type Guards
+
 ```typescript
 function isStyleConfig(obj: any): obj is StyleConfig {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    'genre' in obj
-  );
+  return typeof obj === "object" && obj !== null && "genre" in obj;
 }
 
 // Usage
@@ -104,6 +102,7 @@ if (isStyleConfig(input)) {
 ## API Route Types
 
 ### Request/Response Types
+
 ```typescript
 // types/api.ts
 export interface GenerateRequest {
@@ -127,23 +126,24 @@ export interface ErrorResponse {
 ```
 
 ### Using in API Routes
+
 ```typescript
 // app/api/generate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { GenerateRequest, GenerateResponse } from '@/types/api';
+import { NextRequest, NextResponse } from "next/server";
+import { GenerateRequest, GenerateResponse } from "@/types/api";
 
 export async function POST(request: NextRequest) {
   const body: GenerateRequest = await request.json();
-  
+
   // Type-safe processing
   const response: GenerateResponse = {
     prompt: generatePrompt(body),
     metadata: {
       generatedAt: new Date().toISOString(),
-      version: '1.0'
-    }
+      version: "1.0",
+    },
   };
-  
+
   return NextResponse.json(response);
 }
 ```
@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
 ## Generic Patterns
 
 ### Generic Functions
+
 ```typescript
 // Utility for safe array access
 function getFirst<T>(arr: T[]): T | undefined {
@@ -158,11 +159,12 @@ function getFirst<T>(arr: T[]): T | undefined {
 }
 
 // Usage
-const firstGenre = getFirst(['jazz', 'rock']); // string | undefined
+const firstGenre = getFirst(["jazz", "rock"]); // string | undefined
 const firstNumber = getFirst([1, 2, 3]); // number | undefined
 ```
 
 ### Generic Components
+
 ```typescript
 interface SelectProps<T> {
   options: T[];
@@ -190,6 +192,7 @@ function Select<T>({ options, value, onChange, getLabel }: SelectProps<T>) {
 ## Utility Types
 
 ### Common Patterns
+
 ```typescript
 // Make all properties optional
 type PartialConfig = Partial<PromptConfig>;
@@ -198,19 +201,20 @@ type PartialConfig = Partial<PromptConfig>;
 type RequiredConfig = Required<PromptConfig>;
 
 // Pick specific properties
-type StyleOnly = Pick<PromptConfig, 'style'>;
+type StyleOnly = Pick<PromptConfig, "style">;
 
 // Omit specific properties
-type NoMutations = Omit<PromptConfig, 'mutations'>;
+type NoMutations = Omit<PromptConfig, "mutations">;
 
 // Extract union member
-type InstrumentalOnly = Extract<MutationType, 'instrumental'>;
+type InstrumentalOnly = Extract<MutationType, "instrumental">;
 
 // Exclude union member
-type NoInstrumental = Exclude<MutationType, 'instrumental'>;
+type NoInstrumental = Exclude<MutationType, "instrumental">;
 ```
 
 ### Custom Utility Types
+
 ```typescript
 // Deep partial
 type DeepPartial<T> = {
@@ -227,38 +231,40 @@ type PromptResult = ReturnType<typeof generatePrompt>;
 ## Enum Alternatives
 
 Prefer string literal unions over enums:
+
 ```typescript
 // Avoid: Traditional enum
 enum Genre {
-  Jazz = 'jazz',
-  Rock = 'rock'
+  Jazz = "jazz",
+  Rock = "rock",
 }
 
 // Prefer: String literal union
-type Genre = 'jazz' | 'rock' | 'electronic' | 'classical';
+type Genre = "jazz" | "rock" | "electronic" | "classical";
 
 // With const object for runtime access
 const GENRES = {
-  JAZZ: 'jazz',
-  ROCK: 'rock',
-  ELECTRONIC: 'electronic',
-  CLASSICAL: 'classical'
+  JAZZ: "jazz",
+  ROCK: "rock",
+  ELECTRONIC: "electronic",
+  CLASSICAL: "classical",
 } as const;
 
-type Genre = typeof GENRES[keyof typeof GENRES];
+type Genre = (typeof GENRES)[keyof typeof GENRES];
 ```
 
 ## Type Inference
 
 ### Let TypeScript Infer
+
 ```typescript
 // No need to specify type (inferred as string)
-const genre = 'jazz';
+const genre = "jazz";
 
 // Inferred as { name: string; tempo: number }
 const config = {
-  name: 'My Song',
-  tempo: 120
+  name: "My Song",
+  tempo: 120,
 };
 
 // Inferred from function return type
@@ -266,6 +272,7 @@ const prompt = generatePrompt(config);
 ```
 
 ### When to Annotate
+
 ```typescript
 // Annotate function parameters
 function buildPrompt(config: PromptConfig): string {
@@ -284,6 +291,7 @@ function getConfig(): PromptConfig | null {
 ## Error Handling
 
 ### Type-Safe Error Handling
+
 ```typescript
 class PromptError extends Error {
   constructor(
@@ -292,17 +300,13 @@ class PromptError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'PromptError';
+    this.name = "PromptError";
   }
 }
 
 function generatePrompt(config: PromptConfig): string {
   if (!config.style) {
-    throw new PromptError(
-      'Style is required',
-      'MISSING_STYLE',
-      { config }
-    );
+    throw new PromptError("Style is required", "MISSING_STYLE", { config });
   }
   // ...
 }
@@ -314,7 +318,7 @@ try {
   if (error instanceof PromptError) {
     console.error(`Error ${error.code}: ${error.message}`);
   } else {
-    console.error('Unknown error:', error);
+    console.error("Unknown error:", error);
   }
 }
 ```
@@ -322,32 +326,33 @@ try {
 ## Best Practices
 
 ### 1. Avoid `any`
+
 ```typescript
 // Bad
-function process(data: any) { }
+function process(data: any) {}
 
 // Good
 function process(data: unknown) {
-  if (typeof data === 'string') {
+  if (typeof data === "string") {
     // TypeScript knows data is string here
   }
 }
 ```
 
 ### 2. Use Const Assertions
+
 ```typescript
 // Inferred as string[]
-const genres = ['jazz', 'rock'];
+const genres = ["jazz", "rock"];
 
 // Inferred as readonly ['jazz', 'rock']
-const genres = ['jazz', 'rock'] as const;
+const genres = ["jazz", "rock"] as const;
 ```
 
 ### 3. Discriminated Unions
+
 ```typescript
-type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
+type Result<T> = { success: true; data: T } | { success: false; error: string };
 
 function handleResult<T>(result: Result<T>) {
   if (result.success) {
@@ -361,6 +366,7 @@ function handleResult<T>(result: Result<T>) {
 ```
 
 ### 4. Readonly When Possible
+
 ```typescript
 interface Config {
   readonly id: string;
@@ -370,13 +376,14 @@ interface Config {
 
 // Readonly array
 function getGenres(): readonly string[] {
-  return ['jazz', 'rock'];
+  return ["jazz", "rock"];
 }
 ```
 
 ## Type Checking
 
 ### Command Line
+
 ```bash
 # Type check without building
 npx tsc --noEmit
@@ -386,6 +393,7 @@ npx tsc --noEmit --watch
 ```
 
 ### In VS Code
+
 - Errors appear inline with red squiggles
 - Hover for type information
 - `Ctrl+Space` for autocomplete

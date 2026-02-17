@@ -1,24 +1,46 @@
 {
-    "search.exclude": {
-        "**/node_modules": true,
-        "**/.next": true,
-        "**/out": true,
-        "**/coverage": true,
-        "**/*.tsbuildinfo": true
-    },
-    "files.associations": {
-        "*.ts": "typescript",
-        "*.tsx": "typescriptreact",
-        "*.js": "javascript",
-        "*.jsx": "javascriptreact"
-    },
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "search.useIgnoreFiles": true,
-    "search.followSymlinks": false,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true,
-        "**/node_modules": true,
-        "**/.next": true
-    }
+  // TypeScript
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  // Tailwind CSS
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  // Jest
+  "jest.autoRun": "off",
+  "jest.showCoverageOnLoad": false,
+  // Error Lens
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  // Spell Checker
+  "cSpell.words": ["suno", "supabase", "lucide", "radix"],
+  // Search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/coverage": true,
+    "**/*.tsbuildinfo": true,
+    "**/package-lock.json": true
+  },
+  "search.useIgnoreFiles": true,
+  "search.followSymlinks": false,
+  "files.associations": {
+    "*.ts": "typescript",
+    "*.tsx": "typescriptreact",
+    "*.js": "javascript",
+    "*.jsx": "javascriptreact"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/.next": true
+  }
 }

@@ -1,23 +1,23 @@
 // lib/promptEngine.test.ts
-import { buildPrompt } from './promptEngine';
+import { buildPrompt } from "./promptEngine";
 
-describe('promptEngine', () => {
-  it('should include the correct style and lyrics in the generated prompt', async () => {
+describe("promptEngine", () => {
+  it("should include the correct style and lyrics in the generated prompt", async () => {
     const config = {
-      genre: 'Synthwave',
-      mood: 'Retro', // mood is used in buildStyle
-      lyrics: 'Some lyrics',
+      genre: "Synthwave",
+      mood: "Retro", // mood is used in buildStyle
+      lyrics: "Some lyrics",
     };
 
     const prompt = await buildPrompt(config);
 
     // Verify style contains expected descriptors from the real styleEngine
-    expect(prompt.style).toContain('nostalgic 80s');
-    expect(prompt.style).toContain('Synthwave');
-    expect(prompt.style).toContain('Retro'); // mood
+    expect(prompt.style).toContain("nostalgic 80s");
+    expect(prompt.style).toContain("Synthwave");
+    expect(prompt.style).toContain("Retro"); // mood
 
     // Verify lyrics
-    expect(prompt.lyrics).toContain('Some lyrics');
+    expect(prompt.lyrics).toContain("Some lyrics");
 
     // Verify structure
     expect(prompt.title).toBeDefined();

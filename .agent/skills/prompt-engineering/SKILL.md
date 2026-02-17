@@ -28,15 +28,16 @@ The prompt system is modular with specialized engines in `lib/`:
 4. Run tests: `npm test`
 
 Example:
+
 ```typescript
 // In styleEngine.ts
 export const GENRES = {
   // ... existing genres
   synthwave: {
-    name: 'Synthwave',
-    tags: ['synthwave', 'retro', '80s'],
-    description: 'Nostalgic 80s electronic sound'
-  }
+    name: "Synthwave",
+    tags: ["synthwave", "retro", "80s"],
+    description: "Nostalgic 80s electronic sound",
+  },
 };
 ```
 
@@ -47,9 +48,9 @@ Mutations modify existing prompts. Add to `lib/mutationEngine.ts`:
 ```typescript
 export function applyMutation(prompt: string, mutation: MutationType): string {
   switch (mutation) {
-    case 'instrumental':
-      return prompt.replace(/\[lyrics:.*?\]/g, '[instrumental]');
-    case 'your-new-mutation':
+    case "instrumental":
+      return prompt.replace(/\[lyrics:.*?\]/g, "[instrumental]");
+    case "your-new-mutation":
       // Your logic here
       return modifiedPrompt;
     default:
@@ -74,6 +75,7 @@ npm test -- --watch
 ## API Integration
 
 ### Generate Endpoint
+
 ```typescript
 // POST /api/generate
 {
@@ -85,6 +87,7 @@ npm test -- --watch
 ```
 
 ### Batch Endpoint
+
 ```typescript
 // POST /api/batch
 {
@@ -95,6 +98,7 @@ npm test -- --watch
 ```
 
 ### Vision Endpoint
+
 ```typescript
 // POST /api/vision
 {
@@ -113,19 +117,19 @@ npm test -- --watch
 ```typescript
 export const PROMPT_PACKS = {
   // ... existing packs
-  'cinematic-epic': {
-    name: 'Cinematic Epic',
-    description: 'Grand orchestral compositions',
+  "cinematic-epic": {
+    name: "Cinematic Epic",
+    description: "Grand orchestral compositions",
     baseStyle: {
-      genre: 'orchestral',
-      mood: 'epic',
-      tempo: 'moderate'
+      genre: "orchestral",
+      mood: "epic",
+      tempo: "moderate",
     },
     variations: [
-      { name: 'Battle Theme', tags: ['intense', 'drums'] },
-      { name: 'Victory March', tags: ['triumphant', 'brass'] }
-    ]
-  }
+      { name: "Battle Theme", tags: ["intense", "drums"] },
+      { name: "Victory March", tags: ["triumphant", "brass"] },
+    ],
+  },
 };
 ```
 
@@ -134,9 +138,9 @@ export const PROMPT_PACKS = {
 1. Check the generated prompt in browser console
 2. Verify each engine's contribution:
    ```typescript
-   console.log('Style:', styleEngine.build(config.style));
-   console.log('Lyrics:', lyricsEngine.format(config.lyrics));
-   console.log('Final:', promptEngine.build(config));
+   console.log("Style:", styleEngine.build(config.style));
+   console.log("Lyrics:", lyricsEngine.format(config.lyrics));
+   console.log("Final:", promptEngine.build(config));
    ```
 3. Check for conflicts (e.g., instrumental + lyrics)
 
@@ -149,6 +153,7 @@ export const PROMPT_PACKS = {
 ## Reference Documentation
 
 See `suno-prompting-compendium.md` for:
+
 - Suno-specific syntax and tags
 - Best practices for prompt structure
 - Genre-specific recommendations

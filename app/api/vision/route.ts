@@ -1,5 +1,5 @@
-import { imageToPrompt } from '@/lib/visionEngine';
-import { buildPrompt } from '@/lib/promptEngine';
+import { imageToPrompt } from "@/lib/visionEngine";
+import { buildPrompt } from "@/lib/promptEngine";
 
 export async function POST(req: Request) {
   try {
