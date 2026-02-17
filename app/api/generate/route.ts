@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const prompt = await buildPrompt(body)
 
     return Response.json({ prompt })
-  } catch {
+  } catch (error) {
+    console.error("Generation failed:", error)
     return Response.json({ error: "Generation failed" }, { status: 500 })
   }
 }
