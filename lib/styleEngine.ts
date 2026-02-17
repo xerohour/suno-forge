@@ -45,9 +45,15 @@ export function buildStyle(config: PromptDNA): string {
     config.vocalStyle,
     "studio quality",
     "clear vocals",
-  ].filter(Boolean) as string[]
+  ].filter((p): p is string => !!p)
 
-  const uniqueParts = [...new Set(parts.map((p) => p.trim()))]
+  const uniqueParts = [
+    ...new Set(
+      parts
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0)
+    ),
+  ]
 
   return uniqueParts.join(", ")
 }
