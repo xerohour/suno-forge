@@ -15,6 +15,15 @@ import {
 import Link from "next/link";
 import { PROMPT_PACKS } from "@/lib/promptPacks";
 
+// Chips data defined outside component to avoid recreation on every render
+const STYLE_CHIPS = [
+  "Lo-fi",
+  "Synthwave",
+  "Heavy Metal",
+  "Jazz Fusion",
+  "Hyperpop"
+];
+
 export default function Studio() {
   // State
   const [style, setStyle] = useState("");
@@ -23,15 +32,6 @@ export default function Studio() {
   const [complexity, setComplexity] = useState(82);
   const [experimental, setExperimental] = useState(true);
   const [loading, setLoading] = useState(false);
-
-  // Chips data
-  const styleChips = [
-    "Lo-fi",
-    "Synthwave",
-    "Heavy Metal",
-    "Jazz Fusion",
-    "Hyperpop"
-  ];
 
   const handleChipClick = (chip: string) => {
     setStyle(chip);
@@ -104,7 +104,7 @@ export default function Studio() {
           </div>
           {/* Style Suggestions Chips */}
           <div className="flex gap-2 overflow-x-auto custom-scrollbar -mx-1 px-1 py-1">
-            {styleChips.map((chip) => (
+            {STYLE_CHIPS.map((chip) => (
               <button
                 key={chip}
                 onClick={() => handleChipClick(chip)}
