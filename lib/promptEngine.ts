@@ -1,17 +1,15 @@
-import { buildStyle } from './styleEngine';
-import { generateLyrics } from './lyricsEngine';
-import { PromptConfig } from '../types/prompt';
+import { buildStyle } from "./styleEngine"
+import { generateLyrics } from "./lyricsEngine"
+import { PromptDNA } from "@/types/prompt"
 
-export function buildPrompt(config: PromptConfig) {
-  const style = buildStyle(config);
-  const lyrics = generateLyrics(config);
+export async function buildPrompt(config: PromptDNA) {
+  const style = buildStyle(config)
+  const lyrics = await generateLyrics(config)
 
   return `
-[Style of Music]
-${style}
+STYLE: ${style}
 
-[Lyrics]
-[Title: ${config.theme || 'Untitled Song'}]
+LYRICS:
 ${lyrics}
-`;
+`
 }

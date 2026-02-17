@@ -1,10 +1,18 @@
-// types/prompt.ts
-// Placeholder for prompt related types
-
-export interface PromptConfig {
-  genre?: string;
-  mood?: string;
-  tempo?: number;
-  energy?: number;
-  theme?: string;
+export interface PromptDNA {
+  genre?: string
+  mood?: string
+  energy?: number
+  tempo?: number
+  theme?: string
+  vocalStyle?: string
+  structure?: string[]
 }
+
+export interface GenerateRequest extends PromptDNA {}
+
+export interface MutateRequest {
+  prompt: string
+  type: "viral" | "emotional" | "energy"
+}
+
+export type PromptConfig = PromptDNA

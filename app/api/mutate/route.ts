@@ -1,9 +1,16 @@
-import { mutatePrompt } from '@/lib/mutationEngine';
+import { mutatePrompt } from "@/lib/mutationEngine"
+import { MutateRequest } from "@/types/prompt"
+
+export const runtime = "nodejs"
 
 export async function POST(req: Request) {
-  const { prompt, type } = await req.json();
+  try {
+    const { prompt, type } = (await req.json()) as MutateRequest
 
-  const mutated = mutatePrompt(prompt, type);
+    const mutated = mutatePrompt(prompt, type)
 
-  return Response.json({ mutated });
+    return Response.json({ mutated })
+  } catch {
+    return Response.json({ error: "Mutation failed" }, { status: 500 })
+  }
 }

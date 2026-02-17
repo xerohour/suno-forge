@@ -1,9 +1,16 @@
-import { buildPrompt } from '@/lib/promptEngine';
+import { buildPrompt } from "@/lib/promptEngine"
+import { GenerateRequest } from "@/types/prompt"
+
+export const runtime = "nodejs"
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = (await req.json()) as GenerateRequest
 
-  const prompt = buildPrompt(body);
+    const prompt = await buildPrompt(body)
 
-  return Response.json({ prompt });
+    return Response.json({ prompt })
+  } catch {
+    return Response.json({ error: "Generation failed" }, { status: 500 })
+  }
 }
