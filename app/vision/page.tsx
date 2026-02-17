@@ -6,13 +6,10 @@ import {
   Info,
   Camera,
   Sparkles,
-  AudioWaveform,
-  Wand2,
-  Aperture,
-  Library,
-  User
+  AudioWaveform
 } from "lucide-react";
 import Link from "next/link";
+import { BottomNav } from "@/components/BottomNav";
 
 export default function Vision() {
   const [description, setDescription] = useState("");
@@ -180,24 +177,7 @@ export default function Vision() {
         </footer>
 
         {/* Navigation Bar Component */}
-        <nav className="flex gap-2 border-t border-primary/10 bg-background-dark/95 px-4 pb-8 pt-3 backdrop-blur-lg absolute bottom-0 w-full z-30">
-          <Link href="/studio" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary/40 hover:text-primary transition-colors">
-            <Wand2 className="w-6 h-6" />
-            <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Forge</p>
-          </Link>
-          <Link href="/vision" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary">
-            <Aperture className="w-6 h-6" />
-            <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Vision</p>
-          </Link>
-          <Link href="/library" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary/40 hover:text-primary transition-colors">
-            <Library className="w-6 h-6" />
-            <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Library</p>
-          </Link>
-          <Link href="#" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary/40 hover:text-primary transition-colors">
-            <User className="w-6 h-6" />
-            <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Profile</p>
-          </Link>
-        </nav>
+        <BottomNav active="vision" />
 
         {/* iOS Home Indicator */}
         <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full z-40"></div>
