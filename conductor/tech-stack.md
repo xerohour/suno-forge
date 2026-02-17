@@ -23,10 +23,14 @@ The `suno-forge` project is built upon a modern and robust technology stack desi
 
 -   **OpenAI:**
     -   **Rationale:** Utilized for potential AI-driven enhancements, particularly in prompt generation and mutation, leveraging advanced language models.
--   **Supabase:**
-    -   **Rationale:** Integrated for backend services, including authentication and database capabilities, providing a robust and scalable solution for user management and data storage.
+    -   **Supabase:**
+        -   **Rationale:** Integrated for backend services, including authentication and database capabilities, providing a robust and scalable solution for user management and data storage.
+
+## Testing
+
+-   **Jest & ts-jest:**
+    -   **Rationale:** Provides a powerful and flexible unit testing framework with TypeScript support, ensuring code reliability and preventing regressions in the core prompt engines.
 
 ## Package Management
-
 -   **npm:** Node Package Manager.
     -   **Rationale:** Standard package manager for JavaScript projects, used for dependency management and running development scripts.
