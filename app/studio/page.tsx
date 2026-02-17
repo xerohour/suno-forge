@@ -91,10 +91,11 @@ export default function Studio() {
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <Music className="text-primary w-5 h-5" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight">Musical Style</h2>
+            <h2 id="style-heading" className="text-lg font-bold leading-tight tracking-tight">Musical Style</h2>
           </div>
           <div className="relative group">
             <input
+              aria-labelledby="style-heading"
               className="w-full rounded-xl border border-primary/20 bg-primary/5 px-4 py-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
               placeholder="Enter style (e.g. Cyberpunk Jazz)..."
               type="text"
@@ -107,6 +108,8 @@ export default function Studio() {
             {styleChips.map((chip) => (
               <button
                 key={chip}
+                type="button"
+                aria-pressed={style === chip}
                 onClick={() => handleChipClick(chip)}
                 className={`flex h-9 shrink-0 items-center justify-center rounded-full px-5 text-sm font-medium transition-colors ${
                   style === chip
@@ -124,10 +127,11 @@ export default function Studio() {
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <BookOpen className="text-primary w-5 h-5" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight">Lyrics</h2>
+            <h2 id="lyrics-heading" className="text-lg font-bold leading-tight tracking-tight">Lyrics</h2>
           </div>
           <div className="relative">
             <textarea
+              aria-labelledby="lyrics-heading"
               className="w-full rounded-xl border border-primary/20 bg-primary/5 p-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
               placeholder="Paste your lyrics here or describe a story..."
               rows={6}
@@ -147,10 +151,11 @@ export default function Studio() {
             {/* Randomness Slider */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Randomness</label>
+                <label htmlFor="randomness-slider" className="text-sm font-medium text-slate-600 dark:text-slate-300">Randomness</label>
                 <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">{randomness}</span>
               </div>
               <input
+                id="randomness-slider"
                 className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
                 max="10"
                 min="0"
@@ -163,12 +168,13 @@ export default function Studio() {
             {/* Complexity Slider */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
+                <label htmlFor="complexity-slider" className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
                 <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
                   {complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low"}
                 </span>
               </div>
               <input
+                id="complexity-slider"
                 className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
                 max="100"
                 min="0"
@@ -182,11 +188,13 @@ export default function Studio() {
             {/* Experimental Toggle */}
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-sm font-medium">Experimental Mode</span>
+                <span id="experimental-mode-label" className="text-sm font-medium">Experimental Mode</span>
                 <span className="text-xs text-slate-500">Unstable but creative rhythms</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
+                  id="experimental-toggle"
+                  aria-labelledby="experimental-mode-label"
                   type="checkbox"
                   className="sr-only peer"
                   checked={experimental}
@@ -204,6 +212,8 @@ export default function Studio() {
         <button
           onClick={generate}
           disabled={loading}
+          aria-busy={loading}
+          aria-disabled={loading}
           className="neon-glow w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-95 disabled:opacity-70"
         >
           <Zap className="w-5 h-5 fill-current" />
@@ -216,7 +226,7 @@ export default function Studio() {
             <Home className="w-6 h-6" />
             <span className="text-[10px] font-medium uppercase tracking-widest">Home</span>
           </Link>
-          <Link href="/studio" className="flex flex-col items-center gap-1 text-primary">
+          <Link href="/studio" aria-current="page" className="flex flex-col items-center gap-1 text-primary">
             <Bot className="w-6 h-6" />
             <span className="text-[10px] font-medium uppercase tracking-widest">Studio</span>
           </Link>
