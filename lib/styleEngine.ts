@@ -68,6 +68,12 @@ const GENRE_DATA: Record<
     maxTempo: 92,
     descriptor: "Uplifting, triumphant, powerful",
   },
+  "lofi": {
+    instruments: ["lo-fi beats", "jazz piano", "soft guitar", "vinyl crackle"],
+    minTempo: 70,
+    maxTempo: 90,
+    descriptor: "Chill vibes, lo-fi, relaxed",
+  },
 };
 
 export function getMusicalStyle(styleName: string) {
@@ -85,20 +91,55 @@ export function getMusicalStyle(styleName: string) {
  * It prioritizes core descriptors and filters out empty values.
  */
 export function buildStyle(config: PromptDNA): string {
-  // 1. Front-load non-negotiables as per the Compendium's priority order.
+  // 1. Get genre data or fallback to Pop
+  let genreData = GENRE_DATA['pop'];
+  if (config.genre) {
+    try {
+      genreData = getMusicalStyle(config.genre);
+    } catch (e) {
+      // Keep default as Pop if not found
+    }
+  }
+
+  // 2. Determine Tempo
+  let tempoString: string | null = null;
+  if (config.tempo) {
+    tempoString = `${config.tempo} BPM`;
+  } else {
+    // Generate random tempo within range
+    const randomTempo = Math.floor(Math.random() * (genreData.maxTempo - genreData.minTempo + 1)) + genreData.minTempo;
+    tempoString = `${randomTempo} BPM`;
+  }
+
+  // 3. Determine Energy
+  let energyDescriptor: string | null = null;
+  if (config.energy !== undefined) {
+    if (config.energy > 0.8) energyDescriptor = "high energy";
+    else if (config.energy < 0.4) energyDescriptor = "low energy";
+    else energyDescriptor = "mid energy";
+  } else {
+    // Default energy if not provided? Maybe "mid energy" or null
+    // The test expects "mid energy" for default Synthwave config which has no energy specified.
+    energyDescriptor = "mid energy";
+  }
+
+  // 4. Build parts list
   const parts = [
     config.genre, // Core genre / sub-genre
     config.mood, // Primary mood / energy
+    tempoString, // Tempo / feel
+    energyDescriptor,
+    genreData.descriptor,
+    genreData.instruments.join(", "),
     config.instrumentation, // Lead instrument or key sonic elements
     config.vocalStyle, // Vocal identity is crucial
-    config.tempo ? `${config.tempo} BPM` : null, // Tempo / feel
-    config.production, // Production treatment (e.g., lo-fi, studio quality)
+    config.production || (config.instrumental ? null : "studio quality, clear vocals"), // Production treatment (e.g., lo-fi, studio quality)
   ].filter((p): p is string => !!p && p.trim().length > 0); // Filter out null, undefined, and empty strings.
 
-  // 2. Remove duplicates while preserving order for the most part.
+  // 5. Remove duplicates while preserving order for the most part.
   const uniqueParts = [...new Set(parts.map((p) => p.trim()))];
 
-  // 3. Join into a comma-separated list for balanced weighting.
+  // 6. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
   if (config.genre && uniqueParts.length > 1) {
       return `${uniqueParts.join(", ")}, ${config.genre}`;
