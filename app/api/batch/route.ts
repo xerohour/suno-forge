@@ -18,7 +18,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const { config, count } = body;
+    const { config } = body;
+    let { count } = body;
+
+    // Clamp count between 1 and 50
+    count = Math.max(1, Math.min(50, count));
 
     // Generate prompts in parallel
     const prompts = await Promise.all(

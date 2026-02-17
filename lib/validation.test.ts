@@ -1,4 +1,4 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, createErrorResponse } from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -98,20 +98,20 @@ describe('validation', () => {
             expect(validateBatchRequest(request)).toBe(false);
         });
 
-        it('should reject count less than 1', () => {
+        it('should accept count less than 1', () => {
             const request = {
                 config: { genre: 'jazz' },
                 count: 0,
             };
-            expect(validateBatchRequest(request)).toBe(false);
+            expect(validateBatchRequest(request)).toBe(true);
         });
 
-        it('should reject count greater than 50', () => {
+        it('should accept count greater than 50', () => {
             const request = {
                 config: { genre: 'jazz' },
                 count: 51,
             };
-            expect(validateBatchRequest(request)).toBe(false);
+            expect(validateBatchRequest(request)).toBe(true);
         });
 
         it('should reject non-number count', () => {
@@ -129,6 +129,50 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('createErrorResponse', () => {
+        it('should create a basic error response with default status 500', async () => {
+            const response = createErrorResponse('Test error');
+            expect(response.status).toBe(500);
+            const data = await response.json();
+            expect(data).toEqual({ error: 'Test error' });
+        });
+
+        it('should create an error response with a custom status code', async () => {
+            const response = createErrorResponse('Not found', 404);
+            expect(response.status).toBe(404);
+            const data = await response.json();
+            expect(data).toEqual({ error: 'Not found' });
+        });
+
+        it('should include details when provided', async () => {
+            const response = createErrorResponse('Error', 400, 'Specific details');
+            const data = await response.json();
+            expect(data).toEqual({
+                error: 'Error',
+                details: 'Specific details',
+            });
+        });
+
+        it('should include error code when provided', async () => {
+            const response = createErrorResponse('Error', 400, undefined, 'ERR_001');
+            const data = await response.json();
+            expect(data).toEqual({
+                error: 'Error',
+                code: 'ERR_001',
+            });
+        });
+
+        it('should include both details and error code when both are provided', async () => {
+            const response = createErrorResponse('Error', 400, 'Details', 'ERR_002');
+            const data = await response.json();
+            expect(data).toEqual({
+                error: 'Error',
+                details: 'Details',
+                code: 'ERR_002',
+            });
         });
     });
 });
