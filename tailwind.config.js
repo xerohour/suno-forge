@@ -16,14 +16,20 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        "display": ["Space Grotesk", "sans-serif"],
+        "sans": ["Space Grotesk", "sans-serif"], // Override default sans too
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "background-light": "var(--background-light)",
+        "background-dark": "var(--background-dark)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(var(--primary))", // Changed back to hsl() wrapper for variable usage
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -72,5 +78,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/forms"), require("@tailwindcss/container-queries")],
 }
