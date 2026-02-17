@@ -1,36 +1,27 @@
 // lib/promptEngine.test.ts
-
+import { describe, it, expect } from "bun:test";
 import { buildPrompt } from './promptEngine';
-import * as styleEngine from './styleEngine';
-
-// Mock the styleEngine.buildStyle function
-jest.mock('./styleEngine', () => ({
-  ...jest.requireActual('./styleEngine'),
-  buildStyle: jest.fn(),
-}));
-
-// Mock the lyricsEngine.generateLyrics function
-jest.mock('./lyricsEngine', () => ({
-  generateLyrics: jest.fn(() => 'Mocked lyrics here.'),
-}));
 
 describe('promptEngine', () => {
-  it('should include the correct style descriptors for \'Synthwave\' in the generated prompt', () => {
-    // Mock buildStyle to return a predictable string for Synthwave
-    (styleEngine.buildStyle as jest.Mock).mockReturnValueOnce(
-      'synthwave, retro 80s, 120 BPM, mid energy, synthesizer, drum machine, bass guitar, retro pads, studio quality, clear vocals'
-    );
-
+  it('should include the correct style and lyrics in the generated prompt', async () => {
     const config = {
       genre: 'Synthwave',
-      theme: 'Neon City Night',
+      mood: 'Retro', // mood is used in buildStyle
+      lyrics: 'Some lyrics',
     };
 
-    const prompt = buildPrompt(config);
+    const prompt = await buildPrompt(config);
 
-    expect(prompt).toContain('retro 80s');
-    expect(prompt).toContain('synthwave');
-    expect(prompt).toContain('Neon City Night');
-    expect(prompt).toContain('Mocked lyrics here.');
+    // Verify style contains expected descriptors from the real styleEngine
+    expect(prompt.style).toContain('nostalgic 80s');
+    expect(prompt.style).toContain('Synthwave');
+    expect(prompt.style).toContain('Retro'); // mood
+
+    // Verify lyrics
+    expect(prompt.lyrics).toContain('Some lyrics');
+
+    // Verify structure
+    expect(prompt.title).toBeDefined();
+    expect(prompt.technicalName).toBeDefined();
   });
 });
