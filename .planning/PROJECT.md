@@ -1,6 +1,7 @@
 # Project: suno-forge
 
 ## Overview
+
 `suno-forge` is a project aimed at providing a powerful prompt engineering toolkit for the Suno music generation AI. Its core purpose is to enable users to systematically construct, mutate, and generate prompts for creating music.
 
 ## Product Guidelines
@@ -26,10 +27,13 @@ The prose style of `suno-forge` will be a unique blend of creative, evocative la
 Our guiding principle is to treat `suno-forge` as both a musical instrument and a precision tool. The language we use should reflect this duality, empowering our users to be both artists and engineers in the realm of AI music generation.
 
 ## Target Audience
+
 Music Makers
 
 ## Success Metrics
+
 [Undefined] - To be clarified in future stages.
 
 ## Constraints/Technologies
+
 [Undefined] - To be clarified in future stages.

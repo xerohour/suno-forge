@@ -1,239 +1,973 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  ArrowLeft,
-  Music,
-  BookOpen,
-  SlidersHorizontal,
-  Zap,
-  Home,
-  Bot,
-  Library,
-  UserCircle
-} from "lucide-react";
-import Link from "next/link";
-import { PROMPT_PACKS } from "@/lib/promptPacks";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  MOODS,
+  INSTRUMENTS,
+  PRODUCTION_TERMS,
+  VOCAL_TONE_TEXTURE,
+  VOCAL_DELIVERY,
+} from "@/lib/styleEngine";
+import { PROMPT_PACKS, getRandomPromptPack, type PromptPack } from "@/lib/promptPacks";
+import type { Prompt } from "@/types/prompt";
+
+const structuralTags = [
+  "[Intro]",
+  "[Verse]",
+  "[Pre-Chorus]",
+  "[Chorus]",
+  "[Bridge]",
+  "[Solo]",
+  "[Outro]",
+  "[End]",
+  "[Build]",
+  "[Drop]",
+];
+
+const vocalOptions = [...VOCAL_TONE_TEXTURE, ...VOCAL_DELIVERY];
+const vocalSelectOptions = Array.from(
+  new Set([...vocalOptions, ...PROMPT_PACKS.map((pack) => pack.vocalStyle)])
+);
+
+const languages = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Italian",
+  "Portuguese",
+  "Japanese",
+  "Korean",
+  "Hindi",
+  "Arabic",
+  "Turkish",
+  "Russian",
+  "Dutch",
+  "Swedish",
+  "Indonesian",
+  "Vietnamese",
+];
+
+const styleTagPool = [
+  "catchy hook",
+  "viral-ready chorus",
+  "cinematic intro",
+  "emotional lyrics",
+  "big drop",
+  "anthemic",
+  "club-ready",
+  "radio-friendly",
+  "storytelling",
+  "minimal production",
+  "experimental",
+  "uplifting",
+];
+
+const inspirationIdeas = [
+  "A late-night drive through neon rain while trying to forget someone.",
+  "Small-town dreamer chasing a bigger life in the city.",
+  "Post-breakup glow-up anthem with confident energy.",
+  "A calm study track that feels like warm coffee and rain.",
+  "Festival drop song built around one unforgettable hook.",
+];
+
+const templateLibrary: Array<{
+  id: string;
+  name: string;
+  description: string;
+  genre: string;
+  mood: string;
+  tempo: string;
+  styleTags: string[];
+  negativePrompt: string;
+}> = [
+  {
+    id: "viral-hook",
+    name: "Viral Hook Template",
+    description: "Fast, memorable phrasing with an immediate chorus payoff.",
+    genre: "dance pop",
+    mood: "euphoric",
+    tempo: "126",
+    styleTags: ["catchy hook", "viral-ready chorus", "radio-friendly"],
+    negativePrompt: "no long intro, no abstract lyrics, no low-energy sections",
+  },
+  {
+    id: "cinematic-trailer",
+    name: "Cinematic Trailer",
+    description: "Build and release structure designed for trailers and edits.",
+    genre: "cinematic",
+    mood: "triumphant",
+    tempo: "110",
+    styleTags: ["cinematic intro", "big drop", "anthemic"],
+    negativePrompt: "avoid lo-fi texture, avoid tiny dynamic range",
+  },
+  {
+    id: "lofi-focus",
+    name: "Lo-Fi Focus",
+    description: "Calm, repeatable, low-distraction sound design.",
+    genre: "lofi hip hop",
+    mood: "reflective",
+    tempo: "84",
+    styleTags: ["minimal production", "storytelling"],
+    negativePrompt: "no hard clipping, no sharp high end, no abrupt drops",
+  },
+  {
+    id: "alt-ballad",
+    name: "Alt Ballad",
+    description: "Emotion-forward songwriting with space for lyrical detail.",
+    genre: "indie pop",
+    mood: "melancholic",
+    tempo: "78",
+    styleTags: ["emotional lyrics", "storytelling"],
+    negativePrompt: "avoid repetitive empty lines, avoid over-compression",
+  },
+];
+
+type MetaTagCategory =
+  | "all"
+  | "genre"
+  | "mood"
+  | "vocal"
+  | "instrument"
+  | "production"
+  | "structure";
+
+const metaTagLibrary: Array<{ tag: string; category: MetaTagCategory }> = [
+  { tag: "synthwave", category: "genre" },
+  { tag: "indie pop", category: "genre" },
+  { tag: "trap", category: "genre" },
+  { tag: "cinematic", category: "genre" },
+  { tag: "nostalgic", category: "mood" },
+  { tag: "euphoric", category: "mood" },
+  { tag: "melancholic", category: "mood" },
+  { tag: "triumphant", category: "mood" },
+  { tag: "airy vocal", category: "vocal" },
+  { tag: "gritty vocal", category: "vocal" },
+  { tag: "harmonized", category: "vocal" },
+  { tag: "rap delivery", category: "vocal" },
+  { tag: "analog polysynth", category: "instrument" },
+  { tag: "808 bass", category: "instrument" },
+  { tag: "felt piano", category: "instrument" },
+  { tag: "guitar lead", category: "instrument" },
+  { tag: "tape saturated", category: "production" },
+  { tag: "wide stereo", category: "production" },
+  { tag: "side-chained", category: "production" },
+  { tag: "lo-fi texture", category: "production" },
+  { tag: "intro build", category: "structure" },
+  { tag: "pre-chorus lift", category: "structure" },
+  { tag: "anthemic chorus", category: "structure" },
+  { tag: "final drop", category: "structure" },
+];
+
+type TimelineBlock = {
+  id: string;
+  section: string;
+  cue: string;
+};
+
+const sectionOptions = ["Intro", "Verse", "Pre-Chorus", "Chorus", "Bridge", "Outro", "Drop"];
+
+const MAX_TITLE = 80;
+const MAX_DESCRIPTION = 400;
+
+type BuildMode = "simple" | "custom";
 
 export default function Studio() {
-  // State
-  const [style, setStyle] = useState("");
-  const [lyrics, setLyrics] = useState("");
-  const [randomness, setRandomness] = useState(6.4);
-  const [complexity, setComplexity] = useState(82);
-  const [experimental, setExperimental] = useState(true);
+  const defaultPack = PROMPT_PACKS[0];
+  const [mode, setMode] = useState<BuildMode>("simple");
+  const [isTemplateLibraryOpen, setIsTemplateLibraryOpen] = useState(false);
+  const [selectedPackId, setSelectedPackId] = useState(defaultPack.id);
+  const [title, setTitle] = useState("");
+  const [songIdea, setSongIdea] = useState(inspirationIdeas[0]);
+  const [language, setLanguage] = useState("English");
+  const [instrumental, setInstrumental] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(["catchy hook"]);
+  const [negativePrompt, setNegativePrompt] = useState("");
+  const [metaCategory, setMetaCategory] = useState<MetaTagCategory>("all");
+  const [metaSearch, setMetaSearch] = useState("");
+  const [genre, setGenre] = useState(defaultPack.genre);
+  const [mood, setMood] = useState(defaultPack.mood);
+  const [tempo, setTempo] = useState(String(defaultPack.tempo));
+  const [instrumentation, setInstrumentation] = useState(defaultPack.instrumentation);
+  const [vocalStyle, setVocalStyle] = useState(defaultPack.vocalStyle);
+  const [production, setProduction] = useState(defaultPack.production);
+  const [lyrics, setLyrics] = useState(defaultPack.lyricsSeed);
+  const [timelineBlocks, setTimelineBlocks] = useState<TimelineBlock[]>([
+    {
+      id: "intro-1",
+      section: "Intro",
+      cue: "Set the mood in one strong image.",
+    },
+    { id: "verse-1", section: "Verse", cue: "Introduce the story conflict." },
+    { id: "chorus-1", section: "Chorus", cue: "Repeat the core hook phrase." },
+  ]);
+  const [generatedResult, setGeneratedResult] = useState<Prompt | null>(null);
+  const [generationError, setGenerationError] = useState("");
+  const [copiedField, setCopiedField] = useState<"style" | "lyrics" | "">("");
   const [loading, setLoading] = useState(false);
+  const lyricsRef = useRef<HTMLTextAreaElement>(null);
 
-  // Chips data
-  const styleChips = [
-    "Lo-fi",
-    "Synthwave",
-    "Heavy Metal",
-    "Jazz Fusion",
-    "Hyperpop"
-  ];
+  const selectedPack = useMemo(
+    () => PROMPT_PACKS.find((pack) => pack.id === selectedPackId),
+    [selectedPackId]
+  );
 
-  const handleChipClick = (chip: string) => {
-    setStyle(chip);
+  const filteredMetaTags = useMemo(() => {
+    return metaTagLibrary.filter((item) => {
+      const byCategory = metaCategory === "all" || item.category === metaCategory;
+      const bySearch = item.tag.toLowerCase().includes(metaSearch.toLowerCase());
+      return byCategory && bySearch;
+    });
+  }, [metaCategory, metaSearch]);
+
+  const livePromptPreview = useMemo(() => {
+    const parts = [
+      genre,
+      mood,
+      tempo ? `${tempo} BPM` : "",
+      instrumentation,
+      vocalStyle,
+      production,
+      language ? `language: ${language}` : "",
+      instrumental ? "instrumental only, no vocals" : "",
+      selectedTags.length > 0 ? `style tags: ${selectedTags.join(", ")}` : "",
+      negativePrompt.trim() ? `avoid: ${negativePrompt.trim()}` : "",
+    ].filter((part) => part && part.trim().length > 0);
+    return parts.join(", ");
+  }, [
+    genre,
+    mood,
+    tempo,
+    instrumentation,
+    vocalStyle,
+    production,
+    language,
+    instrumental,
+    selectedTags,
+    negativePrompt,
+  ]);
+
+  const applyPack = (pack: PromptPack) => {
+    setGenre(pack.genre);
+    setMood(pack.mood);
+    setTempo(String(pack.tempo));
+    setInstrumentation(pack.instrumentation);
+    setVocalStyle(pack.vocalStyle);
+    setProduction(pack.production);
+    setLyrics(pack.lyricsSeed);
+    if (!title) setTitle(pack.name);
+  };
+
+  const applySelectedPack = () => {
+    if (selectedPack) applyPack(selectedPack);
+  };
+
+  const applyRandomPack = () => {
+    const randomPack = getRandomPromptPack();
+    setSelectedPackId(randomPack.id);
+    applyPack(randomPack);
+  };
+
+  const applyInspiration = () => {
+    const idea = inspirationIdeas[Math.floor(Math.random() * inspirationIdeas.length)];
+    setSongIdea(idea);
+  };
+
+  const applyTemplate = (templateId: string) => {
+    const template = templateLibrary.find((item) => item.id === templateId);
+    if (!template) return;
+    setGenre(template.genre);
+    setMood(template.mood);
+    setTempo(template.tempo);
+    setSelectedTags(template.styleTags);
+    setNegativePrompt(template.negativePrompt);
+  };
+
+  const toggleStyleTag = (tag: string) => {
+    setSelectedTags((prev) => {
+      if (prev.includes(tag)) return prev.filter((item) => item !== tag);
+      return [...prev, tag];
+    });
+  };
+
+  const addMetaTagToStyle = (tag: string) => {
+    setSelectedTags((prev) => (prev.includes(tag) ? prev : [...prev, tag]));
+  };
+
+  const addMetaTagToLyrics = (tag: string) => {
+    setLyrics((prev) => `${prev}\n[${tag}]\n`);
+  };
+
+  const addTimelineBlock = () => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setTimelineBlocks((prev) => [...prev, { id, section: "Verse", cue: "Add your cue..." }]);
+  };
+
+  const updateTimelineBlock = (id: string, key: "section" | "cue", value: string) => {
+    setTimelineBlocks((prev) =>
+      prev.map((block) => (block.id === id ? { ...block, [key]: value } : block))
+    );
+  };
+
+  const removeTimelineBlock = (id: string) => {
+    setTimelineBlocks((prev) => prev.filter((block) => block.id !== id));
+  };
+
+  const moveTimelineBlock = (id: string, direction: "up" | "down") => {
+    setTimelineBlocks((prev) => {
+      const index = prev.findIndex((block) => block.id === id);
+      if (index < 0) return prev;
+      const target = direction === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  };
+
+  const applyTimelineToLyrics = () => {
+    const built = timelineBlocks
+      .map((block) => `[${block.section}]\n${block.cue.trim() || "..."}\n`)
+      .join("\n");
+    setLyrics(built.trim());
+  };
+
+  const buildLyricsFromIdea = () => {
+    if (instrumental) {
+      setLyrics("");
+      return;
+    }
+    const seed = songIdea.trim() || "A vivid emotional story";
+    setLyrics(
+      `[Verse]\n${seed}\n\n[Pre-Chorus]\nPull the tension higher, one line at a time\n\n[Chorus]\n${title || "Main hook"}\n`
+    );
+  };
+
+  const insertTag = (tag: string) => {
+    const textarea = lyricsRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const newText = `${text.substring(0, start)}\n${tag}\n${text.substring(end)}`;
+    setLyrics(newText);
+    textarea.focus();
+  };
+
+  const copyText = async (value: string, field: "style" | "lyrics") => {
+    await navigator.clipboard.writeText(value);
+    setCopiedField(field);
+    window.setTimeout(() => setCopiedField(""), 1200);
+  };
+
+  const exportText = (value: string, filePrefix: string) => {
+    const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${filePrefix}.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
   };
 
   async function generate() {
     setLoading(true);
+    setGeneratedResult(null);
+    setGenerationError("");
+
     try {
-      // Map simple UI state to the complex API payload
-      // We'll use defaults for fields not exposed in the UI
       const payload = {
-        title: "Untitled Track",
-        genre: style || "pop",
-        mood: "energetic", // Default or derived
-        lyrics: lyrics,
-        // We could pass randomness/complexity if the API supported it
-        // For now we just pass what we have
-        styleTags: [style],
-        experimental: experimental
+        title: title.trim() || undefined,
+        genre: genre || "pop",
+        mood: mood || "dreamy",
+        tempo: Number.parseInt(tempo || "0", 10) || undefined,
+        instrumentation,
+        vocalStyle,
+        production,
+        lyrics: instrumental ? "" : lyrics,
+        language,
+        instrumental,
+        styleTags: selectedTags,
+        theme: songIdea.trim() || undefined,
+        negativePrompt: negativePrompt.trim() || undefined,
       };
 
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        throw new Error('Generation failed');
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Generation failed");
       }
 
       const data = await res.json();
-      console.log("Generated:", data);
-      // In a real app we'd probably redirect to a result page or show the result
-      // The design doesn't show the result state, but for now we just log it
-      // or maybe show a toast.
-    } catch (e) {
-      console.error(e);
+      setGeneratedResult(data.prompt as Prompt);
+    } catch (e: any) {
+      setGenerationError(`Error: ${e.message}`);
     }
+
     setLoading(false);
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
-      {/* Header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button className="text-primary p-1">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
-        <div className="w-6"></div> {/* Spacer for centering */}
-      </header>
+    <div className="p-4 md:p-6 lg:p-8">
+      <h1 className="text-3xl font-bold mb-6">SunoForge Studio</h1>
 
-      {/* Main Form Content */}
-      <main className="flex-1 overflow-y-auto px-6 pb-32 space-y-8 pt-4 custom-scrollbar">
-        {/* Musical Style Section */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Music className="text-primary w-5 h-5" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight">Musical Style</h2>
-          </div>
-          <div className="relative group">
-            <input
-              className="w-full rounded-xl border border-primary/20 bg-primary/5 px-4 py-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
-              placeholder="Enter style (e.g. Cyberpunk Jazz)..."
-              type="text"
-              value={style}
-              onChange={(e) => setStyle(e.target.value)}
-            />
-          </div>
-          {/* Style Suggestions Chips */}
-          <div className="flex gap-2 overflow-x-auto custom-scrollbar -mx-1 px-1 py-1">
-            {styleChips.map((chip) => (
-              <button
-                key={chip}
-                onClick={() => handleChipClick(chip)}
-                className={`flex h-9 shrink-0 items-center justify-center rounded-full px-5 text-sm font-medium transition-colors ${
-                  style === chip
-                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                    : "bg-primary/10 border border-primary/20 hover:bg-primary/20 text-slate-700 dark:text-slate-200"
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Lyrics Section */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <BookOpen className="text-primary w-5 h-5" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight">Lyrics</h2>
-          </div>
-          <div className="relative">
-            <textarea
-              className="w-full rounded-xl border border-primary/20 bg-primary/5 p-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
-              placeholder="Paste your lyrics here or describe a story..."
-              rows={6}
-              value={lyrics}
-              onChange={(e) => setLyrics(e.target.value)}
-            ></textarea>
-          </div>
-        </section>
-
-        {/* Mutation Controls Section */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="text-primary w-5 h-5" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight">Mutation Controls</h2>
-          </div>
-          <div className="space-y-6 bg-primary/5 rounded-2xl p-5 border border-primary/10">
-            {/* Randomness Slider */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Randomness</label>
-                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">{randomness}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Prompt Configuration</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2 rounded-md border p-3">
+              <Label>Generator Mode</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant={mode === "simple" ? "default" : "outline"}
+                  onClick={() => setMode("simple")}
+                >
+                  Simple Mode
+                </Button>
+                <Button
+                  type="button"
+                  variant={mode === "custom" ? "default" : "outline"}
+                  onClick={() => setMode("custom")}
+                >
+                  Custom Mode
+                </Button>
               </div>
-              <input
-                className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
-                max="10"
-                min="0"
-                step="0.1"
-                type="range"
-                value={randomness}
-                onChange={(e) => setRandomness(parseFloat(e.target.value))}
-              />
             </div>
-            {/* Complexity Slider */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
-                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                  {complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low"}
+
+            <div className="space-y-2 rounded-md border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="title">Song Title</Label>
+                <span className="text-xs text-muted-foreground">
+                  {title.length}/{MAX_TITLE}
                 </span>
               </div>
-              <input
-                className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
-                max="100"
-                min="0"
-                step="1"
-                type="range"
-                value={complexity}
-                onChange={(e) => setComplexity(parseInt(e.target.value))}
+              <Input
+                id="title"
+                maxLength={MAX_TITLE}
+                placeholder="Optional title override"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <hr className="border-primary/10"/>
-            {/* Experimental Toggle */}
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">Experimental Mode</span>
-                <span className="text-xs text-slate-500">Unstable but creative rhythms</span>
+
+            <div className="space-y-2 rounded-md border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="idea">Song Description</Label>
+                <span className="text-xs text-muted-foreground">
+                  {songIdea.length}/{MAX_DESCRIPTION}
+                </span>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={experimental}
-                  onChange={(e) => setExperimental(e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-              </label>
+              <Textarea
+                id="idea"
+                rows={3}
+                maxLength={MAX_DESCRIPTION}
+                value={songIdea}
+                onChange={(e) => setSongIdea(e.target.value)}
+              />
+              <Button type="button" variant="outline" size="sm" onClick={applyInspiration}>
+                Get Inspired
+              </Button>
             </div>
-          </div>
-        </section>
-      </main>
 
-      {/* Bottom Generate Button & Nav */}
-      <div className="fixed bottom-0 w-full max-w-[430px] p-6 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/95 dark:via-background-dark/95 to-transparent z-30">
-        <button
-          onClick={generate}
-          disabled={loading}
-          className="neon-glow w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-95 disabled:opacity-70"
-        >
-          <Zap className="w-5 h-5 fill-current" />
-          {loading ? "Generating..." : "Generate Music"}
-        </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="language-select">Language</Label>
+                <Select onValueChange={setLanguage} value={language}>
+                  <SelectTrigger id="language-select">
+                    <SelectValue placeholder="Select language..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Instrumental</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={instrumental ? "default" : "outline"}
+                    onClick={() => setInstrumental(true)}
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={!instrumental ? "default" : "outline"}
+                    onClick={() => setInstrumental(false)}
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-        {/* Bottom Navigation */}
-        <nav className="flex justify-around items-center pt-6 pb-2 text-slate-400 dark:text-slate-500">
-          <Link href="/" className="flex flex-col items-center gap-1 hover:text-primary transition-colors">
-            <Home className="w-6 h-6" />
-            <span className="text-[10px] font-medium uppercase tracking-widest">Home</span>
-          </Link>
-          <Link href="/studio" className="flex flex-col items-center gap-1 text-primary">
-            <Bot className="w-6 h-6" />
-            <span className="text-[10px] font-medium uppercase tracking-widest">Studio</span>
-          </Link>
-          <Link href="/vision" className="flex flex-col items-center gap-1 hover:text-primary transition-colors">
-            <Library className="w-6 h-6" />
-            <span className="text-[10px] font-medium uppercase tracking-widest">Library</span>
-          </Link>
-          <Link href="#" className="flex flex-col items-center gap-1 hover:text-primary transition-colors">
-            <UserCircle className="w-7 h-7" />
-            <span className="text-[10px] font-medium uppercase tracking-widest">Profile</span>
-          </Link>
-        </nav>
+            <div className="space-y-2 rounded-md border p-3">
+              <Label>Style of Music</Label>
+              <div className="flex flex-wrap gap-2">
+                {styleTagPool.map((tag) => (
+                  <Button
+                    key={tag}
+                    type="button"
+                    size="sm"
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
+                    onClick={() => toggleStyleTag(tag)}
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 rounded-md border p-3">
+              <Label htmlFor="negative-prompt">Negative Prompt</Label>
+              <Textarea
+                id="negative-prompt"
+                rows={2}
+                placeholder="e.g. avoid distortion, avoid mumbling vocals, no long intro"
+                value={negativePrompt}
+                onChange={(e) => setNegativePrompt(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2 rounded-md border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label>Meta Tag Creator</Label>
+                <span className="text-xs text-muted-foreground">
+                  Inspired by SunoMetaTagCreator
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <Input
+                  placeholder="Search tags..."
+                  value={metaSearch}
+                  onChange={(e) => setMetaSearch(e.target.value)}
+                  aria-label="Search meta tags"
+                />
+                <Select
+                  value={metaCategory}
+                  onValueChange={(value) => setMetaCategory(value as MetaTagCategory)}
+                >
+                  <SelectTrigger aria-label="Select meta tag category">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="genre">Genre</SelectItem>
+                    <SelectItem value="mood">Mood</SelectItem>
+                    <SelectItem value="vocal">Vocal</SelectItem>
+                    <SelectItem value="instrument">Instrument</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                    <SelectItem value="structure">Structure</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {filteredMetaTags.slice(0, 18).map((item) => (
+                  <div key={item.tag} className="flex gap-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => addMetaTagToStyle(item.tag)}
+                    >
+                      +Style {item.tag}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => addMetaTagToLyrics(item.tag)}
+                    >
+                      +Lyrics
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 rounded-md border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label>Template Library</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsTemplateLibraryOpen((prev) => !prev)}
+                >
+                  {isTemplateLibraryOpen ? "Close Library" : "Open Library"}
+                </Button>
+              </div>
+              {isTemplateLibraryOpen && (
+                <div className="space-y-2">
+                  {templateLibrary.map((template) => (
+                    <div key={template.id} className="rounded border p-2">
+                      <p className="text-sm font-medium">{template.name}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => applyTemplate(template.id)}
+                      >
+                        Apply Template
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {mode === "custom" && (
+              <div className="space-y-4">
+                <div className="space-y-2 rounded-md border p-3">
+                  <Label htmlFor="pack-select">Awesome Prompt Packs</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-2">
+                    <Select onValueChange={setSelectedPackId} value={selectedPackId}>
+                      <SelectTrigger id="pack-select">
+                        <SelectValue placeholder="Select a pack..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROMPT_PACKS.map((pack) => (
+                          <SelectItem key={pack.id} value={pack.id}>
+                            {pack.name} ({pack.energyLabel})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button type="button" variant="outline" onClick={applySelectedPack}>
+                      Apply Pack
+                    </Button>
+                    <Button type="button" variant="outline" onClick={applyRandomPack}>
+                      Random Pack
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Use case: {selectedPack?.useCase || "custom"}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="style">Style / Genre</Label>
+                    <Input id="style" value={genre} onChange={(e) => setGenre(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="mood-select">Mood / Energy</Label>
+                    <Select onValueChange={setMood} value={mood}>
+                      <SelectTrigger id="mood-select">
+                        <SelectValue placeholder="Select a mood..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MOODS.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="tempo">Tempo (BPM)</Label>
+                    <Input
+                      id="tempo"
+                      type="number"
+                      value={tempo}
+                      onChange={(e) => setTempo(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="instrumentation-select">Key Instruments</Label>
+                    <Select onValueChange={setInstrumentation} value={instrumentation}>
+                      <SelectTrigger id="instrumentation-select">
+                        <SelectValue placeholder="Select an instrument..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {INSTRUMENTS.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="vocal-style-select">Vocal Style</Label>
+                    <Select onValueChange={setVocalStyle} value={vocalStyle}>
+                      <SelectTrigger id="vocal-style-select">
+                        <SelectValue placeholder="Select a vocal profile..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vocalSelectOptions.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="production-select">Production</Label>
+                    <Select onValueChange={setProduction} value={production}>
+                      <SelectTrigger id="production-select">
+                        <SelectValue placeholder="e.g., lo-fi, studio quality" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PRODUCTION_TERMS.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <Label>Lyrics & Structure</Label>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" onClick={buildLyricsFromIdea}>
+                    Build Lyrics From Description
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" onClick={applyTimelineToLyrics}>
+                    Apply Timeline
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2 rounded-md border p-2">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium">Timeline Editor</p>
+                  <Button type="button" size="sm" variant="outline" onClick={addTimelineBlock}>
+                    Add Block
+                  </Button>
+                </div>
+                {timelineBlocks.map((block) => (
+                  <div
+                    key={block.id}
+                    className="grid grid-cols-1 md:grid-cols-[170px_1fr_auto] gap-2 items-start"
+                  >
+                    <Select
+                      value={block.section}
+                      onValueChange={(value) => updateTimelineBlock(block.id, "section", value)}
+                    >
+                      <SelectTrigger aria-label="Section type">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sectionOptions.map((section) => (
+                          <SelectItem key={section} value={section}>
+                            {section}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      value={block.cue}
+                      onChange={(e) => updateTimelineBlock(block.id, "cue", e.target.value)}
+                      aria-label="Section cue"
+                    />
+                    <div className="flex gap-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => moveTimelineBlock(block.id, "up")}
+                        aria-label="Move section up"
+                      >
+                        ↑
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => moveTimelineBlock(block.id, "down")}
+                        aria-label="Move section down"
+                      >
+                        ↓
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => removeTimelineBlock(block.id)}
+                        aria-label="Remove section"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {structuralTags.map((tag) => (
+                  <Button
+                    key={tag}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => insertTag(tag)}
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </div>
+              <Textarea
+                ref={lyricsRef}
+                id="lyrics"
+                value={lyrics}
+                onChange={(e) => setLyrics(e.target.value)}
+                rows={12}
+                className="font-mono"
+                disabled={instrumental}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Live Prompt Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                readOnly
+                rows={5}
+                value={livePromptPreview || "Start filling fields to preview..."}
+                className="font-mono"
+              />
+            </CardContent>
+          </Card>
+
+          <Button onClick={generate} disabled={loading} className="w-full text-lg">
+            {loading ? "Generating..." : "Generate Prompt"}
+          </Button>
+          <Card className="h-full min-h-[400px]">
+            <CardHeader>
+              <CardTitle>Generated Prompt</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {loading && <p>Generating...</p>}
+              {!loading && generationError && (
+                <pre className="whitespace-pre-wrap font-mono text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
+                  {generationError}
+                </pre>
+              )}
+              {!loading && generatedResult && (
+                <>
+                  <div className="rounded-md border p-3">
+                    <p className="text-sm font-medium">{generatedResult.title}</p>
+                    <p className="text-xs text-muted-foreground">{generatedResult.technicalName}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <Label>Style Prompt</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => copyText(generatedResult.style, "style")}
+                        >
+                          {copiedField === "style" ? "Copied" : "Copy"}
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            exportText(
+                              generatedResult.style,
+                              `${generatedResult.technicalName}_style`
+                            )
+                          }
+                        >
+                          Export
+                        </Button>
+                      </div>
+                    </div>
+                    <Textarea
+                      readOnly
+                      rows={5}
+                      value={generatedResult.style}
+                      className="font-mono"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <Label>Lyrics</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            copyText(generatedResult.lyrics || "[Instrumental mode]", "lyrics")
+                          }
+                        >
+                          {copiedField === "lyrics" ? "Copied" : "Copy"}
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            exportText(
+                              generatedResult.lyrics || "[Instrumental mode]",
+                              `${generatedResult.technicalName}_lyrics`
+                            )
+                          }
+                        >
+                          Export
+                        </Button>
+                      </div>
+                    </div>
+                    <Textarea
+                      readOnly
+                      rows={8}
+                      value={generatedResult.lyrics || "[Instrumental mode]"}
+                      className="font-mono"
+                    />
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      {/* Decorative background elements */}
-      <div className="fixed top-20 right-[-50px] w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
-      <div className="fixed bottom-40 left-[-50px] w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
     </div>
   );
 }

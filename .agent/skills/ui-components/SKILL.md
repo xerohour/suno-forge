@@ -10,6 +10,7 @@ This skill covers working with the UI component system in suno-forge, which uses
 ## Component Architecture
 
 ### Directory Structure
+
 ```
 components/
 ├── ui/              # Radix UI primitives (button, select, label, etc.)
@@ -20,6 +21,7 @@ components/
 ```
 
 ### Component Categories
+
 - **`components/ui/*`** - Base primitives (shadcn/ui style)
 - **`components/*`** - Feature-specific components
 - **`app/*/page.tsx`** - Page-level components
@@ -27,7 +29,9 @@ components/
 ## Working with Radix UI
 
 ### Available Primitives
+
 The project includes these Radix UI components:
+
 - `@radix-ui/react-dropdown-menu`
 - `@radix-ui/react-label`
 - `@radix-ui/react-select`
@@ -36,11 +40,13 @@ The project includes these Radix UI components:
 ### Adding New Radix Components
 
 1. Install the component:
+
 ```bash
 npm install @radix-ui/react-dialog
 ```
 
 2. Create wrapper in `components/ui/`:
+
 ```typescript
 // components/ui/dialog.tsx
 import * as DialogPrimitive from '@radix-ui/react-dialog';
@@ -75,12 +81,15 @@ export const DialogContent = React.forwardRef<
 ## Tailwind CSS
 
 ### Configuration
+
 Tailwind is configured in `tailwind.config.js` with:
+
 - Custom color schemes
 - Animation utilities (`tailwindcss-animate`)
 - Design tokens
 
 ### Using Tailwind Classes
+
 ```typescript
 // Good: Use utility classes
 <div className="flex items-center gap-4 p-6 rounded-lg bg-slate-100">
@@ -96,26 +105,29 @@ import { cn } from '@/lib/utils';
 ```
 
 ### Custom Utilities
+
 Add to `tailwind.config.js`:
+
 ```javascript
 module.exports = {
   theme: {
     extend: {
       colors: {
-        'suno-purple': '#8B5CF6',
-        'suno-blue': '#3B82F6'
+        "suno-purple": "#8B5CF6",
+        "suno-blue": "#3B82F6",
       },
       spacing: {
-        '128': '32rem'
-      }
-    }
-  }
-}
+        128: "32rem",
+      },
+    },
+  },
+};
 ```
 
 ## Component Patterns
 
 ### Feature Component Template
+
 ```typescript
 // components/FeatureName.tsx
 import { useState } from 'react';
@@ -149,6 +161,7 @@ export function FeatureName({ onSubmit, initialValue = '' }: FeatureNameProps) {
 ```
 
 ### Using Class Variance Authority (CVA)
+
 ```typescript
 import { cva, type VariantProps } from 'class-variance-authority';
 
@@ -191,6 +204,7 @@ export function Button({ variant, size, className, ...props }: ButtonProps) {
 ## Styling Best Practices
 
 ### Responsive Design
+
 ```typescript
 <div className="
   grid grid-cols-1           // Mobile: 1 column
@@ -201,13 +215,14 @@ export function Button({ variant, size, className, ...props }: ButtonProps) {
 ```
 
 ### Dark Mode Support
+
 ```typescript
 // Using next-themes
 import { useTheme } from 'next-themes';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  
+
   return (
     <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
       Toggle Theme
@@ -220,6 +235,7 @@ export function ThemeToggle() {
 ```
 
 ### Animations
+
 ```typescript
 // Using tailwindcss-animate
 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -244,6 +260,7 @@ import { Music, Sparkles, Download } from 'lucide-react';
 ```
 
 ### Common Icons
+
 - `Music`, `Music2`, `Music3`, `Music4` - Music-related
 - `Sparkles`, `Wand2` - AI/generation
 - `Download`, `Upload` - File operations
@@ -253,6 +270,7 @@ import { Music, Sparkles, Download } from 'lucide-react';
 ## Testing UI Components
 
 ### Manual Testing Checklist
+
 - [ ] Responsive on mobile, tablet, desktop
 - [ ] Dark mode appearance
 - [ ] Keyboard navigation
@@ -261,6 +279,7 @@ import { Music, Sparkles, Download } from 'lucide-react';
 - [ ] Error states
 
 ### Accessibility
+
 ```typescript
 // Good: Semantic HTML + ARIA
 <button
@@ -279,16 +298,19 @@ import { Music, Sparkles, Download } from 'lucide-react';
 ## Common Issues
 
 ### Tailwind Classes Not Applying
+
 1. Check `tailwind.config.js` content paths
 2. Restart dev server after config changes
 3. Ensure PostCSS is configured
 
 ### Radix Component Styling
+
 - Use `className` prop, not `style` when possible
 - Wrap in styled components if needed
 - Check Radix docs for styling APIs
 
 ### Hydration Errors
+
 - Avoid `useEffect` for initial render logic
 - Use `suppressHydrationWarning` sparingly
 - Ensure server/client HTML matches

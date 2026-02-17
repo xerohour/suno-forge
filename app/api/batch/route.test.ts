@@ -33,17 +33,17 @@ describe("Batch API", () => {
   });
 
   test("should handle negative/zero count by defaulting to 1", async () => {
-      const req = new Request("http://localhost/api/batch", {
-        method: "POST",
-        body: JSON.stringify({
-          config: { genre: "pop" },
-          count: -5,
-        }),
-      });
+    const req = new Request("http://localhost/api/batch", {
+      method: "POST",
+      body: JSON.stringify({
+        config: { genre: "pop" },
+        count: -5,
+      }),
+    });
 
-      const res = await POST(req);
-      const data = await res.json();
+    const res = await POST(req);
+    const data = await res.json();
 
-      expect(data.prompts.length).toBe(1);
+    expect(data.prompts.length).toBe(1);
   });
 });

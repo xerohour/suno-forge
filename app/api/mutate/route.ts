@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Validate inputs
-    if (!body.prompt || typeof body.prompt !== 'string' || body.prompt.trim().length === 0) {
+    if (!body.prompt || typeof body.prompt !== "string" || body.prompt.trim().length === 0) {
       return createErrorResponse(
         "Invalid prompt",
         400,
@@ -36,12 +36,6 @@ export async function POST(req: Request) {
     console.error("Mutation failed:", error);
 
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    return createErrorResponse(
-      "Failed to mutate prompt",
-      500,
-      errorMessage,
-      "MUTATION_FAILED"
-    );
+    return createErrorResponse("Failed to mutate prompt", 500, errorMessage, "MUTATION_FAILED");
   }
 }
-

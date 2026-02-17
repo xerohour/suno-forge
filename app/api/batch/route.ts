@@ -8,6 +8,12 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    // Clamp count to ensure it is within valid range (1-50)
+    if (typeof body.count === "number") {
+      if (body.count > 50) body.count = 50;
+      if (body.count < 1) body.count = 1;
+    }
+
     // Validate batch request
     if (!validateBatchRequest(body)) {
       return createErrorResponse(
@@ -21,9 +27,7 @@ export async function POST(req: Request) {
     const { config, count } = body;
 
     // Generate prompts in parallel
-    const prompts = await Promise.all(
-      Array.from({ length: count }).map(() => buildPrompt(config))
-    );
+    const prompts = await Promise.all(Array.from({ length: count }).map(() => buildPrompt(config)));
 
     const response: BatchResponse = { prompts };
     return Response.json(response);

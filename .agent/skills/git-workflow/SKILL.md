@@ -10,7 +10,9 @@ This skill covers Git and GitHub best practices for the suno-forge project.
 ## Commit Guidelines
 
 ### Commit Message Format
+
 Use imperative mood (as documented in AGENTS.md):
+
 ```bash
 # Good
 git commit -m "Fix instrumental style conflict"
@@ -24,7 +26,9 @@ git commit -m "Updated files"
 ```
 
 ### Commit Scope
+
 Keep commits focused on one logical change:
+
 ```bash
 # Good: Single logical change
 git add lib/styleEngine.ts lib/styleEngine.test.ts
@@ -38,6 +42,7 @@ git commit -m "Various updates"
 ## Branch Strategy
 
 ### Creating Feature Branches
+
 ```bash
 # Create and switch to new branch
 git checkout -b feature/add-tempo-mutations
@@ -50,6 +55,7 @@ git checkout -b docs/update-api-examples
 ```
 
 ### Branch Naming Conventions
+
 - `feature/description` - New features
 - `fix/description` - Bug fixes
 - `refactor/description` - Code refactoring
@@ -59,6 +65,7 @@ git checkout -b docs/update-api-examples
 ## Common Git Commands
 
 ### Checking Status
+
 ```bash
 # See what's changed
 git status
@@ -71,6 +78,7 @@ git diff --cached
 ```
 
 ### Staging Changes
+
 ```bash
 # Stage specific files
 git add lib/promptEngine.ts
@@ -86,6 +94,7 @@ git add -p
 ```
 
 ### Committing
+
 ```bash
 # Commit staged changes
 git commit -m "Add vision engine for image-to-prompt"
@@ -98,6 +107,7 @@ git commit --amend -m "Updated message"
 ```
 
 ### Pushing and Pulling
+
 ```bash
 # Push current branch
 git push
@@ -113,6 +123,7 @@ git pull --rebase
 ```
 
 ### Viewing History
+
 ```bash
 # View commit history
 git log
@@ -133,6 +144,7 @@ git log --graph --oneline --all
 ## Working with Changes
 
 ### Undoing Changes
+
 ```bash
 # Discard unstaged changes in file
 git checkout -- lib/promptEngine.ts
@@ -148,6 +160,7 @@ git reset --hard HEAD~1
 ```
 
 ### Stashing Changes
+
 ```bash
 # Stash current changes
 git stash
@@ -176,6 +189,7 @@ git stash clear
 ### Before Creating PR
 
 1. **Ensure code quality:**
+
 ```bash
 # Type check
 npx tsc --noEmit
@@ -188,6 +202,7 @@ npm run build
 ```
 
 2. **Update from main:**
+
 ```bash
 git checkout main
 git pull
@@ -197,13 +212,16 @@ git rebase main
 ```
 
 3. **Clean up commits (optional):**
+
 ```bash
 # Interactive rebase to squash/reorder commits
 git rebase -i HEAD~3
 ```
 
 ### PR Checklist
+
 Include in PR description:
+
 - [ ] Concise summary of changes
 - [ ] Validation steps performed
   - [ ] `npx tsc --noEmit` passed
@@ -213,23 +231,28 @@ Include in PR description:
 - [ ] Linked issue/task (if applicable)
 
 ### PR Template Example
+
 ```markdown
 ## Summary
+
 Adds tempo variation mutations to the mutation engine, allowing users to shift tempo up or down while preserving other prompt characteristics.
 
 ## Changes
+
 - Added `tempo-shift-up` and `tempo-shift-down` mutation types
 - Updated `mutationEngine.ts` with tempo parsing logic
 - Added tests in `mutationEngine.test.ts`
 - Updated UI in `BatchPage` to expose new mutations
 
 ## Validation
+
 - ✅ `npx tsc --noEmit` - no errors
 - ✅ `npm test` - all tests passing
 - ✅ `npm run build` - successful build
 - ✅ Manual testing in `/batch` page
 
 ## Screenshots
+
 [Attach screenshots of UI changes]
 
 Closes #42
@@ -238,6 +261,7 @@ Closes #42
 ## Handling Merge Conflicts
 
 ### When Conflicts Occur
+
 ```bash
 # After pull/merge/rebase with conflicts
 git status  # Shows conflicted files
@@ -255,6 +279,7 @@ git commit  # Or git rebase --continue
 ```
 
 ### Avoiding Conflicts
+
 - Pull/rebase frequently
 - Communicate with team about overlapping work
 - Keep changes focused and scoped
@@ -262,7 +287,9 @@ git commit  # Or git rebase --continue
 ## .gitignore
 
 ### Current Exclusions
+
 The project `.gitignore` includes:
+
 - `node_modules/`
 - `.next/`
 - `.env*.local`
@@ -270,6 +297,7 @@ The project `.gitignore` includes:
 - Build artifacts
 
 ### Adding New Patterns
+
 ```bash
 # Edit .gitignore
 echo "*.log" >> .gitignore
@@ -283,6 +311,7 @@ git commit -m "Update gitignore to exclude log files"
 ## Useful Aliases
 
 Add to `~/.gitconfig`:
+
 ```ini
 [alias]
   st = status
@@ -296,6 +325,7 @@ Add to `~/.gitconfig`:
 ```
 
 Usage:
+
 ```bash
 git st          # Instead of git status
 git co main     # Instead of git checkout main
@@ -305,6 +335,7 @@ git visual      # Pretty commit graph
 ## GitHub-Specific Features
 
 ### Using GitHub CLI (gh)
+
 ```bash
 # Install: https://cli.github.com/
 
@@ -322,12 +353,15 @@ gh pr view --web
 ```
 
 ### GitHub Actions
+
 The project may have CI/CD workflows in `.github/workflows/`:
+
 - Automated testing on PR
 - Build verification
 - Deployment pipelines
 
 Check workflow status:
+
 ```bash
 gh run list
 gh run view <run-id>
@@ -336,6 +370,7 @@ gh run view <run-id>
 ## Troubleshooting
 
 ### Accidentally Committed Secrets
+
 ```bash
 # Remove from last commit
 git reset --soft HEAD~1
@@ -347,6 +382,7 @@ git commit -c ORIG_HEAD
 ```
 
 ### Detached HEAD State
+
 ```bash
 # Create branch from current state
 git checkout -b recovery-branch
@@ -356,6 +392,7 @@ git checkout main
 ```
 
 ### Large File Issues
+
 ```bash
 # Remove large file from history
 git filter-branch --tree-filter 'rm -f path/to/large/file' HEAD
