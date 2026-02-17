@@ -1,17 +1,14 @@
-export interface PromptInput {
-  genre?: string;
-  mood?: string;
-  lyrics?: string;
-}
+import { buildStyle } from "./styleEngine"
+import { generateLyrics } from "./lyricsEngine"
 
-export function buildPrompt(input: PromptInput): string {
-  const parts = [input.genre, input.mood, input.lyrics]
-    .map((part) => part?.trim())
-    .filter(Boolean);
+export function buildPrompt(config: any) {
+  const style = buildStyle(config)
+  const lyrics = generateLyrics(config)
 
-  if (parts.length === 0) {
-    return "Generate a polished song concept.";
-  }
+  return `
+STYLE: ${style}
 
-  return `Generate a polished song concept with: ${parts.join(", ")}.`;
+LYRICS:
+${lyrics}
+`
 }

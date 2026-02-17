@@ -1,8 +1,8 @@
 export default function HomePage() {
   return (
-    <main>
-      <h1>Suno Forge</h1>
-      <p>Welcome to the App Router scaffold.</p>
+    <main style={{ padding: 20 }}>
+      <h1>SunoForge</h1>
+      <p>Open the Studio, Batch, or Vision pages to generate prompts.</p>
     </main>
-  );
+  )
 }

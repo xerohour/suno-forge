@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { buildPrompt, type PromptInput } from "@/lib/promptEngine";
+import { buildPrompt } from "@/lib/promptEngine"
 
-export async function POST(request: Request) {
-  const body = (await request.json()) as PromptInput;
-  const prompt = buildPrompt(body);
+export async function POST(req: Request) {
+  const body = await req.json()
 
-  return NextResponse.json({ prompt });
+  const prompt = buildPrompt(body)
+
+  return Response.json({ prompt })
 }
