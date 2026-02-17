@@ -15,6 +15,7 @@ import {
   User
 } from "lucide-react";
 import Link from "next/link";
+import { BottomNav, type NavItem } from "@/components/BottomNav";
 
 export default function Batch() {
   const [results, setResults] = useState<string[]>([]);
@@ -47,6 +48,13 @@ export default function Batch() {
       status: "processing" // amber
     }
   ]);
+
+  const navItems: NavItem[] = [
+    { label: "Forge", icon: Castle, href: "/studio" },
+    { label: "Batch", icon: Layers, href: "/batch", isActive: true },
+    { label: "Library", icon: Library, href: "/vision" },
+    { label: "Profile", icon: User, href: "#" },
+  ];
 
   async function generateBatch() {
     setLoading(true);
@@ -170,29 +178,19 @@ export default function Batch() {
       </main>
 
       {/* Bottom Navigation Bar */}
-      <nav className="absolute bottom-0 w-full bg-[#261933] border-t border-[#362348] px-2 pt-2 pb-6 flex items-center justify-around z-40">
-        <Link href="/studio" className="flex flex-col items-center gap-1 group">
-          <Castle className="w-6 h-6 text-[#ad92c9] group-hover:text-primary transition-colors" />
-          <span className="text-[#ad92c9] text-[10px] font-medium uppercase tracking-wider">Forge</span>
-        </Link>
-        <Link href="/batch" className="flex flex-col items-center gap-1 group">
-          <Layers className="w-6 h-6 text-white" />
-          <span className="text-white text-[10px] font-medium uppercase tracking-wider">Batch</span>
-        </Link>
-        <div className="relative -top-5">
+      <BottomNav
+        items={navItems}
+        className="absolute bottom-0 w-full bg-[#261933] border-t border-[#362348] px-2 pt-2 pb-6"
+        inactiveIconClassName="text-[#ad92c9] group-hover:text-primary"
+        inactiveLabelClassName="text-[#ad92c9]"
+        activeIconClassName="text-white"
+        activeLabelClassName="text-white"
+        centerAction={
           <button className="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 ring-4 ring-background-dark active:scale-95 transition-all">
             <Plus className="w-6 h-6" />
           </button>
-        </div>
-        <Link href="/vision" className="flex flex-col items-center gap-1 group">
-          <Library className="w-6 h-6 text-[#ad92c9] group-hover:text-primary transition-colors" />
-          <span className="text-[#ad92c9] text-[10px] font-medium uppercase tracking-wider">Library</span>
-        </Link>
-        <Link href="#" className="flex flex-col items-center gap-1 group">
-          <User className="w-6 h-6 text-[#ad92c9] group-hover:text-primary transition-colors" />
-          <span className="text-[#ad92c9] text-[10px] font-medium uppercase tracking-wider">Profile</span>
-        </Link>
-      </nav>
+        }
+      />
 
       {/* Quick Action Toast (Mobile UI detail) */}
       <div className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity">
