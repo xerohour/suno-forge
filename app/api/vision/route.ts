@@ -2,10 +2,18 @@ import { imageToPrompt } from '@/lib/visionEngine';
 import { buildPrompt } from '@/lib/promptEngine';
 
 export async function POST(req: Request) {
-  const { description } = await req.json();
+  try {
+    const { description } = await req.json();
 
-  const config = imageToPrompt(description);
-  const prompt = buildPrompt(config);
+    if (typeof description !== 'string' || description.trim().length === 0) {
+      return Response.json({ error: 'Description is required' }, { status: 400 });
+    }
 
-  return Response.json({ prompt });
+    const config = imageToPrompt(description);
+    const prompt = await buildPrompt(config);
+
+    return Response.json({ prompt });
+  } catch {
+    return Response.json({ error: 'Vision generation failed' }, { status: 500 });
+  }
 }
