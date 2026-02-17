@@ -20,6 +20,14 @@ const KEYWORD_MAP: Record<string, { genre: string, mood: string }> = {
 };
 
 export function imageToPrompt(description: string) {
+  if (typeof description !== 'string') {
+    return {
+      genre: 'ambient',
+      mood: 'cinematic',
+      theme: '',
+    };
+  }
+
   const desc = description.toLowerCase();
   let bestMatch = { genre: 'ambient', mood: 'cinematic' };
   
