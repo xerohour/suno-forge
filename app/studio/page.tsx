@@ -461,9 +461,9 @@ export default function Studio() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Language</Label>
+                <Label htmlFor="language-select">Language</Label>
                 <Select onValueChange={setLanguage} value={language}>
-                  <SelectTrigger>
+                  <SelectTrigger id="language-select">
                     <SelectValue placeholder="Select language..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -522,9 +522,14 @@ export default function Studio() {
                 <span className="text-xs text-muted-foreground">Inspired by SunoMetaTagCreator</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <Input placeholder="Search tags..." value={metaSearch} onChange={(e) => setMetaSearch(e.target.value)} />
+                <Input
+                  placeholder="Search tags..."
+                  value={metaSearch}
+                  onChange={(e) => setMetaSearch(e.target.value)}
+                  aria-label="Search meta tags"
+                />
                 <Select value={metaCategory} onValueChange={(value) => setMetaCategory(value as MetaTagCategory)}>
-                  <SelectTrigger>
+                  <SelectTrigger aria-label="Select meta tag category">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -577,10 +582,10 @@ export default function Studio() {
             {mode === 'custom' && (
               <div className="space-y-4">
                 <div className="space-y-2 rounded-md border p-3">
-                  <Label>Awesome Prompt Packs</Label>
+                  <Label htmlFor="pack-select">Awesome Prompt Packs</Label>
                   <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-2">
                     <Select onValueChange={setSelectedPackId} value={selectedPackId}>
-                      <SelectTrigger>
+                      <SelectTrigger id="pack-select">
                         <SelectValue placeholder="Select a pack..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -607,9 +612,9 @@ export default function Studio() {
                     <Input id="style" value={genre} onChange={(e) => setGenre(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mood">Mood / Energy</Label>
+                    <Label htmlFor="mood-select">Mood / Energy</Label>
                     <Select onValueChange={setMood} value={mood}>
-                      <SelectTrigger>
+                      <SelectTrigger id="mood-select">
                         <SelectValue placeholder="Select a mood..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -629,9 +634,9 @@ export default function Studio() {
                     <Input id="tempo" type="number" value={tempo} onChange={(e) => setTempo(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="instrumentation">Key Instruments</Label>
+                    <Label htmlFor="instrumentation-select">Key Instruments</Label>
                     <Select onValueChange={setInstrumentation} value={instrumentation}>
-                      <SelectTrigger>
+                      <SelectTrigger id="instrumentation-select">
                         <SelectValue placeholder="Select an instrument..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -647,9 +652,9 @@ export default function Studio() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="vocal-style">Vocal Style</Label>
+                    <Label htmlFor="vocal-style-select">Vocal Style</Label>
                     <Select onValueChange={setVocalStyle} value={vocalStyle}>
-                      <SelectTrigger>
+                      <SelectTrigger id="vocal-style-select">
                         <SelectValue placeholder="Select a vocal profile..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -662,9 +667,9 @@ export default function Studio() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="production">Production</Label>
+                    <Label htmlFor="production-select">Production</Label>
                     <Select onValueChange={setProduction} value={production}>
-                      <SelectTrigger>
+                      <SelectTrigger id="production-select">
                         <SelectValue placeholder="e.g., lo-fi, studio quality" />
                       </SelectTrigger>
                       <SelectContent>
@@ -702,7 +707,7 @@ export default function Studio() {
                 {timelineBlocks.map((block) => (
                   <div key={block.id} className="grid grid-cols-1 md:grid-cols-[170px_1fr_auto] gap-2 items-start">
                     <Select value={block.section} onValueChange={(value) => updateTimelineBlock(block.id, 'section', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger aria-label="Section type">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -713,15 +718,37 @@ export default function Studio() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Input value={block.cue} onChange={(e) => updateTimelineBlock(block.id, 'cue', e.target.value)} />
+                    <Input
+                      value={block.cue}
+                      onChange={(e) => updateTimelineBlock(block.id, 'cue', e.target.value)}
+                      aria-label="Section cue"
+                    />
                     <div className="flex gap-1">
-                      <Button type="button" size="sm" variant="outline" onClick={() => moveTimelineBlock(block.id, 'up')}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => moveTimelineBlock(block.id, 'up')}
+                        aria-label="Move section up"
+                      >
                         ↑
                       </Button>
-                      <Button type="button" size="sm" variant="outline" onClick={() => moveTimelineBlock(block.id, 'down')}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => moveTimelineBlock(block.id, 'down')}
+                        aria-label="Move section down"
+                      >
                         ↓
                       </Button>
-                      <Button type="button" size="sm" variant="outline" onClick={() => removeTimelineBlock(block.id)}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => removeTimelineBlock(block.id)}
+                        aria-label="Remove section"
+                      >
                         ×
                       </Button>
                     </div>
