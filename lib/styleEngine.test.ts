@@ -4,14 +4,14 @@ import { getMusicalStyle, buildStyle } from './styleEngine';
 
 describe('styleEngine', () => {
   describe('getMusicalStyle', () => {
-    it('should throw an error for a non-existent musical style', () => {
-      expect(() => getMusicalStyle('NonExistentStyle')).toThrow('Musical style \'NonExistentStyle\' not found.');
+    it('should return undefined for a non-existent musical style', () => {
+      expect(getMusicalStyle('NonExistentStyle')).toBeUndefined();
     });
 
     it('should return the correct descriptors for \'Synthwave\' musical style', () => {
       const synthwaveStyle = getMusicalStyle('Synthwave');
       expect(synthwaveStyle).toEqual({
-        instruments: 'Analog polysynth pads, bass arps, tom fills, gated reverb drums',
+        instruments: ["Analog polysynth pads", "bass arps", "tom fills", "gated reverb drums"],
         minTempo: 84,
         maxTempo: 104,
         descriptor: 'nostalgic 80s, neon dreamy, night drive',

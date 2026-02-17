@@ -154,11 +154,7 @@ const GENRE_DATA: Record<
 
 export function getMusicalStyle(styleName: string) {
   const normalizedStyleName = styleName.toLowerCase().trim();
-  const style = GENRE_DATA[normalizedStyleName];
-  if (!style) {
-    throw new Error(`Musical style '${styleName}' not found.`);
-  }
-  return style;
+  return GENRE_DATA[normalizedStyleName];
 }
 
 /**
@@ -170,10 +166,9 @@ export function buildStyle(config: PromptDNA): string {
   // 1. Get genre data or fallback to Pop
   let genreData = GENRE_DATA['pop'];
   if (config.genre) {
-    try {
-      genreData = getMusicalStyle(config.genre);
-    } catch (e) {
-      // Keep default as Pop if not found
+    const requestedGenre = getMusicalStyle(config.genre);
+    if (requestedGenre) {
+      genreData = requestedGenre;
     }
   }
 

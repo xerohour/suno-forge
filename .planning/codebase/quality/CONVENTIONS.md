@@ -46,7 +46,7 @@
 
 **Patterns:**
 - API route handlers use `try...catch` blocks to catch errors and return a generic JSON error response with a `500` status (e.g., `app/api/generate/route.ts`).
-- Functions can throw errors for invalid input, which are expected to be caught by callers (e.g., `getMusicalStyle` in `lib/styleEngine.ts`).
+- Internal engine functions generally return `null` or `undefined` for non-critical missing data instead of throwing, allowing callers to provide defaults.
 
 ## Logging
 
