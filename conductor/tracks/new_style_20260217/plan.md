@@ -24,7 +24,7 @@
 
 ## Phase 2: UI Integration [checkpoint: ]
 
-- [ ] **Task: Update Style Controls**
+- [x] **Task: Update Style Controls** 9e1493a
     - [ ] **Write Failing Tests (Red Phase):**
         - This is a UI component, so a functional/integration test would be more appropriate than a unit test. Since we don't have a testing framework for UI components set up, we will skip this step and rely on manual verification.
     - [ ] **Implement to Pass Tests (Green Phase):**
