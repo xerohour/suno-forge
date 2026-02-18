@@ -165,11 +165,7 @@ const GENRE_DATA: Record<string, GenreStyle> = Object.fromEntries(
 
 export function getMusicalStyle(styleName: string) {
   const normalizedStyleName = styleName.toLowerCase().trim();
-  const style = GENRE_DATA[normalizedStyleName];
-  if (!style) {
-    throw new Error(`Musical style '${styleName}' not found.`);
-  }
-  return style;
+  return GENRE_DATA[normalizedStyleName];
 }
 
 /**
@@ -181,10 +177,9 @@ export function buildStyle(config: PromptDNA): string {
   // 1. Get genre data or fallback to Pop
   let genreData = GENRE_DATA['pop'];
   if (config.genre) {
-    try {
-      genreData = getMusicalStyle(config.genre);
-    } catch (e) {
-      // Keep default as Pop if not found
+    const foundStyle = getMusicalStyle(config.genre);
+    if (foundStyle) {
+      genreData = foundStyle;
     }
   }
 
@@ -211,37 +206,30 @@ export function buildStyle(config: PromptDNA): string {
   }
 
   // 4. Build parts list
-  const parts = new Set<string>();
+  const potentialParts = [
+    config.genre,
+    config.mood,
+    tempoString,
+    energyDescriptor,
+    genreData.descriptor,
+    genreData.instrumentsString,
+    config.instrumentation,
+    config.vocalStyle,
+    config.production || (!config.instrumental ? "studio quality, clear vocals" : null)
+  ];
 
-  const addPart = (part: string | null | undefined) => {
-    if (part) {
-      const trimmed = part.trim();
-      if (trimmed.length > 0) {
-        parts.add(trimmed);
-      }
+  const uniqueParts = new Set<string>();
+  for (const part of potentialParts) {
+    if (part && part.trim().length > 0) {
+      uniqueParts.add(part.trim());
     }
-  };
-
-  addPart(config.genre); // Core genre / sub-genre
-  addPart(config.mood); // Primary mood / energy
-  addPart(tempoString); // Tempo / feel
-  addPart(energyDescriptor);
-  addPart(genreData.descriptor);
-  addPart(genreData.instrumentsString); // Use pre-computed string
-  addPart(config.instrumentation); // Lead instrument or key sonic elements
-  addPart(config.vocalStyle); // Vocal identity is crucial
-
-  if (config.production) {
-    addPart(config.production);
-  } else if (!config.instrumental) {
-    addPart("studio quality, clear vocals");
   }
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && parts.size > 1) {
-      return `${Array.from(parts).join(", ")}, ${config.genre}`;
+  if (config.genre && uniqueParts.size > 1) {
+      return `${Array.from(uniqueParts).join(", ")}, ${config.genre}`;
   }
 
-  return Array.from(parts).join(", ");
+  return Array.from(uniqueParts).join(", ");
 }

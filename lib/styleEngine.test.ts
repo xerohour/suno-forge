@@ -4,8 +4,8 @@ import { getMusicalStyle, buildStyle } from './styleEngine';
 
 describe('styleEngine', () => {
   describe('getMusicalStyle', () => {
-    it('should throw an error for a non-existent musical style', () => {
-      expect(() => getMusicalStyle('NonExistentStyle')).toThrow('Musical style \'NonExistentStyle\' not found.');
+    it('should return undefined for a non-existent musical style', () => {
+      expect(getMusicalStyle('NonExistentStyle')).toBeUndefined();
     });
 
     it('should return the correct descriptors for \'Synthwave\' musical style', () => {
