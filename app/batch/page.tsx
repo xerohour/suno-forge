@@ -87,10 +87,18 @@ export default function Batch() {
             <h1 className="text-xl font-bold tracking-tight">Batch Forge</h1>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 hover:bg-primary/10 rounded-full transition-colors">
+            <button
+              aria-label="View history"
+              title="View history"
+              className="p-2 hover:bg-primary/10 rounded-full transition-colors"
+            >
               <History className="text-slate-400 w-5 h-5" />
             </button>
-            <button className="p-2 hover:bg-primary/10 rounded-full transition-colors">
+            <button
+              aria-label="More options"
+              title="More options"
+              className="p-2 hover:bg-primary/10 rounded-full transition-colors"
+            >
               <MoreVertical className="text-slate-400 w-5 h-5" />
             </button>
           </div>
@@ -140,10 +148,18 @@ export default function Batch() {
                 <div className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
               </div>
               <div className="flex gap-1">
-                <button className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors">
+                <button
+                  aria-label="Duplicate job"
+                  title="Duplicate job"
+                  className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors"
+                >
                   <Copy className="w-4 h-4" />
                 </button>
-                <button className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors">
+                <button
+                  aria-label="Delete job"
+                  title="Delete job"
+                  className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors"
+                >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -180,7 +196,11 @@ export default function Batch() {
           <span className="text-white text-[10px] font-medium uppercase tracking-wider">Batch</span>
         </Link>
         <div className="relative -top-5">
-          <button className="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 ring-4 ring-background-dark active:scale-95 transition-all">
+          <button
+            aria-label="Create new batch"
+            title="Create new batch"
+            className="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 ring-4 ring-background-dark active:scale-95 transition-all"
+          >
             <Plus className="w-6 h-6" />
           </button>
         </div>
