@@ -10,7 +10,8 @@ import {
   Wand2,
   Aperture,
   Library,
-  User
+  User,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -84,7 +85,7 @@ export default function Vision() {
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h2 className="text-lg font-bold tracking-tight uppercase">Vision</h2>
-          <button className="text-white hover:text-primary transition-colors">
+          <button className="text-white hover:text-primary transition-colors" aria-label="Vision Info">
             <Info className="w-6 h-6" />
           </button>
         </header>
@@ -150,12 +151,13 @@ export default function Vision() {
           {/* Generated Prompt Area */}
           <div className="w-full mt-6 space-y-3">
             <div className="flex justify-between items-end px-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Generated Music Prompt</label>
+              <label htmlFor="generated-prompt" className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Generated Music Prompt</label>
               <Sparkles className="text-primary/40 w-4 h-4" />
             </div>
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-primary/20 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
               <textarea
+                id="generated-prompt"
                 className="relative w-full bg-background-dark/50 border border-primary/20 rounded-xl p-4 text-white placeholder:text-white/20 focus:ring-1 focus:ring-primary focus:border-primary min-h-[120px] pulse-border outline-none text-sm leading-relaxed"
                 placeholder="Waiting for image analysis..."
                 readOnly={status === 'analyzing'}
@@ -172,10 +174,17 @@ export default function Vision() {
           <button
             onClick={generateMusic}
             disabled={status === 'analyzing' || !description}
+            aria-busy={status === 'analyzing'}
             className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-[0_0_25px_rgba(13,242,242,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
-            <AudioWaveform className="w-5 h-5 font-bold" />
-            <span className="uppercase tracking-widest">Generate Music</span>
+            {status === 'analyzing' ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <AudioWaveform className="w-5 h-5 font-bold" />
+            )}
+            <span className="uppercase tracking-widest">
+              {status === 'analyzing' ? "Analyzing..." : "Generate Music"}
+            </span>
           </button>
         </footer>
 
