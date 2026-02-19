@@ -1,5 +1,5 @@
 import { mutatePrompt } from "@/lib/mutationEngine";
-import { validateMutationType, createErrorResponse } from "@/lib/validation";
+import { validateMutateRequest, createErrorResponse } from "@/lib/validation";
 import { MutateResponse } from "@/types/api";
 
 export const runtime = "nodejs";
@@ -9,21 +9,12 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Validate inputs
-    if (!body.prompt || typeof body.prompt !== 'string' || body.prompt.trim().length === 0) {
+    if (!validateMutateRequest(body)) {
       return createErrorResponse(
-        "Invalid prompt",
+        "Invalid mutation request",
         400,
-        "Prompt must be a non-empty string",
-        "INVALID_PROMPT"
-      );
-    }
-
-    if (!validateMutationType(body.type)) {
-      return createErrorResponse(
-        "Invalid mutation type",
-        400,
-        "Mutation type must be one of: viral, emotional, energy, instrumental, tempo-shift-up, tempo-shift-down, mood-invert, genre-blend",
-        "INVALID_MUTATION_TYPE"
+        "Request must include a valid prompt string and mutation type",
+        "INVALID_MUTATION_REQUEST"
       );
     }
 
@@ -44,4 +35,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

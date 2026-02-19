@@ -1,4 +1,14 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import {
+    validatePromptConfig,
+    validateMutationType,
+    validateBatchRequest,
+    validateVisionRequest,
+    validateMutateRequest,
+    MAX_TITLE_LENGTH,
+    MAX_SHORT_TEXT_LENGTH,
+    MAX_LONG_TEXT_LENGTH,
+    MAX_TAGS_COUNT
+} from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +68,28 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        it('should reject title too long', () => {
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject genre too long', () => {
+            expect(validatePromptConfig({ genre: 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject lyrics too long', () => {
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject styleTags count too high', () => {
+            const tags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tags })).toBe(false);
+        });
+
+        it('should reject styleTags with long tag', () => {
+            const tags = ['a'.repeat(MAX_SHORT_TEXT_LENGTH + 1)];
+            expect(validatePromptConfig({ styleTags: tags })).toBe(false);
         });
     });
 
@@ -129,6 +161,56 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+            expect(validateVisionRequest({ description: 'A beautiful sunset' })).toBe(true);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+            expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+        it('should reject missing description', () => {
+            expect(validateVisionRequest({})).toBe(false);
+        });
+
+        it('should reject invalid description type', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
+        });
+
+        it('should reject too long description', () => {
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+        });
+    });
+
+    describe('validateMutateRequest', () => {
+        it('should accept valid mutate request', () => {
+            expect(validateMutateRequest({ prompt: 'some prompt', type: 'viral' })).toBe(true);
+        });
+
+        it('should reject empty prompt', () => {
+            expect(validateMutateRequest({ prompt: '', type: 'viral' })).toBe(false);
+            expect(validateMutateRequest({ prompt: '   ', type: 'viral' })).toBe(false);
+        });
+
+        it('should reject missing prompt', () => {
+            expect(validateMutateRequest({ type: 'viral' })).toBe(false);
+        });
+
+        it('should reject invalid prompt type', () => {
+            expect(validateMutateRequest({ prompt: 123, type: 'viral' })).toBe(false);
+        });
+
+        it('should reject too long prompt', () => {
+            expect(validateMutateRequest({ prompt: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1), type: 'viral' })).toBe(false);
+        });
+
+        it('should reject invalid mutation type', () => {
+            expect(validateMutateRequest({ prompt: 'valid prompt', type: 'invalid' })).toBe(false);
         });
     });
 });
