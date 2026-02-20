@@ -1,4 +1,14 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import {
+    validatePromptConfig,
+    validateMutationType,
+    validateBatchRequest,
+    validateVisionRequest,
+    validateMutateRequest,
+    MAX_TITLE_LENGTH,
+    MAX_SHORT_TEXT_LENGTH,
+    MAX_LONG_TEXT_LENGTH,
+    MAX_TAGS_COUNT
+} from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +68,32 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        it('should reject title exceeding max length', () => {
+            const longTitle = 'a'.repeat(MAX_TITLE_LENGTH + 1);
+            expect(validatePromptConfig({ title: longTitle })).toBe(false);
+            expect(validatePromptConfig({ title: 'valid title' })).toBe(true);
+        });
+
+        it('should reject genre exceeding max length', () => {
+            const longGenre = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ genre: longGenre })).toBe(false);
+        });
+
+        it('should reject lyrics exceeding max length', () => {
+            const longLyrics = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ lyrics: longLyrics })).toBe(false);
+        });
+
+        it('should reject too many style tags', () => {
+            const tooManyTags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tooManyTags })).toBe(false);
+        });
+
+        it('should reject style tag exceeding max length', () => {
+            const longTag = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ styleTags: [longTag] })).toBe(false);
         });
     });
 
@@ -129,6 +165,46 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+            expect(validateVisionRequest({ description: 'a detailed image description' })).toBe(true);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+            expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+        it('should reject non-string description', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
+        });
+
+        it('should reject description exceeding max length', () => {
+            const longDesc = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validateVisionRequest({ description: longDesc })).toBe(false);
+        });
+    });
+
+    describe('validateMutateRequest', () => {
+         it('should accept valid mutate request', () => {
+            expect(validateMutateRequest({ prompt: 'some prompt', type: 'viral' })).toBe(true);
+        });
+
+        it('should reject invalid mutation type', () => {
+            expect(validateMutateRequest({ prompt: 'some prompt', type: 'invalid' })).toBe(false);
+        });
+
+        it('should reject empty prompt', () => {
+            expect(validateMutateRequest({ prompt: '', type: 'viral' })).toBe(false);
+            expect(validateMutateRequest({ prompt: '   ', type: 'viral' })).toBe(false);
+        });
+
+        it('should reject prompt exceeding max length', () => {
+            const longPrompt = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validateMutateRequest({ prompt: longPrompt, type: 'viral' })).toBe(false);
         });
     });
 });
