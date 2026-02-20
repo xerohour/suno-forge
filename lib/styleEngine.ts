@@ -163,9 +163,14 @@ const GENRE_DATA: Record<string, GenreStyle> = Object.fromEntries(
   ])
 );
 
-export function getMusicalStyle(styleName: string) {
+// Optimization: Internal helper to avoid try-catch overhead for expected flow (unknown genres)
+function getMusicalStyleOrUndefined(styleName: string): GenreStyle | undefined {
   const normalizedStyleName = styleName.toLowerCase().trim();
-  const style = GENRE_DATA[normalizedStyleName];
+  return GENRE_DATA[normalizedStyleName];
+}
+
+export function getMusicalStyle(styleName: string): GenreStyle {
+  const style = getMusicalStyleOrUndefined(styleName);
   if (!style) {
     throw new Error(`Musical style '${styleName}' not found.`);
   }
@@ -179,12 +184,12 @@ export function getMusicalStyle(styleName: string) {
  */
 export function buildStyle(config: PromptDNA): string {
   // 1. Get genre data or fallback to Pop
+  // Optimization: Use non-throwing helper to avoid exception handling overhead
   let genreData = GENRE_DATA['pop'];
   if (config.genre) {
-    try {
-      genreData = getMusicalStyle(config.genre);
-    } catch (e) {
-      // Keep default as Pop if not found
+    const style = getMusicalStyleOrUndefined(config.genre);
+    if (style) {
+      genreData = style;
     }
   }
 
@@ -211,37 +216,35 @@ export function buildStyle(config: PromptDNA): string {
   }
 
   // 4. Build parts list
-  const parts = new Set<string>();
+  const rawParts = [
+    config.genre,
+    config.mood,
+    tempoString,
+    energyDescriptor,
+    genreData.descriptor,
+    genreData.instrumentsString,
+    config.instrumentation,
+    config.vocalStyle,
+    config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined)
+  ];
 
-  const addPart = (part: string | null | undefined) => {
-    if (part) {
-      const trimmed = part.trim();
+  const parts: string[] = [];
+  for (const p of rawParts) {
+    if (p) {
+      const trimmed = p.trim();
       if (trimmed.length > 0) {
-        parts.add(trimmed);
+        parts.push(trimmed);
       }
     }
-  };
-
-  addPart(config.genre); // Core genre / sub-genre
-  addPart(config.mood); // Primary mood / energy
-  addPart(tempoString); // Tempo / feel
-  addPart(energyDescriptor);
-  addPart(genreData.descriptor);
-  addPart(genreData.instrumentsString); // Use pre-computed string
-  addPart(config.instrumentation); // Lead instrument or key sonic elements
-  addPart(config.vocalStyle); // Vocal identity is crucial
-
-  if (config.production) {
-    addPart(config.production);
-  } else if (!config.instrumental) {
-    addPart("studio quality, clear vocals");
   }
+
+  const uniqueParts = Array.from(new Set(parts));
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && parts.size > 1) {
-      return `${Array.from(parts).join(", ")}, ${config.genre}`;
+  if (config.genre && uniqueParts.length > 1) {
+      return `${uniqueParts.join(", ")}, ${config.genre}`;
   }
 
-  return Array.from(parts).join(", ");
+  return uniqueParts.join(", ");
 }
