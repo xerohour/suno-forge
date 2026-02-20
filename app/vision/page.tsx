@@ -81,7 +81,7 @@ export default function Vision() {
       <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto border-x border-primary/10 bg-background-light dark:bg-background-dark shadow-2xl">
         {/* Header */}
         <header className="flex items-center px-6 pt-12 pb-4 justify-between sticky top-0 bg-background-dark/80 backdrop-blur-md z-10">
-          <Link href="/" className="text-white hover:text-primary transition-colors">
+          <Link href="/" aria-label="Go back to Home" className="text-white hover:text-primary transition-colors">
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h2 className="text-lg font-bold tracking-tight uppercase">Vision</h2>
