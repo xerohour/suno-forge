@@ -78,9 +78,9 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button className="text-primary p-1">
+        <Link href="/" aria-label="Go back to Home" className="text-primary p-1">
           <ArrowLeft className="w-6 h-6" />
-        </button>
+        </Link>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
         <div className="w-6"></div> {/* Spacer for centering */}
       </header>
