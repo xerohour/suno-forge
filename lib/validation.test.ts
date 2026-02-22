@@ -1,4 +1,4 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, validateVisionRequest, MAX_TITLE_LENGTH, MAX_SHORT_TEXT_LENGTH, MAX_LONG_TEXT_LENGTH, MAX_TAGS_COUNT } from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +58,36 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        // NEW TESTS
+        it('should reject title too long', () => {
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH + 1) })).toBe(false);
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH) })).toBe(true);
+        });
+
+        it('should reject genre too long', () => {
+            expect(validatePromptConfig({ genre: 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject mood too long', () => {
+            expect(validatePromptConfig({ mood: 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject lyrics too long', () => {
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
+        });
+
+        it('should reject too many style tags', () => {
+            const tags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tags })).toBe(false);
+            const validTags = Array(MAX_TAGS_COUNT).fill('tag');
+            expect(validatePromptConfig({ styleTags: validTags })).toBe(true);
+        });
+
+        it('should reject style tag too long', () => {
+            expect(validatePromptConfig({ styleTags: ['a'.repeat(MAX_SHORT_TEXT_LENGTH + 1)] })).toBe(false);
         });
     });
 
@@ -129,6 +159,33 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid request', () => {
+            expect(validateVisionRequest({ description: 'A futuristic city' })).toBe(true);
+        });
+
+        it('should reject missing description', () => {
+            expect(validateVisionRequest({})).toBe(false);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+        });
+
+        it('should reject whitespace-only description', () => {
+            expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+         it('should reject non-string description', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
+        });
+
+        it('should reject description too long', () => {
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
         });
     });
 });
