@@ -33,6 +33,8 @@ export default function Studio() {
   const [experimental, setExperimental] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  const complexityLabel = complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low";
+
   const handleChipClick = (chip: string) => {
     setStyle(chip);
   };
@@ -78,7 +80,7 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button className="text-primary p-1">
+        <button className="text-primary p-1" aria-label="Go back">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
@@ -161,6 +163,7 @@ export default function Studio() {
                 min="0"
                 step="0.1"
                 type="range"
+                aria-valuetext={`Randomness: ${randomness}`}
                 value={randomness}
                 onChange={(e) => setRandomness(parseFloat(e.target.value))}
               />
@@ -170,7 +173,7 @@ export default function Studio() {
               <div className="flex justify-between items-center">
                 <label htmlFor="complexity-slider" className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
                 <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                  {complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low"}
+                  {complexityLabel}
                 </span>
               </div>
               <input
@@ -180,6 +183,7 @@ export default function Studio() {
                 min="0"
                 step="1"
                 type="range"
+                aria-valuetext={complexityLabel}
                 value={complexity}
                 onChange={(e) => setComplexity(parseInt(e.target.value))}
               />
@@ -200,7 +204,7 @@ export default function Studio() {
                   checked={experimental}
                   onChange={(e) => setExperimental(e.target.checked)}
                 />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
               </label>
             </div>
           </div>
