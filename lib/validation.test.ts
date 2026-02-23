@@ -1,4 +1,13 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import {
+    validatePromptConfig,
+    validateMutationType,
+    validateBatchRequest,
+    validateVisionRequest,
+    MAX_TITLE_LENGTH,
+    MAX_SHORT_TEXT_LENGTH,
+    MAX_LONG_TEXT_LENGTH,
+    MAX_TAGS_COUNT
+} from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +67,44 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        // Length validation tests
+        it('should reject title exceeding max length', () => {
+            const longTitle = 'a'.repeat(MAX_TITLE_LENGTH + 1);
+            expect(validatePromptConfig({ title: longTitle })).toBe(false);
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH) })).toBe(true);
+        });
+
+        it('should reject short text fields exceeding max length', () => {
+            const longText = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            const validText = 'a'.repeat(MAX_SHORT_TEXT_LENGTH);
+
+            const fields = ['genre', 'mood', 'instrumentation', 'vocalStyle',
+                            'production', 'theme', 'language', 'negativePrompt'];
+
+            fields.forEach(field => {
+                expect(validatePromptConfig({ [field]: longText })).toBe(false);
+                expect(validatePromptConfig({ [field]: validText })).toBe(true);
+            });
+        });
+
+        it('should reject lyrics exceeding max length', () => {
+            const longLyrics = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ lyrics: longLyrics })).toBe(false);
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
+        });
+
+        it('should reject styleTags exceeding max count', () => {
+            const manyTags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: manyTags })).toBe(false);
+            expect(validatePromptConfig({ styleTags: Array(MAX_TAGS_COUNT).fill('tag') })).toBe(true);
+        });
+
+        it('should reject styleTags with individual tag exceeding max length', () => {
+            const longTag = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ styleTags: [longTag] })).toBe(false);
+            expect(validatePromptConfig({ styleTags: ['valid'] })).toBe(true);
         });
     });
 
@@ -129,6 +176,37 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+            const request = { description: 'A beautiful sunset' };
+            expect(validateVisionRequest(request)).toBe(true);
+        });
+
+        it('should reject invalid description type', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
+            expect(validateVisionRequest({ description: null })).toBe(false);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+            expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+        it('should reject description exceeding max length', () => {
+            const longDesc = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validateVisionRequest({ description: longDesc })).toBe(false);
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
+        });
+
+        it('should reject missing description', () => {
+             expect(validateVisionRequest({})).toBe(false);
+        });
+
+        it('should reject null request', () => {
+            expect(validateVisionRequest(null)).toBe(false);
         });
     });
 });
