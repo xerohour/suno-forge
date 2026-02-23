@@ -13,3 +13,7 @@
 ## 2025-02-18 - Array Chaining vs Loops
 **Learning:** Chaining `.filter().map()` creates intermediate arrays and iterates multiple times. For hot paths, a single `for` loop is more memory efficient and faster.
 **Action:** Prefer single loops over array method chains in performance-critical code sections.
+
+## 2025-02-18 - Optimized String Replacement
+**Learning:** Replacing multiple non-overlapping strings iteratively (e.g. A->B, C->D) is O(N*M) and can be error-prone with circular replacements (A->B, B->A). A single regex `/(A|C)/g` with a callback map is O(N) and handles circularity naturally.
+**Action:** Use regex with callback map for multiple string replacements instead of iterative `replace` calls.
