@@ -1,5 +1,10 @@
 import { PromptConfig, MutationType } from "@/types/prompt";
 
+export const MAX_TITLE_LENGTH = 100;
+export const MAX_SHORT_TEXT_LENGTH = 500;
+export const MAX_LONG_TEXT_LENGTH = 5000;
+export const MAX_TAGS_COUNT = 20;
+
 /**
  * Validates a prompt configuration object
  */
@@ -11,23 +16,36 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
     const c = config as Record<string, unknown>;
 
     // Optional fields with type checking
-    if (c.title !== undefined && typeof c.title !== 'string') return false;
-    if (c.genre !== undefined && typeof c.genre !== 'string') return false;
-    if (c.mood !== undefined && typeof c.mood !== 'string') return false;
+    if (c.title !== undefined) {
+        if (typeof c.title !== 'string') return false;
+        if (c.title.length > MAX_TITLE_LENGTH) return false;
+    }
+
+    const shortTextFields = [
+        'genre', 'mood', 'instrumentation', 'vocalStyle',
+        'production', 'theme', 'language', 'negativePrompt'
+    ];
+
+    for (const field of shortTextFields) {
+        if (c[field] !== undefined) {
+            if (typeof c[field] !== 'string') return false;
+            if ((c[field] as string).length > MAX_SHORT_TEXT_LENGTH) return false;
+        }
+    }
+
+    if (c.lyrics !== undefined) {
+        if (typeof c.lyrics !== 'string') return false;
+        if (c.lyrics.length > MAX_LONG_TEXT_LENGTH) return false;
+    }
+
     if (c.tempo !== undefined && typeof c.tempo !== 'number') return false;
-    if (c.instrumentation !== undefined && typeof c.instrumentation !== 'string') return false;
-    if (c.vocalStyle !== undefined && typeof c.vocalStyle !== 'string') return false;
-    if (c.production !== undefined && typeof c.production !== 'string') return false;
     if (c.energy !== undefined && typeof c.energy !== 'number') return false;
-    if (c.theme !== undefined && typeof c.theme !== 'string') return false;
-    if (c.lyrics !== undefined && typeof c.lyrics !== 'string') return false;
-    if (c.language !== undefined && typeof c.language !== 'string') return false;
     if (c.instrumental !== undefined && typeof c.instrumental !== 'boolean') return false;
-    if (c.negativePrompt !== undefined && typeof c.negativePrompt !== 'string') return false;
 
     if (c.styleTags !== undefined) {
         if (!Array.isArray(c.styleTags)) return false;
-        if (!c.styleTags.every((tag) => typeof tag === 'string')) return false;
+        if (c.styleTags.length > MAX_TAGS_COUNT) return false;
+        if (!c.styleTags.every((tag) => typeof tag === 'string' && tag.length <= MAX_SHORT_TEXT_LENGTH)) return false;
     }
 
     // Validate energy range
@@ -93,6 +111,10 @@ export function validateVisionRequest(data: unknown): data is { description: str
     const d = data as Record<string, unknown>;
 
     if (!d.description || typeof d.description !== 'string' || d.description.trim().length === 0) {
+        return false;
+    }
+
+    if (d.description.length > MAX_LONG_TEXT_LENGTH) {
         return false;
     }
 
