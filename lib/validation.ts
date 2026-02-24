@@ -117,3 +117,19 @@ export function createErrorResponse(
         { status }
     );
 }
+
+/**
+ * Handles server errors securely by logging the full error and returning a sanitized response
+ */
+export function handleServerError(error: unknown, context: string): Response {
+    console.error(`${context}:`, error);
+
+    // In production, we should not expose the error message
+    // But for now, we'll keep the message generic
+    return createErrorResponse(
+        "An unexpected error occurred",
+        500,
+        undefined, // Don't expose details
+        "INTERNAL_SERVER_ERROR"
+    );
+}

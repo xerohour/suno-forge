@@ -1,5 +1,5 @@
 import { mutatePrompt } from "@/lib/mutationEngine";
-import { validateMutationType, createErrorResponse } from "@/lib/validation";
+import { validateMutationType, createErrorResponse, handleServerError } from "@/lib/validation";
 import { MutateResponse } from "@/types/api";
 
 export const runtime = "nodejs";
@@ -33,15 +33,6 @@ export async function POST(req: Request) {
     const response: MutateResponse = { mutated };
     return Response.json(response);
   } catch (error) {
-    console.error("Mutation failed:", error);
-
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    return createErrorResponse(
-      "Failed to mutate prompt",
-      500,
-      errorMessage,
-      "MUTATION_FAILED"
-    );
+    return handleServerError(error, "Mutation failed");
   }
 }
-
