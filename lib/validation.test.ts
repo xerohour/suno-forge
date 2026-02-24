@@ -1,4 +1,4 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, handleServerError } from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -129,6 +129,30 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('handleServerError', () => {
+        it('should return a generic error message', async () => {
+            // We want to verify it doesn't return the sensitive error message
+            const error = new Error('Sensitive internal error');
+            const context = 'Test Context';
+
+            // Mock console.error to avoid polluting test output
+            const originalConsoleError = console.error;
+            console.error = () => {};
+
+            try {
+                const response = handleServerError(error, context);
+                const data = await response.json();
+
+                expect(data.error).toBe('An unexpected error occurred');
+                expect(data.details).toBeUndefined();
+                expect(data.code).toBe('INTERNAL_SERVER_ERROR');
+                expect(response.status).toBe(500);
+            } finally {
+                console.error = originalConsoleError;
+            }
         });
     });
 });
