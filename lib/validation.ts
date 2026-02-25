@@ -117,3 +117,22 @@ export function createErrorResponse(
         { status }
     );
 }
+
+/**
+ * Handles server errors by logging and returning a generic error response
+ */
+export function handleServerError(
+    error: unknown,
+    userMessage: string,
+    errorCode: string
+): Response {
+    console.error(`[${errorCode}] ${userMessage}:`, error);
+
+    // Return generic error to client, do not leak error details
+    return createErrorResponse(
+        userMessage,
+        500,
+        undefined,
+        errorCode
+    );
+}
