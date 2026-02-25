@@ -13,3 +13,7 @@
 ## 2025-02-18 - Array Chaining vs Loops
 **Learning:** Chaining `.filter().map()` creates intermediate arrays and iterates multiple times. For hot paths, a single `for` loop is more memory efficient and faster.
 **Action:** Prefer single loops over array method chains in performance-critical code sections.
+
+## 2025-02-18 - Regex Performance
+**Learning:** `mutatePrompt` was creating `mutations` object and compiling regexes on every call. `mood-invert` used iterative replacements O(N*M).
+**Action:** Extract static data/handlers to module scope. Use single-pass regex replacement with callback O(N) for multiple substitutions.
