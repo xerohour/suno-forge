@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PROMPT_PACKS } from "@/lib/promptPacks";
+import { getComplexityLabel } from "./helpers";
 
 // Chips data defined outside component to avoid recreation on every render
 const STYLE_CHIPS = [
@@ -170,7 +171,7 @@ export default function Studio() {
               <div className="flex justify-between items-center">
                 <label htmlFor="complexity-slider" className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
                 <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                  {complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low"}
+                  {getComplexityLabel(complexity)}
                 </span>
               </div>
               <input
@@ -181,6 +182,7 @@ export default function Studio() {
                 step="1"
                 type="range"
                 value={complexity}
+                aria-valuetext={getComplexityLabel(complexity)}
                 onChange={(e) => setComplexity(parseInt(e.target.value))}
               />
             </div>
@@ -200,7 +202,7 @@ export default function Studio() {
                   checked={experimental}
                   onChange={(e) => setExperimental(e.target.checked)}
                 />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
               </label>
             </div>
           </div>
