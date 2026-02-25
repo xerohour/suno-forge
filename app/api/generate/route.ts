@@ -1,5 +1,5 @@
 import { buildPrompt } from "@/lib/promptEngine";
-import { validatePromptConfig, createErrorResponse } from "@/lib/validation";
+import { validatePromptConfig, createErrorResponse, handleServerError } from "@/lib/validation";
 import { GenerateResponse } from "@/types/api";
 
 export const runtime = "nodejs";
@@ -24,13 +24,9 @@ export async function POST(req: Request) {
     const response: GenerateResponse = { prompt };
     return Response.json(response);
   } catch (error) {
-    console.error("Generation failed:", error);
-
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    return createErrorResponse(
+    return handleServerError(
+      error,
       "Failed to generate prompt",
-      500,
-      errorMessage,
       "GENERATION_FAILED"
     );
   }

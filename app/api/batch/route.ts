@@ -1,5 +1,5 @@
 import { buildPrompt } from "@/lib/promptEngine";
-import { validateBatchRequest, createErrorResponse } from "@/lib/validation";
+import { validateBatchRequest, createErrorResponse, handleServerError } from "@/lib/validation";
 import { BatchResponse } from "@/types/api";
 
 export const runtime = "nodejs";
@@ -28,13 +28,9 @@ export async function POST(req: Request) {
     const response: BatchResponse = { prompts };
     return Response.json(response);
   } catch (error) {
-    console.error("Batch generation failed:", error);
-
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    return createErrorResponse(
+    return handleServerError(
+      error,
       "Failed to generate batch prompts",
-      500,
-      errorMessage,
       "BATCH_FAILED"
     );
   }

@@ -1,6 +1,38 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, handleServerError } from './validation';
 
 describe('validation', () => {
+    describe('handleServerError', () => {
+        it('should log error and return generic response', async () => {
+            const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const error = new Error('Sensitive internal error');
+
+            const response = handleServerError(
+                error,
+                'User facing message',
+                'TEST_ERROR'
+            );
+
+            // Verify console logging
+            expect(consoleSpy).toHaveBeenCalledWith(
+                '[TEST_ERROR] User facing message:',
+                error
+            );
+
+            // Verify response
+            expect(response.status).toBe(500);
+            const body = await response.json();
+
+            // Should contain user message
+            expect(body.error).toBe('User facing message');
+            expect(body.code).toBe('TEST_ERROR');
+
+            // Should NOT contain sensitive details
+            expect(body.details).toBeUndefined();
+
+            consoleSpy.mockRestore();
+        });
+    });
+
     describe('validatePromptConfig', () => {
         it('should accept valid minimal config', () => {
             const config = { genre: 'jazz' };
