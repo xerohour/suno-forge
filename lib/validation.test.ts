@@ -1,4 +1,4 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, validateVisionRequest, MAX_TITLE_LENGTH, MAX_SHORT_TEXT_LENGTH, MAX_LONG_TEXT_LENGTH, MAX_TAGS_COUNT } from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +58,41 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        it('should enforce max title length', () => {
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH) })).toBe(true);
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should enforce max short text length for generic fields', () => {
+            const longText = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ genre: longText })).toBe(false);
+            expect(validatePromptConfig({ mood: longText })).toBe(false);
+            expect(validatePromptConfig({ instrumentation: longText })).toBe(false);
+            expect(validatePromptConfig({ vocalStyle: longText })).toBe(false);
+            expect(validatePromptConfig({ production: longText })).toBe(false);
+            expect(validatePromptConfig({ theme: longText })).toBe(false);
+            expect(validatePromptConfig({ language: longText })).toBe(false);
+            expect(validatePromptConfig({ negativePrompt: longText })).toBe(false);
+        });
+
+        it('should enforce max long text length for lyrics', () => {
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should enforce max tags count', () => {
+            const tags = Array(MAX_TAGS_COUNT).fill('tag');
+            expect(validatePromptConfig({ styleTags: tags })).toBe(true);
+
+            const tooManyTags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tooManyTags })).toBe(false);
+        });
+
+        it('should enforce max length for individual tags', () => {
+             const longTag = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+             expect(validatePromptConfig({ styleTags: [longTag] })).toBe(false);
         });
     });
 
@@ -129,6 +164,26 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+             expect(validateVisionRequest({ description: 'A sunny beach' })).toBe(true);
+        });
+
+        it('should reject null or undefined', () => {
+            expect(validateVisionRequest(null)).toBe(false);
+            expect(validateVisionRequest(undefined)).toBe(false);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+        });
+
+        it('should enforce max description length', () => {
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH) })).toBe(true);
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
         });
     });
 });
