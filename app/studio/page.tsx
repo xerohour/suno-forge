@@ -37,6 +37,12 @@ export default function Studio() {
     setStyle(chip);
   };
 
+  const getComplexityLabel = (val: number) => {
+    if (val > 75) return "High";
+    if (val > 40) return "Medium";
+    return "Low";
+  };
+
   async function generate() {
     setLoading(true);
     try {
@@ -78,7 +84,7 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button className="text-primary p-1">
+        <button className="text-primary p-1" aria-label="Go back">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
@@ -170,11 +176,12 @@ export default function Studio() {
               <div className="flex justify-between items-center">
                 <label htmlFor="complexity-slider" className="text-sm font-medium text-slate-600 dark:text-slate-300">Complexity</label>
                 <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                  {complexity > 75 ? "High" : complexity > 40 ? "Medium" : "Low"}
+                  {getComplexityLabel(complexity)}
                 </span>
               </div>
               <input
                 id="complexity-slider"
+                aria-valuetext={getComplexityLabel(complexity)}
                 className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
                 max="100"
                 min="0"
