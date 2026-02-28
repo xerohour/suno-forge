@@ -1,4 +1,4 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import { validatePromptConfig, validateMutationType, validateBatchRequest, validateVisionRequest, MAX_TITLE_LENGTH, MAX_SHORT_TEXT_LENGTH, MAX_LONG_TEXT_LENGTH, MAX_TAGS_COUNT } from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
@@ -58,6 +58,18 @@ describe('validation', () => {
         it('should reject styleTags with non-string elements', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
+        });
+
+        it('should reject fields exceeding max lengths', () => {
+            expect(validatePromptConfig({ title: 'a'.repeat(MAX_TITLE_LENGTH + 1) })).toBe(false);
+            expect(validatePromptConfig({ genre: 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1) })).toBe(false);
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+
+            const tooManyTags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tooManyTags })).toBe(false);
+
+            const tagTooLong = ['a'.repeat(MAX_SHORT_TEXT_LENGTH + 1)];
+            expect(validatePromptConfig({ styleTags: tagTooLong })).toBe(false);
         });
     });
 
@@ -129,6 +141,33 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+            expect(validateVisionRequest({ description: 'A sunny day in the park' })).toBe(true);
+        });
+
+        it('should reject missing description', () => {
+            expect(validateVisionRequest({})).toBe(false);
+        });
+
+        it('should reject non-string description', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
+        });
+
+        it('should reject empty description', () => {
+            expect(validateVisionRequest({ description: '' })).toBe(false);
+            expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+        it('should reject description exceeding max length', () => {
+            expect(validateVisionRequest({ description: 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1) })).toBe(false);
+        });
+
+        it('should reject null', () => {
+            expect(validateVisionRequest(null)).toBe(false);
         });
     });
 });
