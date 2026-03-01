@@ -1,5 +1,5 @@
 import { mutatePrompt } from "@/lib/mutationEngine";
-import { validateMutationType, createErrorResponse } from "@/lib/validation";
+import { validateMutationType, createErrorResponse, MAX_LONG_TEXT_LENGTH } from "@/lib/validation";
 import { MutateResponse } from "@/types/api";
 
 export const runtime = "nodejs";
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Validate inputs
-    if (!body.prompt || typeof body.prompt !== 'string' || body.prompt.trim().length === 0) {
+    if (!body.prompt || typeof body.prompt !== 'string' || body.prompt.length > MAX_LONG_TEXT_LENGTH || body.prompt.trim().length === 0) {
       return createErrorResponse(
         "Invalid prompt",
         400,
