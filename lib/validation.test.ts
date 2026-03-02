@@ -59,6 +59,18 @@ describe('validation', () => {
             expect(validatePromptConfig({ styleTags: [123, 'valid'] })).toBe(false);
             expect(validatePromptConfig({ styleTags: ['valid', 'tags'] })).toBe(true);
         });
+
+        it('should reject overly long strings', () => {
+            expect(validatePromptConfig({ title: 'a'.repeat(101) })).toBe(false);
+            expect(validatePromptConfig({ genre: 'a'.repeat(501) })).toBe(false);
+            expect(validatePromptConfig({ lyrics: 'a'.repeat(5001) })).toBe(false);
+            expect(validatePromptConfig({ styleTags: ['a'.repeat(501)] })).toBe(false);
+        });
+
+        it('should reject too many style tags', () => {
+            expect(validatePromptConfig({ styleTags: Array(21).fill('tag') })).toBe(false);
+            expect(validatePromptConfig({ styleTags: Array(20).fill('tag') })).toBe(true);
+        });
     });
 
     describe('validateMutationType', () => {
