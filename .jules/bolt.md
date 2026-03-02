@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-03-02 - Set Instantiation vs Includes
+**Learning:** Using `Array.from(new Set(arr))` to remove duplicates from a small array is significantly slower than building a new array and checking for uniqueness during insertion with `.includes()`. The overhead of instantiating the Set and converting it back to an Array is too high for small, frequently-called hot paths.
+**Action:** Use a simple `for` loop with an `.includes()` check for deduplicating small arrays in performance-critical code.
