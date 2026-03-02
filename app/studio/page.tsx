@@ -10,7 +10,8 @@ import {
   Home,
   Bot,
   Library,
-  UserCircle
+  UserCircle,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 import { PROMPT_PACKS } from "@/lib/promptPacks";
@@ -78,7 +79,7 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button className="text-primary p-1">
+        <button aria-label="Go back" className="text-primary p-1">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
@@ -216,7 +217,7 @@ export default function Studio() {
           aria-disabled={loading}
           className="neon-glow w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-95 disabled:opacity-70"
         >
-          <Zap className="w-5 h-5 fill-current" />
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5 fill-current" />}
           {loading ? "Generating..." : "Generate Music"}
         </button>
 
