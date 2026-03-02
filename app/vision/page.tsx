@@ -194,7 +194,7 @@ export default function Vision() {
             <Wand2 className="w-6 h-6" />
             <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Forge</p>
           </Link>
-          <Link href="/vision" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary">
+          <Link href="/vision" aria-current="page" className="flex flex-1 flex-col items-center justify-end gap-1 text-primary">
             <Aperture className="w-6 h-6" />
             <p className="text-[10px] font-bold leading-normal tracking-widest uppercase">Vision</p>
           </Link>

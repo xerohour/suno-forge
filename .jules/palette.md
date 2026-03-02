@@ -5,3 +5,6 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+## 2025-03-02 - Active Navigation State
+**Learning:** Visual active states on navigation links (like color changes) are invisible to screen readers. We must use `aria-current="page"` on the active link to ensure users navigating with assistive tech know which page they are currently viewing.
+**Action:** When building or updating navigation menus, always ensure the active link dynamically or statically applies `aria-current="page"`.
