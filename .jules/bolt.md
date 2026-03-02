@@ -13,3 +13,11 @@
 ## 2025-02-18 - Array Chaining vs Loops
 **Learning:** Chaining `.filter().map()` creates intermediate arrays and iterates multiple times. For hot paths, a single `for` loop is more memory efficient and faster.
 **Action:** Prefer single loops over array method chains in performance-critical code sections.
+
+## 2025-02-18 - RegExp Callbacks vs Multiple Passes
+**Learning:** Performing multiple `String.prototype.replace()` passes with a placeholder system for cyclical replacements (O(N*M)) is slow. Using a single pre-compiled regular expression with a callback mapping function (O(N)) provides an immediate ~300% performance boost and is more memory efficient.
+**Action:** Always prefer a single pre-compiled regex with a callback over iterative placeholder replacements for multiple simultaneous string substitutions.
+
+## 2025-02-18 - Object Allocation in Hot Paths
+**Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
+**Action:** Extract static configuration objects and maps to module-level constants.

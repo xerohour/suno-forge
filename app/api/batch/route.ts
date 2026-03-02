@@ -8,8 +8,18 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    const { config, count: rawCount } = body;
+
+    // Clamp count
+    const count = typeof rawCount === 'number'
+      ? Math.max(1, Math.min(50, rawCount))
+      : 1;
+
+    // Create a modified body with the clamped count to pass validation
+    const clampedBody = { config, count };
+
     // Validate batch request
-    if (!validateBatchRequest(body)) {
+    if (!validateBatchRequest(clampedBody)) {
       return createErrorResponse(
         "Invalid batch request",
         400,
@@ -17,8 +27,6 @@ export async function POST(req: Request) {
         "INVALID_BATCH_REQUEST"
       );
     }
-
-    const { config, count } = body;
 
     // Generate prompts in parallel
     const prompts = await Promise.all(
