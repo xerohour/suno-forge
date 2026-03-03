@@ -15,11 +15,8 @@ export async function POST(req: Request) {
       ? Math.max(1, Math.min(50, rawCount))
       : 1;
 
-    // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
-
-    // Validate batch request
-    if (!validateBatchRequest(clampedBody)) {
+    // Validate batch request using the un-clamped body to ensure raw count was valid
+    if (!validateBatchRequest(body)) {
       return createErrorResponse(
         "Invalid batch request",
         400,
@@ -38,11 +35,10 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Batch generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to generate batch prompts",
       500,
-      errorMessage,
+      "An internal error occurred",
       "BATCH_FAILED"
     );
   }
