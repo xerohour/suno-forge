@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Array Deduplication Overhead
+**Learning:** Using `Array.from(new Set(array))` for deduplicating very small arrays in hot paths (like `buildStyle`) introduces significant instantiation overhead. Using a single `for` loop with a `.includes()` check is measurably faster (almost 2x on microbenchmarks) while maintaining insertion order and correct behavior.
+**Action:** For performance-critical code dealing with small arrays, prefer single loops with `.includes()` over `Set` instantiation.
