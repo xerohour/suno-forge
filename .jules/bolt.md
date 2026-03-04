@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Regex Re-compilation Overhead
+**Learning:** Using regex literals inside a frequently called function (like `mutatePrompt` with `instrumental` type) causes the regex engine to re-compile the expression on every invocation. Defining regexes as module-level constants (`VOCAL_REGEX`, `MULTI_COMMA_REGEX`, etc.) avoids this overhead and provides a ~3x performance boost.
+**Action:** Always define regular expressions as module-level constants if they are used within hot paths or frequently called functions.

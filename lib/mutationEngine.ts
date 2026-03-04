@@ -19,6 +19,10 @@ const MOOD_MAP: Record<string, string> = {
 
 const MOOD_REGEX = new RegExp(`\\b(${Object.keys(MOOD_MAP).join('|')})\\b`, 'gi');
 
+const VOCAL_REGEX = /\b(vocal|vocals|singing|lyrics|voice|sung)\b[^,]*/gi;
+const MULTI_COMMA_REGEX = /,\s*,+/g;
+const EDGE_COMMA_REGEX = /^,\s*|\s*,$/g;
+
 const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
   viral: (p) => {
     // Add viral characteristics: short, catchy, repetitive
@@ -40,9 +44,9 @@ const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
 
   instrumental: (p) => {
     // Convert to instrumental by removing vocal references
-    let result = p.replace(/\b(vocal|vocals|singing|lyrics|voice|sung)\b[^,]*/gi, '');
+    let result = p.replace(VOCAL_REGEX, '');
     // Clean up multiple commas and extra spaces
-    result = result.replace(/,\s*,+/g, ',').replace(/^,\s*|\s*,$/g, '').trim();
+    result = result.replace(MULTI_COMMA_REGEX, ',').replace(EDGE_COMMA_REGEX, '').trim();
     return `${result}, instrumental only, no vocals`;
   },
 
