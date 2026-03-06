@@ -10,16 +10,8 @@ export async function POST(req: Request) {
 
     const { config, count: rawCount } = body;
 
-    // Clamp count
-    const count = typeof rawCount === 'number'
-      ? Math.max(1, Math.min(50, rawCount))
-      : 1;
-
-    // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
-
-    // Validate batch request
-    if (!validateBatchRequest(clampedBody)) {
+    // Use the original body for validation to properly reject out-of-range values
+    if (!validateBatchRequest(body)) {
       return createErrorResponse(
         "Invalid batch request",
         400,
@@ -27,6 +19,11 @@ export async function POST(req: Request) {
         "INVALID_BATCH_REQUEST"
       );
     }
+
+    // Defense-in-depth: clamp count after validation to strictly bound allocation
+    const count = typeof rawCount === 'number'
+      ? Math.max(1, Math.min(50, rawCount))
+      : 1;
 
     // Generate prompts in parallel
     const prompts = await Promise.all(
@@ -38,11 +35,10 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Batch generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to generate batch prompts",
       500,
-      errorMessage,
+      undefined, // Do not expose internal error messages to the client
       "BATCH_FAILED"
     );
   }
