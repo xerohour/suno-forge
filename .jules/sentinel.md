@@ -1,0 +1,4 @@
+## 2024-05-24 - API Error Information Leakage
+**Vulnerability:** Internal error messages and stack traces were being returned to the client in the 500 error responses from the `/api/generate`, `/api/mutate`, `/api/batch`, and `/api/vision` routes.
+**Learning:** Returning `error.message` or the internal stack directly via the `createErrorResponse` helper exposes internal application logic, which can give an attacker insight into server paths, file structure, third-party failures, or underlying service infrastructure, making the system easier to attack.
+**Prevention:** Catch blocks in API routes should only return a generic, static failure message to the client (or explicitly handle known, safe, user-facing error details) while logging the full exception internally to a monitoring system or standard output. Wait to invoke `createErrorResponse` with `undefined` for the details field.
