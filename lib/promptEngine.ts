@@ -8,10 +8,17 @@ function generatePromptTitle(config: PromptDNA): string {
   return `${genre.charAt(0).toUpperCase() + genre.slice(1)} - ${mood.charAt(0).toUpperCase() + mood.slice(1)}`;
 }
 
+// Pre-compiled regexes to avoid re-compilation overhead on every prompt generation
+const NON_ALPHANUMERIC_REGEX = /[^a-z0-9_\s-]/g;
+const WHITESPACE_REGEX = /\s+/g;
+
+const ISO_DATE_CLEANUP_REGEX = /[-:T]/g;
+
 function generateTechnicalName(title: string): string {
+    // Retain the exact YYYYMMDDHHMMSS format while optimizing regex overhead
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
+    const timestamp = now.toISOString().slice(0, 19).replace(ISO_DATE_CLEANUP_REGEX, ''); // YYYYMMDDHHMMSS
+    const safeTitle = title.toLowerCase().replace(NON_ALPHANUMERIC_REGEX, ' ').trim().replace(WHITESPACE_REGEX, '_');
     return `${safeTitle}_${timestamp}`;
 }
 

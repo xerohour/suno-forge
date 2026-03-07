@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2026-03-07 - Pre-compile Regexes in Function Scopes
+**Learning:** Defining literal regular expressions inside frequently called functions (like `generateTechnicalName` inside `buildPrompt`) forces the JS engine to allocate a new RegExp object on each invocation.
+**Action:** Hoist local regex literals to module-level constants to avoid unnecessary recompilation and garbage collection overhead, preserving strict functional output.
