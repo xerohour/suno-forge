@@ -1,0 +1,4 @@
+## 2024-05-24 - API Error Response Information Disclosure
+**Vulnerability:** Internal application errors, such as trace logs or generated exception messages, were being surfaced back to users through all API routes (batch, generate, mutate, vision) using the `createErrorResponse`'s details field.
+**Learning:** Returning `error.message` unconditionally when exceptions occur violates the fail-secure principle, allowing malicious users or automated bots to map out internal infrastructure or logic depending on how errors bubble up.
+**Prevention:** Avoid passing raw exception objects or their messages explicitly to user-facing generic response wrappers. Instead, supply structured data like constant error codes (e.g. `GENERATION_FAILED`), log securely on the backend, and supply `undefined` or generic public messages to clients.
