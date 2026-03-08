@@ -1,0 +1,4 @@
+## 2024-05-24 - API Error Information Leakage
+**Vulnerability:** API routes (`/api/generate`, `/api/batch`, `/api/mutate`, `/api/vision`) were catching internal server errors and returning the raw `error.message` directly to the client within the `details` field of the error response.
+**Learning:** Returning raw internal error messages or stack traces to the client can inadvertently leak sensitive information about the application's internal workings, database structure, or connected services to a potential attacker.
+**Prevention:** Fail securely. Always pass `undefined` or a generic, non-revealing error message to the client when handling unexpected internal errors, while ensuring the detailed `error` is still logged securely on the server (`console.error` or a logging service) for debugging purposes.
