@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Micro-optimization Pitfalls
+**Learning:** Replacing `Set` with an `.includes()` check in a loop is an algorithmically worse approach (O(N^2) vs O(N)) and often does not provide a true performance optimization. Also, do not modify test behavior when implementing a pure performance improvement.
+**Action:** Avoid O(N^2) loops for deduplication unless the arrays are guaranteed to be extremely small (e.g. < 5 elements) and always ensure purely non-functional changes do not break test contracts.
