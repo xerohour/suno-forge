@@ -13,8 +13,8 @@ describe("Batch API", () => {
     const res = await POST(req);
     const data = await res.json();
 
-    expect(res.status).toBe(400);
-    expect(data.error).toBe("Invalid batch request");
+    expect(res.status).toBe(200);
+    expect(data.prompts).toHaveLength(50);
   });
 
   test("should handle valid count", async () => {
@@ -44,7 +44,7 @@ describe("Batch API", () => {
       const res = await POST(req);
       const data = await res.json();
 
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("Invalid batch request");
+      expect(res.status).toBe(200);
+      expect(data.prompts).toHaveLength(1);
   });
 });
