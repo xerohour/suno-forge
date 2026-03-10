@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - RegExp Recompilation Overhead
+**Learning:** Inline regular expression literals (e.g., `/[a-z]/g`) inside frequently called functions (like `generateTechnicalName`) are re-compiled by the JavaScript engine on every invocation, adding unnecessary overhead.
+**Action:** Extract inline regular expressions into pre-compiled module-level constants to eliminate recompilation overhead, especially in batch processing scenarios.
