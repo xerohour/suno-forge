@@ -8,10 +8,15 @@ function generatePromptTitle(config: PromptDNA): string {
   return `${genre.charAt(0).toUpperCase() + genre.slice(1)} - ${mood.charAt(0).toUpperCase() + mood.slice(1)}`;
 }
 
+// Pre-compile regexes to avoid recompilation overhead in hot paths
+const TIMESTAMP_CLEANUP_REGEX = /[-:T]/g;
+const SAFE_TITLE_CLEANUP_REGEX = /[^a-z0-9_\s-]/g;
+const WHITESPACE_REGEX = /\s+/g;
+
 function generateTechnicalName(title: string): string {
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
+    const timestamp = now.toISOString().slice(0, 19).replace(TIMESTAMP_CLEANUP_REGEX, ''); // YYYYMMDDHHMMSS
+    const safeTitle = title.toLowerCase().replace(SAFE_TITLE_CLEANUP_REGEX, ' ').trim().replace(WHITESPACE_REGEX, '_');
     return `${safeTitle}_${timestamp}`;
 }
 
