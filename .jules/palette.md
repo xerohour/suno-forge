@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2025-03-13 - Custom Interactive Div Accessibility and HTML Nesting
+**Learning:** Custom file upload dropzones implemented with `div` wrappers must include `role="button"`, `tabIndex={0}`, an `aria-label`, and an `onKeyDown` handler (for Enter/Space keys) to ensure keyboard accessibility. Visual focus states (e.g., `focus-visible:ring-2`) are also crucial. Additionally, interactive elements like `<button>` cannot be nested inside another element acting as a button; they should be changed to `<span className="inline-block">` to maintain styling while ensuring valid HTML nesting.
+**Action:** When implementing custom interactive elements like dropzones, ensure full keyboard accessibility, semantic roles, focus states, and valid HTML nesting.
