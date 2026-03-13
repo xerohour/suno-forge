@@ -2,6 +2,11 @@ import { buildStyle } from "./styleEngine";
 import { cleanLyricsForProduction } from "./lyricsEngine";
 import { Prompt, PromptDNA } from "@/types/prompt";
 
+// Pre-compile regexes for technical name generation
+const TIMESTAMP_REPLACE_REGEX = /[-:T]/g;
+const SAFE_TITLE_REGEX = /[^a-z0-9_\s-]/g;
+const SPACE_REPLACE_REGEX = /\s+/g;
+
 function generatePromptTitle(config: PromptDNA): string {
   const genre = config.genre || 'Music';
   const mood = config.mood || 'Vibes';
@@ -10,8 +15,8 @@ function generatePromptTitle(config: PromptDNA): string {
 
 function generateTechnicalName(title: string): string {
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
+    const timestamp = now.toISOString().slice(0, 19).replace(TIMESTAMP_REPLACE_REGEX, ''); // YYYYMMDDHHMMSS
+    const safeTitle = title.toLowerCase().replace(SAFE_TITLE_REGEX, ' ').trim().replace(SPACE_REPLACE_REGEX, '_');
     return `${safeTitle}_${timestamp}`;
 }
 
