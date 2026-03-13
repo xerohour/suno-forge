@@ -177,7 +177,7 @@ export default function Batch() {
           <Castle className="w-6 h-6 text-[#ad92c9] group-hover:text-primary transition-colors" />
           <span className="text-[#ad92c9] text-[10px] font-medium uppercase tracking-wider">Forge</span>
         </Link>
-        <Link href="/batch" className="flex flex-col items-center gap-1 group">
+        <Link href="/batch" aria-current="page" className="flex flex-col items-center gap-1 group">
           <Layers className="w-6 h-6 text-white" />
           <span className="text-white text-[10px] font-medium uppercase tracking-wider">Batch</span>
         </Link>
