@@ -8,10 +8,21 @@ function generatePromptTitle(config: PromptDNA): string {
   return `${genre.charAt(0).toUpperCase() + genre.slice(1)} - ${mood.charAt(0).toUpperCase() + mood.slice(1)}`;
 }
 
+const NON_ALPHANUM_REGEX = /[^a-z0-9_\s-]/g;
+const WHITESPACE_REGEX = /\s+/g;
+
 function generateTechnicalName(title: string): string {
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
+    // Optimization: Use manual string construction for timestamp (YYYYMMDDHHMMSS) to avoid ISO parsing and regex overhead
+    const yyyy = now.getUTCFullYear();
+    const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(now.getUTCDate()).padStart(2, '0');
+    const hh = String(now.getUTCHours()).padStart(2, '0');
+    const min = String(now.getUTCMinutes()).padStart(2, '0');
+    const ss = String(now.getUTCSeconds()).padStart(2, '0');
+    const timestamp = `${yyyy}${mm}${dd}${hh}${min}${ss}`;
+
+    const safeTitle = title.toLowerCase().replace(NON_ALPHANUM_REGEX, ' ').trim().replace(WHITESPACE_REGEX, '_');
     return `${safeTitle}_${timestamp}`;
 }
 
@@ -28,13 +39,29 @@ export async function buildPrompt(config: PromptDNA): Promise<Prompt> {
     : config;
   const style = buildStyle(styleConfig);
   const lyrics = cleanLyricsForProduction(config.lyrics || "");
-  const styleTags = (config.styleTags || []).filter((tag) => tag.trim().length > 0);
 
+  // Optimization: Pre-allocate strings to avoid intermediate arrays with .filter().push().join()
   const styleParts = [style];
   if (config.language) styleParts.push(`language: ${config.language}`);
   if (config.instrumental) styleParts.push("instrumental only, no vocals");
-  if (styleTags.length > 0) styleParts.push(`style tags: ${styleTags.join(", ")}`);
-  if (config.negativePrompt?.trim()) styleParts.push(`avoid: ${config.negativePrompt.trim()}`);
+
+  if (config.styleTags && config.styleTags.length > 0) {
+      let tagsStr = "";
+      for (let i = 0; i < config.styleTags.length; i++) {
+          const tag = config.styleTags[i].trim();
+          if (tag.length > 0) {
+              if (tagsStr.length > 0) tagsStr += ", ";
+              tagsStr += tag;
+          }
+      }
+      if (tagsStr.length > 0) styleParts.push(`style tags: ${tagsStr}`);
+  }
+
+  if (config.negativePrompt) {
+      const negativeTrimmed = config.negativePrompt.trim();
+      if (negativeTrimmed.length > 0) styleParts.push(`avoid: ${negativeTrimmed}`);
+  }
+
   const mergedStyle = styleParts.join(", ");
 
   const title = config.title?.trim() || generatePromptTitle(config);
