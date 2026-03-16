@@ -1,0 +1,4 @@
+## 2024-05-14 - Prevent Information Leakage in API Routes
+**Vulnerability:** API routes (`vision/route.ts`, `batch/route.ts`, `mutate/route.ts`, `generate/route.ts`) were exposing internal error messages (e.g. stack traces or sensitive internal states) to the client by passing `error.message` directly into `createErrorResponse`.
+**Learning:** Returning raw internal error messages in HTTP response bodies compromises security by revealing system internals or database schemas to potential attackers. All externally-facing API catch blocks must normalize error outputs.
+**Prevention:** Always pass `undefined` as the `details` field (or omit it entirely if not strictly required) to `createErrorResponse` in the API route catch blocks. Log the detailed error server-side instead.
