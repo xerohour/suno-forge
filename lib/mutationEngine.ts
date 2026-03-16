@@ -19,6 +19,14 @@ const MOOD_MAP: Record<string, string> = {
 
 const MOOD_REGEX = new RegExp(`\\b(${Object.keys(MOOD_MAP).join('|')})\\b`, 'gi');
 
+// Optimization: Pre-compile regular expressions as module-level constants.
+// This prevents the JS engine from having to parse and compile the regex on every single function call.
+const VOCAL_REGEX = /\b(vocal|vocals|singing|lyrics|voice|sung)\b[^,]*/gi;
+const MULTI_COMMA_REGEX = /,\s*,+/g;
+const TRIM_COMMA_REGEX = /^,\s*|\s*,$/g;
+const TEMPO_CAPTURE_REGEX = /(\d+)\s*BPM/i;
+const TEMPO_REPLACE_REGEX = /\d+\s*BPM/i;
+
 const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
   viral: (p) => {
     // Add viral characteristics: short, catchy, repetitive
@@ -40,30 +48,30 @@ const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
 
   instrumental: (p) => {
     // Convert to instrumental by removing vocal references
-    let result = p.replace(/\b(vocal|vocals|singing|lyrics|voice|sung)\b[^,]*/gi, '');
+    let result = p.replace(VOCAL_REGEX, '');
     // Clean up multiple commas and extra spaces
-    result = result.replace(/,\s*,+/g, ',').replace(/^,\s*|\s*,$/g, '').trim();
+    result = result.replace(MULTI_COMMA_REGEX, ',').replace(TRIM_COMMA_REGEX, '').trim();
     return `${result}, instrumental only, no vocals`;
   },
 
   'tempo-shift-up': (p) => {
     // Increase tempo references
-    const tempoMatch = p.match(/(\d+)\s*BPM/i);
+    const tempoMatch = p.match(TEMPO_CAPTURE_REGEX);
     if (tempoMatch) {
       const currentTempo = parseInt(tempoMatch[1]);
       const newTempo = Math.min(currentTempo + 20, 200);
-      return p.replace(/\d+\s*BPM/i, `${newTempo} BPM`);
+      return p.replace(TEMPO_REPLACE_REGEX, `${newTempo} BPM`);
     }
     return `${p}, uptempo, faster pace`;
   },
 
   'tempo-shift-down': (p) => {
     // Decrease tempo references
-    const tempoMatch = p.match(/(\d+)\s*BPM/i);
+    const tempoMatch = p.match(TEMPO_CAPTURE_REGEX);
     if (tempoMatch) {
       const currentTempo = parseInt(tempoMatch[1]);
       const newTempo = Math.max(currentTempo - 20, 40);
-      return p.replace(/\d+\s*BPM/i, `${newTempo} BPM`);
+      return p.replace(TEMPO_REPLACE_REGEX, `${newTempo} BPM`);
     }
     return `${p}, downtempo, slower pace`;
   },
