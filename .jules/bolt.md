@@ -21,3 +21,11 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-03-01 - Global RegExp State in Replace
+**Learning:** Extracting global (`/g`) regular expressions into module-scoped constants is thread-safe and stateless when used exclusively with `String.prototype.replace()`, as the `replace` method automatically resets and manages the `lastIndex` property.
+**Action:** Always prefer module-level constants for global regexes used in string replacement to prevent repeated compilation without worrying about `lastIndex` state leakage.
+
+## 2025-03-01 - Dependency Constraint Violation
+**Learning:** When measuring performance impact locally, do not install third-party benchmarking libraries (e.g., `mitata`) if it modifies `package.json` or lockfiles, as this violates strict boundaries against adding dependencies or modifying package manifests without explicit instruction.
+**Action:** Use built-in tools like `performance.now()` for simple benchmarking scripts, or run them in isolated scratchpads that don't affect repository configuration files.
