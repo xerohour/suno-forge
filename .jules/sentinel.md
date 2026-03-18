@@ -1,0 +1,4 @@
+## 2025-02-17 - Prevent Information Leakage in Error Responses
+**Vulnerability:** Internal error details and potentially sensitive stack traces were leaked to the client through API error responses. The catch blocks in API routes passed the raw `error.message` to `createErrorResponse` without sanitization.
+**Learning:** A helper function designed to provide error details (`createErrorResponse`) can inadvertently become a vector for information leakage if used with unverified or internal error strings. All API routes (batch, generate, mutate, vision) had this pattern.
+**Prevention:** Always pass `undefined` as the `details` field (or similar) in generic top-level catch blocks when returning a 5xx response to the client, unless specifically intending to show a sanitized message. Ensure a clear separation between internally logged errors and client-facing error messages.
