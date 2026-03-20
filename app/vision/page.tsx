@@ -107,8 +107,17 @@ export default function Vision() {
             <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
             {/* Hexagon Shape */}
             <div
-              className="relative w-full h-full hexagon-border bg-primary/10 border border-primary/30 flex flex-col items-center justify-center group cursor-pointer hover:bg-primary/20 transition-all duration-500"
+              className="relative w-full h-full hexagon-border bg-primary/10 border border-primary/30 flex flex-col items-center justify-center group cursor-pointer hover:bg-primary/20 transition-all duration-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              aria-label="Upload image"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
             >
               {/* Inner Hexagon for Border Effect */}
               <div className="absolute inset-1 hexagon-border border border-primary/20 pointer-events-none"></div>
@@ -123,15 +132,16 @@ export default function Vision() {
                     {description ? description.replace("An image of ", "") : "Visual Inspiration"}
                   </p>
                 </div>
-                <button className="mt-2 bg-primary text-background-dark text-xs font-bold py-2 px-4 rounded-full hover:scale-105 transition-transform">
+                <span className="inline-block mt-2 bg-primary text-background-dark text-xs font-bold py-2 px-4 rounded-full hover:scale-105 transition-transform">
                   SELECT FILE
-                </button>
+                </span>
                 <input
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
                   onChange={handleFileChange}
                   accept="image/*"
+                  tabIndex={-1}
                 />
               </div>
             </div>
