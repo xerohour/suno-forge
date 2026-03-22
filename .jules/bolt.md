@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Unnecessary Async/Promise Wrappers for Synchronous Code
+**Learning:** Wrapping purely synchronous logic (like string mapping and concatenation in `buildPrompt`) in `async` functions or returning `Promise`s unnecessarily adds measurable overhead. It forces the JavaScript engine to allocate a Promise, wrap the return value, and defer execution via the micro-task queue. In batch processing routes using `Promise.all` over such functions, this creates completely useless overhead.
+**Action:** Always verify if a function actually performs asynchronous operations (like I/O or network requests). If not, declare it synchronously and return the value directly to allow callers to skip `Promise.all` entirely and execute sequentially on the main stack.
