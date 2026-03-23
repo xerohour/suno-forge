@@ -9,7 +9,7 @@ describe('promptEngine', () => {
       lyrics: 'Some lyrics',
     };
 
-    const prompt = await buildPrompt(config);
+    const prompt = buildPrompt(config);
 
     // Verify style contains expected descriptors from the real styleEngine
     expect(prompt.style).toContain('nostalgic 80s');
