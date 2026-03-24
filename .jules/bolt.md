@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-03-24 - Pre-compiled Regex vs Array Splitting for Multiline Strings
+**Learning:** Parsing large multiline strings (like lyrics) by splitting them into an array of lines, iterating over them, and re-joining them is significantly slower than using pre-compiled regular expressions. The array operations cause many intermediate string allocations. A single `.replace()` pass with a pre-compiled regex is ~2-3x faster and more memory efficient.
+**Action:** Always prefer using pre-compiled regex replacements (`.replace(REGEX, '')`) over `string.split('\n').filter(...).join('\n')` for multiline string manipulation, especially on hot paths like prompt generation.
