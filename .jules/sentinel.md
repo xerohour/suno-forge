@@ -1,0 +1,4 @@
+## 2025-02-14 - Prevent Information Leakage in API Error Responses
+**Vulnerability:** API routes (`batch`, `generate`, `mutate`, `vision`) were catching errors and passing the raw `error.message` to the client via `createErrorResponse`. This could potentially leak sensitive internal system details, file paths, or API keys embedded within error strings.
+**Learning:** Raw error messages from underlying systems or libraries should never be passed directly to the client response, as their contents are unpredictable and can expose internal infrastructure details (Information Exposure).
+**Prevention:** Always log the detailed error server-side (e.g., `console.error`) for debugging, but return a generic, sanitized error message to the client. When using helper functions like `createErrorResponse` that accept a `details` parameter, pass `undefined` or a hardcoded safe string instead of the raw `error.message` or stack trace.
