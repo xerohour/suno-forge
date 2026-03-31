@@ -15,20 +15,62 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
 
     const c = config as Record<string, unknown>;
 
-    // Optional fields with type checking
-    if (c.title !== undefined && typeof c.title !== 'string') return false;
-    if (c.genre !== undefined && typeof c.genre !== 'string') return false;
-    if (c.mood !== undefined && typeof c.mood !== 'string') return false;
+    // Optional fields with type checking and length validation
+    if (c.title !== undefined) {
+        if (typeof c.title !== 'string') return false;
+        if (c.title.length > MAX_TITLE_LENGTH) return false;
+    }
+
+    if (c.genre !== undefined) {
+        if (typeof c.genre !== 'string') return false;
+        if (c.genre.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
+    if (c.mood !== undefined) {
+        if (typeof c.mood !== 'string') return false;
+        if (c.mood.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
     if (c.tempo !== undefined && typeof c.tempo !== 'number') return false;
-    if (c.instrumentation !== undefined && typeof c.instrumentation !== 'string') return false;
-    if (c.vocalStyle !== undefined && typeof c.vocalStyle !== 'string') return false;
-    if (c.production !== undefined && typeof c.production !== 'string') return false;
+
+    if (c.instrumentation !== undefined) {
+        if (typeof c.instrumentation !== 'string') return false;
+        if (c.instrumentation.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
+    if (c.vocalStyle !== undefined) {
+        if (typeof c.vocalStyle !== 'string') return false;
+        if (c.vocalStyle.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
+    if (c.production !== undefined) {
+        if (typeof c.production !== 'string') return false;
+        if (c.production.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
     if (c.energy !== undefined && typeof c.energy !== 'number') return false;
-    if (c.theme !== undefined && typeof c.theme !== 'string') return false;
-    if (c.lyrics !== undefined && typeof c.lyrics !== 'string') return false;
-    if (c.language !== undefined && typeof c.language !== 'string') return false;
+
+    if (c.theme !== undefined) {
+        if (typeof c.theme !== 'string') return false;
+        if (c.theme.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
+    if (c.lyrics !== undefined) {
+        if (typeof c.lyrics !== 'string') return false;
+        if (c.lyrics.length > MAX_LONG_TEXT_LENGTH) return false;
+    }
+
+    if (c.language !== undefined) {
+        if (typeof c.language !== 'string') return false;
+        if (c.language.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
+
     if (c.instrumental !== undefined && typeof c.instrumental !== 'boolean') return false;
-    if (c.negativePrompt !== undefined && typeof c.negativePrompt !== 'string') return false;
+
+    if (c.negativePrompt !== undefined) {
+        if (typeof c.negativePrompt !== 'string') return false;
+        if (c.negativePrompt.length > MAX_SHORT_TEXT_LENGTH) return false;
+    }
 
     if (c.styleTags !== undefined) {
         if (!Array.isArray(c.styleTags)) return false;

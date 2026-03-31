@@ -1,7 +1,58 @@
-import { validatePromptConfig, validateMutationType, validateBatchRequest } from './validation';
+import {
+    validatePromptConfig,
+    validateMutationType,
+    validateBatchRequest,
+    validateVisionRequest,
+    MAX_TITLE_LENGTH,
+    MAX_SHORT_TEXT_LENGTH,
+    MAX_LONG_TEXT_LENGTH,
+    MAX_TAGS_COUNT
+} from './validation';
 
 describe('validation', () => {
     describe('validatePromptConfig', () => {
+        it('should reject inputs exceeding length limits', () => {
+            const longTitle = 'a'.repeat(MAX_TITLE_LENGTH + 1);
+            expect(validatePromptConfig({ title: longTitle })).toBe(false);
+
+            const longGenre = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ genre: longGenre })).toBe(false);
+
+            const longMood = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ mood: longMood })).toBe(false);
+
+            const longInstrumentation = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ instrumentation: longInstrumentation })).toBe(false);
+
+            const longVocalStyle = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ vocalStyle: longVocalStyle })).toBe(false);
+
+            const longProduction = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ production: longProduction })).toBe(false);
+
+            const longTheme = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ theme: longTheme })).toBe(false);
+
+            const longLyrics = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ lyrics: longLyrics })).toBe(false);
+
+            const longLanguage = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ language: longLanguage })).toBe(false);
+
+            const longNegativePrompt = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ negativePrompt: longNegativePrompt })).toBe(false);
+        });
+
+        it('should reject styleTags exceeding count limit', () => {
+            const tooManyTags = Array(MAX_TAGS_COUNT + 1).fill('tag');
+            expect(validatePromptConfig({ styleTags: tooManyTags })).toBe(false);
+        });
+
+        it('should reject styleTags with individual tags exceeding length limit', () => {
+            const longTag = 'a'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+            expect(validatePromptConfig({ styleTags: [longTag] })).toBe(false);
+        });
+
         it('should accept valid minimal config', () => {
             const config = { genre: 'jazz' };
             expect(validatePromptConfig(config)).toBe(true);
@@ -141,6 +192,30 @@ describe('validation', () => {
 
         it('should reject null', () => {
             expect(validateBatchRequest(null)).toBe(false);
+        });
+    });
+
+    describe('validateVisionRequest', () => {
+        it('should accept valid vision request', () => {
+            expect(validateVisionRequest({ description: 'A beautiful sunset' })).toBe(true);
+        });
+
+        it('should reject description exceeding length limit', () => {
+            const longDescription = 'a'.repeat(MAX_LONG_TEXT_LENGTH + 1);
+            expect(validateVisionRequest({ description: longDescription })).toBe(false);
+        });
+
+        it('should reject empty description', () => {
+             expect(validateVisionRequest({ description: '' })).toBe(false);
+             expect(validateVisionRequest({ description: '   ' })).toBe(false);
+        });
+
+        it('should reject missing description', () => {
+            expect(validateVisionRequest({})).toBe(false);
+        });
+
+        it('should reject non-string description', () => {
+            expect(validateVisionRequest({ description: 123 })).toBe(false);
         });
     });
 });
