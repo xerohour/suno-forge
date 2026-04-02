@@ -1,0 +1,4 @@
+## 2025-04-02 - Normalization Before Validation Anti-Pattern
+**Vulnerability:** The `/api/batch` endpoint clamped the `count` input before validating it, allowing out-of-bounds inputs to bypass validation checks. Additionally, API error catch blocks leaked raw `error.message` strings directly to the client via `createErrorResponse`.
+**Learning:** Normalizing or "fixing" input (like clamping) before validation is a security anti-pattern because it masks malicious or erroneous input, allowing it to proceed rather than explicitly rejecting it. Similarly, exposing stack traces or raw error strings to the client risks leaking internal system state.
+**Prevention:** Always validate the raw request body first to ensure malformed or out-of-bounds requests are rejected with a 400 error. For errors, ensure catch blocks pass `undefined` instead of raw error messages to the `details` field of the error response.
