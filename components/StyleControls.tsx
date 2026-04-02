@@ -27,12 +27,13 @@ export function StyleControls({ onStyleChange, config = {} }: StyleControlsProps
       <h2 className='text-xl font-bold mb-4'>Style Controls</h2>
       
       <div className='mb-4'>
-        <label className='block text-sm font-medium mb-1'>Genre:</label>
+        <label htmlFor='genre' className='block text-sm font-medium mb-1'>Genre:</label>
         <select 
+          id='genre'
           name='genre' 
           value={config.genre || ''} 
           onChange={handleChange}
-          className='w-full p-2 border rounded'
+          className='w-full p-2 border rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
         >
           <option value=''>Select a genre...</option>
           {GENRES.map(genre => (
@@ -42,32 +43,35 @@ export function StyleControls({ onStyleChange, config = {} }: StyleControlsProps
       </div>
 
       <div className='mb-4'>
-        <label className='block text-sm font-medium mb-1'>Mood:</label>
+        <label htmlFor='mood' className='block text-sm font-medium mb-1'>Mood:</label>
         <input 
+          id='mood'
           type='text' 
           name='mood'
           value={config.mood || ''}
           onChange={handleChange}
           placeholder='e.g. Dreamy, Energetic'
-          className='w-full p-2 border rounded'
+          className='w-full p-2 border rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
         />
       </div>
 
       <div className='grid grid-cols-2 gap-4'>
         <div>
-          <label className='block text-sm font-medium mb-1'>Tempo (BPM):</label>
+          <label htmlFor='tempo' className='block text-sm font-medium mb-1'>Tempo (BPM):</label>
           <input 
+            id='tempo'
             type='number' 
             name='tempo'
             value={config.tempo || ''}
             onChange={handleChange}
             placeholder='Auto'
-            className='w-full p-2 border rounded'
+            className='w-full p-2 border rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           />
         </div>
         <div>
-          <label className='block text-sm font-medium mb-1'>Energy (0-1):</label>
+          <label htmlFor='energy' className='block text-sm font-medium mb-1'>Energy (0-1):</label>
           <input 
+            id='energy'
             type='number' 
             step='0.1'
             min='0'
@@ -76,7 +80,7 @@ export function StyleControls({ onStyleChange, config = {} }: StyleControlsProps
             value={config.energy || ''}
             onChange={handleChange}
             placeholder='0.5'
-            className='w-full p-2 border rounded'
+            className='w-full p-2 border rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           />
         </div>
       </div>
