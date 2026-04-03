@@ -1,7 +1,7 @@
 import { POST } from "./route";
 
 describe("Batch API", () => {
-  test("should reject excessive count to prevent DoS", async () => {
+  test("should clamp excessive count to prevent DoS", async () => {
     const req = new Request("http://localhost/api/batch", {
       method: "POST",
       body: JSON.stringify({
@@ -13,8 +13,8 @@ describe("Batch API", () => {
     const res = await POST(req);
     const data = await res.json();
 
-    expect(res.status).toBe(400);
-    expect(data.error).toBe("Invalid batch request");
+    expect(res.status).toBe(200);
+    expect(data.prompts).toHaveLength(50);
   });
 
   test("should handle valid count", async () => {
@@ -32,7 +32,7 @@ describe("Batch API", () => {
     expect(data.prompts).toHaveLength(5);
   });
 
-  test("should reject negative/zero count", async () => {
+  test("should clamp negative/zero count", async () => {
       const req = new Request("http://localhost/api/batch", {
         method: "POST",
         body: JSON.stringify({
@@ -44,7 +44,7 @@ describe("Batch API", () => {
       const res = await POST(req);
       const data = await res.json();
 
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("Invalid batch request");
+      expect(res.status).toBe(200);
+      expect(data.prompts).toHaveLength(1);
   });
 });
