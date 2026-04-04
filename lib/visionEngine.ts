@@ -19,14 +19,19 @@ const KEYWORD_MAP: Record<string, { genre: string, mood: string }> = {
   'battle': { genre: 'metal', mood: 'aggressive' },
 };
 
+// Bolt Performance Optimization:
+// Pre-compute Object.entries to avoid the overhead of `for...in` object
+// prototype traversal and repeated allocation overhead on every function call.
+const KEYWORD_ENTRIES = Object.entries(KEYWORD_MAP);
+
 export function imageToPrompt(description: string) {
   const desc = description.toLowerCase();
   let bestMatch = { genre: 'ambient', mood: 'cinematic' };
   
   // Find first keyword match
-  for (const key in KEYWORD_MAP) {
+  for (const [key, value] of KEYWORD_ENTRIES) {
     if (desc.includes(key)) {
-      bestMatch = KEYWORD_MAP[key];
+      bestMatch = value;
       break; // Or could collect multiple and combine? But keep simple for now.
     }
   }
