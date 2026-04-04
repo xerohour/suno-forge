@@ -10,16 +10,23 @@ export async function POST(req: Request) {
 
     const { config, count: rawCount } = body;
 
-    // Clamp count
-    const count = typeof rawCount === 'number'
-      ? Math.max(1, Math.min(50, rawCount))
-      : 1;
+    // Validate raw input directly
+    if (rawCount !== undefined && (typeof rawCount !== 'number' || rawCount < 1 || rawCount > 50)) {
+      return createErrorResponse(
+        "Invalid batch request",
+        400,
+        "Request must include valid config and count (1-50)",
+        "INVALID_BATCH_REQUEST"
+      );
+    }
 
-    // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
+    // Apply default fallback and defensive clamp to ensure the value used downstream is strictly bounded
+    const count = rawCount !== undefined ? rawCount : 1;
+    const safeCount = Math.max(1, Math.min(50, count));
 
-    // Validate batch request
-    if (!validateBatchRequest(clampedBody)) {
+    // Validate the rest of the batch request configuration
+    const payload = { config, count: safeCount };
+    if (!validateBatchRequest(payload)) {
       return createErrorResponse(
         "Invalid batch request",
         400,
@@ -30,7 +37,7 @@ export async function POST(req: Request) {
 
     // Generate prompts in parallel
     const prompts = await Promise.all(
-      Array.from({ length: count }).map(() => buildPrompt(config))
+      Array.from({ length: safeCount }).map(() => buildPrompt(config))
     );
 
     const response: BatchResponse = { prompts };
