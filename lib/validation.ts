@@ -61,22 +61,24 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
     return true;
 }
 
+// ⚡ Bolt: Extract valid types to a module-level Set to prevent
+// array reallocation on every invocation and enable O(1) lookups.
+const VALID_MUTATION_TYPES = new Set<MutationType>([
+    'viral',
+    'emotional',
+    'energy',
+    'instrumental',
+    'tempo-shift-up',
+    'tempo-shift-down',
+    'mood-invert',
+    'genre-blend',
+]);
+
 /**
  * Validates a mutation type
  */
 export function validateMutationType(type: unknown): type is MutationType {
-    const validTypes: MutationType[] = [
-        'viral',
-        'emotional',
-        'energy',
-        'instrumental',
-        'tempo-shift-up',
-        'tempo-shift-down',
-        'mood-invert',
-        'genre-blend',
-    ];
-
-    return typeof type === 'string' && validTypes.includes(type as MutationType);
+    return typeof type === 'string' && VALID_MUTATION_TYPES.has(type as MutationType);
 }
 
 /**
