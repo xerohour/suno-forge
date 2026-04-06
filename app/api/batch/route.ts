@@ -10,16 +10,24 @@ export async function POST(req: Request) {
 
     const { config, count: rawCount } = body;
 
-    // Clamp count
-    const count = typeof rawCount === 'number'
-      ? Math.max(1, Math.min(50, rawCount))
-      : 1;
+    // Explicitly validate raw input to fail-fast on out-of-bounds requests (DoS prevention)
+    if (rawCount !== undefined) {
+      if (typeof rawCount !== 'number' || rawCount < 1 || rawCount > 50) {
+        return createErrorResponse(
+          "Invalid batch request",
+          400,
+          "Request must include valid config and count (1-50)",
+          "INVALID_BATCH_REQUEST"
+        );
+      }
+    }
 
-    // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
+    // Default count to 1 if not provided
+    const count = rawCount !== undefined ? rawCount : 1;
+    const requestBody = { config, count };
 
     // Validate batch request
-    if (!validateBatchRequest(clampedBody)) {
+    if (!validateBatchRequest(requestBody)) {
       return createErrorResponse(
         "Invalid batch request",
         400,

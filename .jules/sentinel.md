@@ -1,0 +1,4 @@
+## 2024-04-06 - Input Validation Bypass via Input Clamping
+**Vulnerability:** The `/api/batch` endpoint attempted to handle invalid input sizes by clamping the `count` parameter to a maximum of 50 before performing validation. This normalized bad input instead of rejecting it, allowing potentially malicious DoS-style payloads (e.g., `count: 1000`) to silently pass validation and consume resources.
+**Learning:** Normalizing or "fixing" input before validation is a security anti-pattern. It bypasses the intent of strict boundary checks and masks potentially abusive requests by coercing them into a valid state.
+**Prevention:** Always validate raw request bodies first, ensuring that out-of-bounds or malformed requests are explicitly rejected with a 400 Bad Request error. Fail-fast on bad data rather than attempting to clean it.
