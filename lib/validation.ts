@@ -64,19 +64,21 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
 /**
  * Validates a mutation type
  */
-export function validateMutationType(type: unknown): type is MutationType {
-    const validTypes: MutationType[] = [
-        'viral',
-        'emotional',
-        'energy',
-        'instrumental',
-        'tempo-shift-up',
-        'tempo-shift-down',
-        'mood-invert',
-        'genre-blend',
-    ];
+// Use a module-level Set to avoid runtime memory allocation on every call
+// and achieve O(1) lookup complexity instead of Array.prototype.includes().
+const VALID_MUTATION_TYPES = new Set<MutationType>([
+    'viral',
+    'emotional',
+    'energy',
+    'instrumental',
+    'tempo-shift-up',
+    'tempo-shift-down',
+    'mood-invert',
+    'genre-blend',
+]);
 
-    return typeof type === 'string' && validTypes.includes(type as MutationType);
+export function validateMutationType(type: unknown): type is MutationType {
+    return typeof type === 'string' && VALID_MUTATION_TYPES.has(type as MutationType);
 }
 
 /**
