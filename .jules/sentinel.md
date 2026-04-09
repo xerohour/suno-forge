@@ -1,0 +1,4 @@
+## 2024-05-15 - Input Validation Bypass via Clamping
+**Vulnerability:** The `/api/batch` endpoint attempted to enforce maximum `count` constraints by clamping the input (`Math.min(50, rawCount)`) *before* applying validation using `validateBatchRequest`.
+**Learning:** This approach modifies out-of-bounds user input to make it pass validation instead of rejecting it, a security anti-pattern. This circumvents boundary checking validation, allowing excessively large inputs to pass silently. Clamping must not precede validation.
+**Prevention:** Always validate the user's *raw* input first using strict boundaries, rejecting malicious or out-of-bounds inputs with HTTP 400 Bad Request to fail-fast. Ensure that default fallback logic is only applied for explicitly `undefined` properties, preserving valid behavior without circumventing strict constraints.
