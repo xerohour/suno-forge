@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2024-04-09 - Accessible Interactive Containers
+**Learning:** When making a non-interactive element (like a custom dropzone `div`) into a clickable area, ensure full keyboard accessibility by adding `role="button"`, `tabIndex={0}`, an `aria-label`, and an `onKeyDown` handler that triggers the action on 'Enter' and 'Space' key presses. Additionally, avoid nested interactive elements (like a `<button>` inside a `role="button"`) by converting the inner elements to styled `<span>`s with `inline-block` to maintain layout, and shift `hover:` effects to `group-hover:` on the child.
+**Action:** When building interactive layout containers, always verify keyboard navigability and ensure nested buttons are visually styled as spans rather than semantic buttons to prevent HTML validation and screen reader issues.
