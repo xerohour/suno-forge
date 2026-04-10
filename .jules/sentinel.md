@@ -1,0 +1,4 @@
+## 2025-02-26 - Input Clamping Security Anti-Pattern
+**Vulnerability:** The batch generation API endpoint clamped out-of-bounds user input `count` values (e.g. from 1000 down to 50) instead of failing.
+**Learning:** Normalizing or "fixing" inputs via clamping before validation is a security anti-pattern because it allows malicious requests to pass through successfully, silently accepting unexpected/excessive inputs instead of properly denying them with 400 Bad Request.
+**Prevention:** Always validate raw request bodies first to explicitly fail-fast when given out-of-bounds inputs, preventing potential DoS regressions or unexpected downstream logic from oversized payloads. Ensure that valid defaults (like `count = 1`) are explicitly handled and preserved for optional inputs.
