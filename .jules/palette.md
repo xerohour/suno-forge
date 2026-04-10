@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2024-05-23 - Keyboard Accessibility for Custom Interactive Elements
+**Learning:** When converting non-interactive elements (like a `<div>` used as a drag-and-drop zone) into clickable, interactive components via `onClick`, they inherently lack keyboard accessibility. They cannot be focused via 'Tab' or activated via 'Enter'/'Space', blocking keyboard-only and screen reader users from using core functionality (like selecting an image).
+**Action:** Always ensure full keyboard accessibility for custom interactive elements by adding `role="button"`, `tabIndex={0}`, an `onKeyDown` handler to trigger the same action as the click on 'Enter' or 'Space' presses, and explicit `focus-visible` styling (e.g., `focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none`) to provide clear visual feedback during keyboard navigation.
