@@ -1,0 +1,4 @@
+## 2024-05-15 - Insecure Input Clamping DoS Risk
+**Vulnerability:** Input fields (like `count` in batch generation) were clamped to acceptable ranges (e.g., `Math.max(1, Math.min(50, rawCount))`) rather than being strictly validated and rejected if out of bounds.
+**Learning:** Clamping is a security anti-pattern because it normalizes invalid data instead of failing fast. An attacker could intentionally send massive payloads (e.g., `count: 10000`) expecting them to be clamped, which still requires processing time to parse and clamp, potentially leading to Resource Exhaustion (DoS) if large enough payloads are sent frequently, bypassing intended strict limits.
+**Prevention:** Always validate the raw request body first and return a 400 Bad Request to fail-fast on out-of-bounds inputs, rather than normalizing or 'fixing' the input before validation.
