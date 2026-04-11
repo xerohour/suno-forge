@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Module-level Set Validation
+**Learning:** Re-allocating static arrays for validation on every function call (e.g., in hot paths like `validateMutationType`) and using `.includes()` is slow (O(N)).
+**Action:** Extract valid types to a module-level `Set` and use `.has()` for O(1) lookup to improve validation performance in frequently called functions.
