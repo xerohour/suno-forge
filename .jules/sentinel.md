@@ -1,0 +1,4 @@
+## 2025-02-19 - Insecure Input Clamping vs Strict Validation
+**Vulnerability:** The API endpoint `/api/batch` insecurely modified the user input (clamped the `count` parameter between 1 and 50) before validation, allowing excessively large payloads (e.g. `count = 1000`) to be quietly accepted instead of explicitly rejected.
+**Learning:** Normalizing or "fixing" input before validation is a security anti-pattern. It masks malicious requests and bypasses fail-fast mechanisms, which can lead to Denial of Service (DoS) if large payloads cause performance issues upstream.
+**Prevention:** Always validate raw request bodies strictly to ensure out-of-bounds or malicious requests are rejected with a 400 Bad Request error. Only apply default fallbacks (e.g., defaulting `count` to 1 if undefined) after or alongside strict bounds checking.
