@@ -61,22 +61,23 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
     return true;
 }
 
+// Optimization: Use a Set for O(1) lookups and avoid memory allocation overhead on every invocation
+const VALID_MUTATION_TYPES = new Set<MutationType>([
+    'viral',
+    'emotional',
+    'energy',
+    'instrumental',
+    'tempo-shift-up',
+    'tempo-shift-down',
+    'mood-invert',
+    'genre-blend',
+]);
+
 /**
  * Validates a mutation type
  */
 export function validateMutationType(type: unknown): type is MutationType {
-    const validTypes: MutationType[] = [
-        'viral',
-        'emotional',
-        'energy',
-        'instrumental',
-        'tempo-shift-up',
-        'tempo-shift-down',
-        'mood-invert',
-        'genre-blend',
-    ];
-
-    return typeof type === 'string' && validTypes.includes(type as MutationType);
+    return typeof type === 'string' && VALID_MUTATION_TYPES.has(type as MutationType);
 }
 
 /**
