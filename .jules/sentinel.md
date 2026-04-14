@@ -1,0 +1,4 @@
+## 2024-04-14 - Remove Insecure Input Clamping in API Routes
+**Vulnerability:** The `/api/batch` route was "clamping" out-of-bounds `count` inputs (e.g. 1000 -> 50) before validation, effectively modifying malicious/invalid input to make it pass validation instead of rejecting it.
+**Learning:** Normalizing or "fixing" input before validation is a security anti-pattern. By modifying the input to fit expected bounds, the API silently processes potentially malicious requests (like DoS attempts with massive counts) instead of returning an error, masking the attack.
+**Prevention:** Always validate the raw request body first. Reject out-of-bounds or malicious requests with a 400 Bad Request to fail-fast. Maintain backward compatibility only by setting safe defaults for missing optional parameters, not by modifying invalid provided values.
