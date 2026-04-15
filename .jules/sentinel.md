@@ -1,0 +1,4 @@
+## 2026-04-15 - Input normalization before validation masks bad requests
+**Vulnerability:** The API clamped out-of-bounds inputs (e.g. `count: 1000` -> `count: 50`) *before* validation instead of strictly rejecting them. Also, the validation allowed `NaN` to bypass bounds checking due to JS type coercion behaviors (`typeof NaN === 'number'`).
+**Learning:** Normalizing inputs before validation violates fail-fast security principles. It can silently accept malicious payloads (like DoS attempts) and unexpected edge cases (like `NaN`) without throwing an error, masking potentially larger issues from monitoring tools and breaking the client-server contract.
+**Prevention:** Always validate the raw, unmodified input first. If an input is invalid, immediately reject it with a 400 Bad Request. For numeric boundaries, explicitly check for `Number.isNaN()` since `NaN` passes `typeof === 'number'` but breaks `<` and `>` comparisons.
