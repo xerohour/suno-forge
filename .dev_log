@@ -1,0 +1,17 @@
+
+> suno-forge@1.0.0 dev /app
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 704ms
+○ Compiling /vision ...
+ GET /vision 200 in 5.6s (compile: 5.0s, render: 638ms)
+ GET /vision 200 in 81ms (compile: 6ms, render: 75ms)
+ GET /vision 200 in 205ms (compile: 71ms, render: 134ms)
+ GET /vision 200 in 185ms (compile: 9ms, render: 176ms)
+ GET /vision 200 in 166ms (compile: 56ms, render: 109ms)
