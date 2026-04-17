@@ -216,35 +216,33 @@ export function buildStyle(config: PromptDNA): string {
   }
 
   // 4. Build parts list
-  const rawParts = [
-    config.genre,
-    config.mood,
-    tempoString,
-    energyDescriptor,
-    genreData.descriptor,
-    genreData.instrumentsString,
-    config.instrumentation,
-    config.vocalStyle,
-    config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined)
-  ];
-
   const parts: string[] = [];
-  for (const p of rawParts) {
+
+  // Optimization: Internal helper to push unique parts without Set allocation
+  const addPart = (p: string | null | undefined) => {
     if (p) {
       const trimmed = p.trim();
-      if (trimmed.length > 0) {
+      if (trimmed.length > 0 && !parts.includes(trimmed)) {
         parts.push(trimmed);
       }
     }
-  }
+  };
 
-  const uniqueParts = Array.from(new Set(parts));
+  addPart(config.genre);
+  addPart(config.mood);
+  addPart(tempoString);
+  addPart(energyDescriptor);
+  addPart(genreData.descriptor);
+  addPart(genreData.instrumentsString);
+  addPart(config.instrumentation);
+  addPart(config.vocalStyle);
+  addPart(config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined));
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && uniqueParts.length > 1) {
-      return `${uniqueParts.join(", ")}, ${config.genre}`;
+  if (config.genre && parts.length > 1) {
+      return `${parts.join(", ")}, ${config.genre}`;
   }
 
-  return uniqueParts.join(", ");
+  return parts.join(", ");
 }
