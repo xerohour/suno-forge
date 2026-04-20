@@ -10,20 +10,28 @@ export async function POST(req: Request) {
 
     const { config, count: rawCount } = body;
 
-    // Clamp count
-    const count = typeof rawCount === 'number'
-      ? Math.max(1, Math.min(50, rawCount))
-      : 1;
+    // Preserve default fallback logic
+    const count = rawCount === undefined ? 1 : rawCount;
 
-    // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
-
-    // Validate batch request
-    if (!validateBatchRequest(clampedBody)) {
+    // Strict validation of the input
+    if (typeof count !== 'number' || Number.isNaN(count) || count < 1 || count > 50) {
       return createErrorResponse(
         "Invalid batch request",
         400,
-        "Request must include valid config and count (1-50)",
+        "Request must include a valid count (1-50)",
+        "INVALID_BATCH_REQUEST"
+      );
+    }
+
+    // Create a modified body with the validated count
+    const validatedBody = { config, count };
+
+    // Validate batch request
+    if (!validateBatchRequest(validatedBody)) {
+      return createErrorResponse(
+        "Invalid batch request",
+        400,
+        "Request must include valid config",
         "INVALID_BATCH_REQUEST"
       );
     }
@@ -38,11 +46,10 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Batch generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to generate batch prompts",
       500,
-      errorMessage,
+      undefined,
       "BATCH_FAILED"
     );
   }
