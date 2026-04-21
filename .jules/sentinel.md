@@ -1,0 +1,4 @@
+## 2024-05-24 - Number Clamping Bypass via NaN
+**Vulnerability:** A DoS vulnerability in the batch generation endpoint allowed bypassing the intended maximum limit (50) by exploiting the standard `Math.max(1, Math.min(50, rawCount))` clamping technique in conjunction with `typeof` checks. Specifically, passing a non-number or something that evaluates to `NaN` allowed the original logic to produce a payload that bypassed subsequent validators while ultimately resolving to `NaN` length generation.
+**Learning:** Clamping is not validation. When an input must be bounded, applying pre-validation transformations like `Math.max/min` can hide underlying type violations (like `NaN` which passes `typeof rawCount === 'number'`) from the validator.
+**Prevention:** Instead of coercing or clamping out-of-bounds user inputs to make them "fit," explicitly reject invalid inputs with strict validation (including `Number.isNaN(count)`) and return a 400 Bad Request to fail-fast.
