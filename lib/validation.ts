@@ -93,7 +93,7 @@ export function validateBatchRequest(data: unknown): data is { config: PromptCon
         return false;
     }
 
-    if (typeof d.count !== 'number' || d.count < 1 || d.count > 50) {
+    if (typeof d.count !== 'number' || Number.isNaN(d.count) || d.count < 1 || d.count > 50) {
         return false;
     }
 
