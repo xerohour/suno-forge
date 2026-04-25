@@ -1,0 +1,4 @@
+## 2026-03-02 - API Route Error Message Leakage
+**Vulnerability:** API endpoints (batch, generate, mutate, vision) were catching internal errors and passing the raw `error.message` directly into the client-facing `createErrorResponse` payload.
+**Learning:** This widespread pattern bypassed the abstraction meant to be provided by the `createErrorResponse` helper, implicitly coupling internal failure reasons (like prompt generation failures or downstream API timeouts) directly to the user-visible response, risking the exposure of stack traces or infrastructure details.
+**Prevention:** Always verify how error properties (specifically `message` and `stack`) are propagated from the catch block to the client response layer. Use `undefined` or a static generic message for the client payload while preserving the detailed raw error in server-side logging (`console.error`).
