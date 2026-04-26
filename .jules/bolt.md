@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2024-05-15 - Array Deduplication Memory Optimization
+
+**Learning:** When building strings and deduplicating small bounded collections (like style tags where `N < 10`), using `Array.from(new Set(array))` introduces measurable overhead due to object allocation and type conversion. While technically O(1) for lookups, the Set initialization cost dwarfs the savings for such tiny arrays.
+**Action:** For small, bounded arrays where maximum potential size is known to be tiny (< 10 items), use an inline `.includes()` check during the initial iteration to filter uniqueness. This avoids intermediate array building and Set object allocation. Add a comment `// Optimization: Avoid object allocation overhead for Set/Array conversions on small bound arrays (< 10 items)` to prevent future refactoring regressions. Note: NEVER apply this to arbitrary-length data structures, as it degrades O(N) deduplication to O(N^2).
