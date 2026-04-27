@@ -19,11 +19,11 @@ export function validatePromptConfig(config: unknown): config is PromptConfig {
     if (c.title !== undefined && typeof c.title !== 'string') return false;
     if (c.genre !== undefined && typeof c.genre !== 'string') return false;
     if (c.mood !== undefined && typeof c.mood !== 'string') return false;
-    if (c.tempo !== undefined && typeof c.tempo !== 'number') return false;
+    if (c.tempo !== undefined && (typeof c.tempo !== 'number' || Number.isNaN(c.tempo))) return false;
     if (c.instrumentation !== undefined && typeof c.instrumentation !== 'string') return false;
     if (c.vocalStyle !== undefined && typeof c.vocalStyle !== 'string') return false;
     if (c.production !== undefined && typeof c.production !== 'string') return false;
-    if (c.energy !== undefined && typeof c.energy !== 'number') return false;
+    if (c.energy !== undefined && (typeof c.energy !== 'number' || Number.isNaN(c.energy))) return false;
     if (c.theme !== undefined && typeof c.theme !== 'string') return false;
     if (c.lyrics !== undefined && typeof c.lyrics !== 'string') return false;
     if (c.language !== undefined && typeof c.language !== 'string') return false;
@@ -93,7 +93,7 @@ export function validateBatchRequest(data: unknown): data is { config: PromptCon
         return false;
     }
 
-    if (typeof d.count !== 'number' || d.count < 1 || d.count > 50) {
+    if (typeof d.count !== 'number' || Number.isNaN(d.count) || d.count < 1 || d.count > 50) {
         return false;
     }
 
