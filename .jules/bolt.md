@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2024-11-20 - Array Deduplication Micro-Optimization
+**Learning:** For deduplicating small, strictly bounded arrays (e.g., under 10 items), avoiding the object allocation overhead of `Array.from(new Set(array))` by using an inline `.includes()` check is measurably faster. However, this replaces an O(1) Set lookup with an O(N) `.includes()` lookup (O(N^2) overall deduplication complexity), so it must not be used for arbitrary-length data structures where it would become a performance regression.
+**Action:** When deduplicating small arrays (like style parts in `lib/styleEngine.ts`), use an inline `.includes()` check to avoid the overhead of `Set` allocation, but always document the bounds to prevent misapplication.
