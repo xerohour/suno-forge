@@ -21,3 +21,10 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-02-18 - Small Array Deduplication Complexity
+**Learning:** Using `Array.prototype.includes` for deduplicating small bounded arrays is a valid optimization over `Array.from(new Set())` due to the overhead of object allocation, even though it degrades complexity from O(1) to O(N). Reviewers may flag it as an algorithmic degradation to O(N^2) if not explicitly documented.
+**Action:** Always explicitly document inline why O(N^2)  is used for deduplication (i.e., that the array is bounded and the lack of Set object allocation makes it faster in this specific hot path constraint).
+
+## 2025-02-18 - Small Array Deduplication Complexity
+**Learning:** Using `Array.prototype.includes` for deduplicating small bounded arrays is a valid optimization over `Array.from(new Set())` due to the overhead of object allocation, even though it degrades complexity from O(1) lookup to O(N). Reviewers may flag it as an algorithmic degradation to O(N^2) if not explicitly documented.
+**Action:** Always explicitly document inline why O(N^2) `.includes()` is used for deduplication (i.e., that the array is bounded and the lack of Set object allocation makes it faster in this specific hot path constraint).
