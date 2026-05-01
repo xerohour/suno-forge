@@ -1,0 +1,4 @@
+## 2024-05-24 - Information Leakage in API Error Responses
+**Vulnerability:** The `createErrorResponse` utility was being passed the raw `error.message` from caught exceptions across multiple API endpoints (`/api/batch`, `/api/generate`, `/api/mutate`, `/api/vision`).
+**Learning:** Returning raw internal error strings to the client can inadvertently expose sensitive information, such as stack traces, backend structure, or third-party service details. The `createErrorResponse` helper accepts a `details` parameter which was being populated with this sensitive data.
+**Prevention:** In API route catch blocks, log the full error details server-side using `console.error` for debugging, but pass `undefined` as the `details` argument to client-facing error formatters to ensure a generic, safe response.

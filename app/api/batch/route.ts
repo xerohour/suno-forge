@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     return createErrorResponse(
       "Failed to generate batch prompts",
       500,
-      errorMessage,
+      undefined,
       "BATCH_FAILED"
     );
   }
