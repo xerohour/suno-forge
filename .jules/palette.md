@@ -1,7 +1,3 @@
-## 2024-05-22 - Semantic Headings as Labels
-**Learning:** When visual design uses section headings (h2) as the primary label for an input, use `aria-labelledby` to associate them programmatically without duplicating text in a hidden label.
-**Action:** In future forms with section-based layouts, check if the section header serves as the label and link it via ID instead of adding redundant `sr-only` labels.
-
-## 2025-02-18 - Syncing Visual and ARIA Labels
-**Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
-**Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+## 2024-05-02 - Custom UI Component Focus Management
+**Learning:** Custom interactive elements (like the image dropzone div in app/vision/page.tsx) that trigger actions via onClick and omit semantic HTML tags (like <button>) fail to receive keyboard focus by default. Adding `tabIndex={0}` makes them focusable, but they may lack visual feedback unless explicit focus utility classes (e.g., `focus-visible:ring-2 ...`) are added. Furthermore, nested semantic elements (like `<button>SELECT FILE</button>`) inside the clickable container result in invalid HTML semantics and screen reader confusion, and must be replaced with neutral elements like `<span>` while preserving styling with `inline-block`.
+**Action:** When auditing custom UI elements for accessibility, always ensure they have `role="button"`, `tabIndex={0}`, keyboard event handlers (Enter/Space), focus styling, and no nested interactive elements inside the parent clickable container.
