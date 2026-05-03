@@ -1,0 +1,3 @@
+## 2024-05-03 - Dropzone Accessibility and HTML Semantics
+**Learning:** Found a common anti-pattern where a file upload dropzone was implemented as a clickable `div` (inaccessible to keyboards) wrapping a decorative `<button>`. Fixing the keyboard access via the wrapper meant the inner `<button>` created an invalid semantic tree.
+**Action:** Always ensure full keyboard support (`role="button"`, `tabIndex={0}`, `onKeyDown` for Space/Enter) on custom interactive wrappers, apply visual focus styles (`focus-visible:ring-offset-background`), and replace nested `<button>` tags with styled inline `<span>` elements to maintain valid HTML while preserving the original layout.
