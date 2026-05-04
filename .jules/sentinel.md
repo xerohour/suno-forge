@@ -1,0 +1,4 @@
+## 2025-02-14 - Prevent Information Leakage in API Route Error Handlers
+**Vulnerability:** Next.js API routes were passing `error.message` directly into `createErrorResponse()`, which returned the raw error details (and potentially stack traces or internal secrets if `error.message` contained them) directly to clients in HTTP 500 responses.
+**Learning:** Returning detailed error messages to clients can leak sensitive system architecture, database structure, or internal state, especially in catch blocks where the exact shape of the error may be unpredictable.
+**Prevention:** Always sanitize server-side error responses. Use internal logging (e.g., `console.error`) to capture detailed debugging information, but only return a generic error message and safe status code (like "500 Internal Server Error") to the client. Avoid passing `error.message` to client-facing response helpers.
