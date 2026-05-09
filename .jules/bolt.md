@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Small Array Deduplication Performance
+**Learning:** Deduplicating small, strictly bounded arrays using `.includes()` is faster than using `Array.from(new Set())` because it avoids the object allocation overhead, despite changing an O(1) Set lookup to an O(N) lookup.
+**Action:** Use `.includes()` for deduplication only when the array size is strictly bounded and small (e.g., under 10 items), and explicitly document why this O(N^2) operation is used.
