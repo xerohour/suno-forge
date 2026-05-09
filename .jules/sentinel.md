@@ -1,0 +1,4 @@
+## 2026-05-09 - Information Disclosure via API Error Handler
+**Vulnerability:** Raw error messages were being leaked to the client through the `details` parameter of the `createErrorResponse` helper function across multiple API routes.
+**Learning:** Even when errors are caught and wrapped in a helper function, passing the raw `error.message` as a detail string can expose sensitive internal server information or stack traces to end users.
+**Prevention:** Always omit or pass `undefined` for detail parameters in client-facing error responses in `catch` blocks, relying solely on server-side logging for debugging.
