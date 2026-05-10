@@ -228,17 +228,18 @@ export function buildStyle(config: PromptDNA): string {
     config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined)
   ];
 
-  const parts: string[] = [];
+  const uniqueParts: string[] = [];
+  // Optimization: For deduplicating strictly bounded arrays (under 10 items in rawParts),
+  // avoiding the object allocation overhead of Array.from(new Set(array)) by using an inline
+  // .includes() check is measurably faster despite the O(N^2) complexity.
   for (const p of rawParts) {
     if (p) {
       const trimmed = p.trim();
-      if (trimmed.length > 0) {
-        parts.push(trimmed);
+      if (trimmed.length > 0 && !uniqueParts.includes(trimmed)) {
+        uniqueParts.push(trimmed);
       }
     }
   }
-
-  const uniqueParts = Array.from(new Set(parts));
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
