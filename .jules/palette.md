@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2024-05-28 - Interactive Dropzones and Nested Buttons
+**Learning:** Custom interactive elements like file dropzones need keyboard accessibility (`role="button"`, `tabIndex={0}`, `onKeyDown` for Enter/Space), and they must not contain nested interactive elements (like `<button>`) to maintain valid HTML semantics and prevent screen reader confusion.
+**Action:** When converting a `div` into an interactive dropzone or button, always ensure full keyboard support is implemented, and convert any child "buttons" to visually identical `span` elements using utility classes like `inline-block`.
