@@ -1,0 +1,4 @@
+## 2025-02-23 - Prevent Information Exposure in API Error Responses
+**Vulnerability:** API routes (`app/api/batch/route.ts`, `app/api/generate/route.ts`, `app/api/mutate/route.ts`, `app/api/vision/route.ts`) were exposing internal error messages (e.g., `error.message`) directly to clients in the 500 error response via the `createErrorResponse` helper's `details` parameter.
+**Learning:** This existed because catching unknown errors and returning their message string is a common anti-pattern that can inadvertently leak sensitive system internals or secrets when an underlying library or custom logic fails unexpectedly.
+**Prevention:** In production API routes, always log the full error server-side (e.g., using `console.error`) but omit the `details` parameter (or explicitly pass `undefined`) when constructing the client-facing error response to ensure only a safe, generic message is returned.
