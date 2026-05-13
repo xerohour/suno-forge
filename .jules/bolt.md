@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Async Overhead on Sync Logic
+**Learning:** `buildPrompt` in `lib/promptEngine.ts` was marked `async` but only performed synchronous operations. All callers (including `batch` and `generate` API routes) were awaiting it, incurring the overhead of the JavaScript async state machine for no benefit. This resulted in a measurable performance penalty on hot paths.
+**Action:** Remove `async`/`await` from functions that only perform synchronous operations, especially on hot paths, to eliminate state machine overhead.
