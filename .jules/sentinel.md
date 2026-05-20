@@ -1,0 +1,4 @@
+## 2024-10-24 - Information Exposure in API Error Responses
+**Vulnerability:** Internal error messages (e.g., `error.message`) were being passed directly to the `createErrorResponse` helper's `details` parameter in API catch blocks, exposing potentially sensitive backend execution details to the client.
+**Learning:** The standardization of error response shapes via helpers like `createErrorResponse` can inadvertently encourage passing all available error context if the helper signature accepts it, leading to systemic information leakage across all endpoints.
+**Prevention:** Always omit or pass `undefined` for the details parameter in catch blocks catching generic or internal errors. Ensure API error helper functions default to safe, generic messages for 5xx status codes, and avoid mapping `Error.message` directly to response bodies.
