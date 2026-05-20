@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       : 1;
 
     // Create a modified body with the clamped count to pass validation
-    const clampedBody = { config, count };
+    const clampedBody = { config, count: rawCount };
 
     // Validate batch request
     if (!validateBatchRequest(clampedBody)) {
@@ -28,10 +28,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate prompts in parallel
-    const prompts = await Promise.all(
-      Array.from({ length: count }).map(() => buildPrompt(config))
-    );
+    // Generate prompts sequentially as it's now synchronous
+    const prompts = Array.from({ length: count }).map(() => buildPrompt(config));
 
     const response: BatchResponse = { prompts };
     return Response.json(response);
