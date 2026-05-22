@@ -1,0 +1,4 @@
+## 2024-05-30 - Information Exposure in API Routes
+**Vulnerability:** Internal error messages (`error.message`) were being passed as the `details` parameter to `createErrorResponse` in multiple API routes.
+**Learning:** The validation helper `createErrorResponse` is reused across multiple routes, and standard catch blocks were blindly passing the internal error message to it, which gets serialized and exposed to the client. This is a common pattern where developers log internally and accidentally leak the same message externally.
+**Prevention:** Always sanitize error responses. Do not pass internal exception messages to response builders. Ensure `details` is omitted or set to `undefined` unless it contains safe, user-facing information.
