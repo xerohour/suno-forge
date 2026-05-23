@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2024-05-23 - Avoid Unnecessary Async Wrappers
+**Learning:** Adding `async` to a purely synchronous function in Next.js/Bun adds measurable Promise allocation and state machine overhead. This overhead becomes significant in batch operations or hot paths, making synchronous operations roughly 100x slower.
+**Action:** Always check if a function actually performs asynchronous I/O before wrapping it in `async`. If it's purely synchronous, keep it synchronous to avoid unnecessary overhead.
