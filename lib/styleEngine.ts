@@ -238,7 +238,13 @@ export function buildStyle(config: PromptDNA): string {
     }
   }
 
-  const uniqueParts = Array.from(new Set(parts));
+  // Optimization: The array is strictly bounded (under 10 items), so avoiding Set allocation overhead by using an inline .includes() check is faster despite the O(N^2) complexity.
+  const uniqueParts: string[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (!uniqueParts.includes(parts[i])) {
+      uniqueParts.push(parts[i]);
+    }
+  }
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
