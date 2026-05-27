@@ -1,0 +1,4 @@
+## 2025-02-27 - Information Exposure in API Error Responses
+**Vulnerability:** The application was exposing internal error messages and stack traces to clients through the `createErrorResponse` utility in catch blocks across all API routes.
+**Learning:** Returning `error.message` directly in client responses leaks sensitive internal architecture details, failing the "fail securely" principle. The `createErrorResponse` helper's `details` parameter must be used cautiously.
+**Prevention:** Always log the full error securely on the server (e.g., using `console.error`) for debugging, but only return generic error messages (and `undefined` for details) to the client.
