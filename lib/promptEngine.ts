@@ -22,7 +22,8 @@ function generateTechnicalName(title: string): string {
  * It uses the provided config to generate a style prompt and 
  * directly uses the provided lyrics.
  */
-export async function buildPrompt(config: PromptDNA): Promise<Prompt> {
+export function buildPrompt(config: PromptDNA): Prompt {
+  // Optimization: Removed async/Promise wrapper to eliminate state machine overhead
   const styleConfig: PromptDNA = config.instrumental
     ? { ...config, vocalStyle: undefined }
     : config;
