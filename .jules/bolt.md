@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2024-05-24 - Deduplication performance for bounded small arrays
+**Learning:** Using `Array.from(new Set())` to deduplicate strictly bounded small arrays (e.g., under 10 items) introduces unnecessary object allocation overhead. An inline `.includes()` check is measurably faster in JavaScript/TypeScript engines despite the O(N^2) complexity tradeoff.
+**Action:** Prefer an inline `.includes()` check over `Array.from(new Set())` when deduplicating strictly bounded small arrays to eliminate allocation overhead.
