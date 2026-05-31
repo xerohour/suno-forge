@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2026-05-31 - Interactive Custom Elements and Semantic HTML
+**Learning:** When building custom interactive components like file dropzones, adding role="button" and tabIndex={0} requires an onKeyDown handler for full keyboard access. Additionally, screen readers and valid HTML specifications disallow nesting semantic interactive elements (like a `<button>`) inside another interactive element.
+**Action:** Ensure custom interactive regions use `span` or `div` for internal styling instead of semantic buttons, and always pair `tabIndex={0}` with keydown listeners for Enter/Space.
