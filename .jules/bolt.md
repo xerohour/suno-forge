@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Small Array Deduplication
+**Learning:** When deduplicating strictly bounded small arrays (e.g., under 10 items), `Array.from(new Set())` introduces significant object allocation overhead that outweighs its algorithmic benefits.
+**Action:** Prefer an inline `.includes()` check over `Array.from(new Set())` for small arrays to avoid allocation overhead, despite the O(N^2) complexity tradeoff.
