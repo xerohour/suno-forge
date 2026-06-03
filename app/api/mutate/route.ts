@@ -33,13 +33,13 @@ export async function POST(req: Request) {
     const response: MutateResponse = { mutated };
     return Response.json(response);
   } catch (error) {
+    // Security: Do not expose internal error details to the client
     console.error("Mutation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to mutate prompt",
       500,
-      errorMessage,
+      "An unexpected error occurred.",
       "MUTATION_FAILED"
     );
   }
