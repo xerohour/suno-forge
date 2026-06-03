@@ -24,13 +24,13 @@ export async function POST(req: Request) {
     const response: GenerateResponse = { prompt };
     return Response.json(response);
   } catch (error) {
+    // Security: Do not expose internal error details to the client
     console.error("Generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to generate prompt",
       500,
-      errorMessage,
+      "An unexpected error occurred.",
       "GENERATION_FAILED"
     );
   }

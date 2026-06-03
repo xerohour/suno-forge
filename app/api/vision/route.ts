@@ -24,13 +24,13 @@ export async function POST(req: Request) {
 
     return Response.json({ prompt });
   } catch (error) {
+    // Security: Do not expose internal error details to the client
     console.error("Vision processing failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Vision processing failed",
       500,
-      errorMessage,
+      "An unexpected error occurred.",
       "VISION_FAILED"
     );
   }
