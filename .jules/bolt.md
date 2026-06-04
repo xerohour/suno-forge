@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-03-08 - Eliminate State Machine Overhead from Synchronous Operations
+**Learning:** Using `async` on functions that exclusively perform synchronous logic (like `buildPrompt`'s string manipulation) introduces hidden Promise state machine overhead on every call. In Next.js/Bun API routes, `Response.json()` doesn't await unresolved Promises passed in object properties, which could lead to serializing raw Promise objects instead of data if un-awaited.
+**Action:** Remove `async`/`await` keywords from functions that only perform synchronous operations to eliminate state machine overhead and avoid unexpected serialization bugs.
