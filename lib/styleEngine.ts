@@ -238,7 +238,13 @@ export function buildStyle(config: PromptDNA): string {
     }
   }
 
-  const uniqueParts = Array.from(new Set(parts));
+  // Optimization: Inline deduplication for small array avoids Set/Array.from allocation overhead
+  const uniqueParts: string[] = [];
+  for (const p of parts) {
+    if (!uniqueParts.includes(p)) {
+      uniqueParts.push(p);
+    }
+  }
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
