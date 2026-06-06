@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Async State Machine Overhead & Set Allocation
+**Learning:** Using `async` on functions that are entirely synchronous adds state machine and Promise allocation overhead. Additionally, using `Array.from(new Set())` for deduplicating very small arrays (< 10 items) is measurably slower than an inline `.includes()` check due to object allocation overhead.
+**Action:** Remove `async`/`await` from pure synchronous paths, and prefer inline `.includes()` checks over `Set` for deduplicating bounded, small arrays on hot paths.
