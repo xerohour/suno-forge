@@ -17,6 +17,8 @@ import Link from "next/link";
 import { PROMPT_PACKS } from "@/lib/promptPacks";
 import { getComplexityLabel } from "./helpers";
 
+const MAX_LYRICS_LENGTH = 5000;
+
 // Chips data defined outside component to avoid recreation on every render
 const STYLE_CHIPS = [
   "Lo-fi",
@@ -80,7 +82,7 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button aria-label="Go back" className="text-primary p-1">
+        <button aria-label="Go back" className="text-primary p-1 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
@@ -134,12 +136,21 @@ export default function Studio() {
           <div className="relative">
             <textarea
               aria-labelledby="lyrics-heading"
-              className="w-full rounded-xl border border-primary/20 bg-primary/5 p-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
+              aria-describedby="lyrics-counter"
+              maxLength={MAX_LYRICS_LENGTH}
+              className="w-full rounded-xl border border-primary/20 bg-primary/5 p-4 pb-8 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
               placeholder="Paste your lyrics here or describe a story..."
               rows={6}
               value={lyrics}
               onChange={(e) => setLyrics(e.target.value)}
             ></textarea>
+            <div
+              id="lyrics-counter"
+              className={`absolute bottom-3 right-4 text-xs font-medium ${lyrics.length >= MAX_LYRICS_LENGTH * 0.9 ? 'text-amber-500' : 'text-slate-400 dark:text-slate-500'}`}
+              aria-live={lyrics.length >= MAX_LYRICS_LENGTH * 0.9 ? 'polite' : 'off'}
+            >
+              {lyrics.length} / {MAX_LYRICS_LENGTH}
+            </div>
           </div>
         </section>
 
