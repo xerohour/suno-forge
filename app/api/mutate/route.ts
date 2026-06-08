@@ -35,7 +35,8 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Mutation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    // Security: Do not expose internal error details to the client
+    const errorMessage = "An unexpected error occurred during processing";
     return createErrorResponse(
       "Failed to mutate prompt",
       500,
