@@ -26,11 +26,11 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    // Security: Do not expose internal error details to the client
     return createErrorResponse(
       "Failed to generate prompt",
       500,
-      errorMessage,
+      undefined,
       "GENERATION_FAILED"
     );
   }
