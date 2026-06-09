@@ -20,6 +20,8 @@ export async function POST(req: Request) {
     const { description } = body;
 
     const config = imageToPrompt(description);
+    // Optimization: buildPrompt is now synchronous, eliminating the state machine overhead
+    // and implicitly fixing a bug where the unresolved Promise was serialized
     const prompt = buildPrompt(config);
 
     return Response.json({ prompt });

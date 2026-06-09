@@ -21,3 +21,11 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Async/Await Overhead in Synchronous Code
+**Learning:** Wrapping purely synchronous logic (like string manipulation and array mapping) in `async`/`Promise` introduces significant state machine overhead. A benchmark showed a synchronous implementation executed in ~3ms compared to ~224ms for the async version with `Promise.all` mapping. Additionally, missing `await`s on returning promises can lead to unintended serialization bugs in API responses.
+**Action:** Remove `async` from functions unless they genuinely perform asynchronous I/O operations.
+
+## 2025-02-18 - Deduplicating Small Arrays
+**Learning:** Using `Array.from(new Set(array))` for deduplication on small, bounded arrays (e.g., under 10 items) is measurably slower due to object allocation overhead. An inline `.includes()` check during the initial iteration provides better performance for small lists.
+**Action:** Prefer inline `.includes()` over `Set` creation when deduplicating strictly bounded small arrays.
