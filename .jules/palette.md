@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2026-06-11 - Custom Shape Upload Zones
+**Learning:** This app uses custom CSS shapes (like the Hexagonal Upload Zone in Vision) implemented via `div`s. Because standard `<input type="file">` elements can't easily be styled this way, these custom zones often lack keyboard accessibility and may mistakenly nest `<button>` elements inside clickable containers, leading to invalid HTML and broken screen reader experiences.
+**Action:** When building custom interactive shapes, always apply `role="button"`, `tabIndex={0}`, and keydown handlers for Enter/Space. Convert any visually-nested `<button>` elements to `<span className="inline-block">` with `group-hover` utilities to preserve the intended design while maintaining semantic validity.
