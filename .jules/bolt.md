@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2026-06-12 - Synchronous Processing and Array Deduplication Overheads
+**Learning:** For small, bounded arrays (like string tags or prompt parts under 10 elements), `Set` object allocation overhead is measurably slower than an inline `.includes()` check. Additionally, `async`/`Promise` overhead is surprisingly significant on purely synchronous string manipulation operations and should be removed when not relying on async I/O.
+**Action:** Prefer synchronous code paths when purely processing strings/logic, and use inline `.includes()` checks for deduplicating small bounded arrays in performance-critical code paths.
