@@ -1,19 +1,18 @@
-import { mutatePrompt } from "./lib/mutationEngine";
+import { buildPrompt } from "./lib/promptEngine";
 
-const iterations = 100000;
-const testPrompt = "happy, calm, light, uplifting, energetic, sad, dark, aggressive";
+const config = {
+  genre: "Synthwave",
+  mood: "Retro",
+  lyrics: "Test lyrics",
+};
 
-console.log(`Benchmarking 'mood-invert' with ${iterations} iterations...`);
-
-const start = performance.now();
-
-for (let i = 0; i < iterations; i++) {
-  mutatePrompt(testPrompt, 'mood-invert');
+async function runBench() {
+  const start = performance.now();
+  for (let i = 0; i < 10000; i++) {
+    await buildPrompt(config);
+  }
+  const end = performance.now();
+  console.log(`Async/Await time: ${(end - start).toFixed(2)} ms`);
 }
 
-const end = performance.now();
-const duration = end - start;
-const opsPerSec = Math.round(iterations / (duration / 1000));
-
-console.log(`Duration: ${duration.toFixed(2)}ms`);
-console.log(`Speed: ${opsPerSec.toLocaleString()} ops/sec`);
+runBench();
