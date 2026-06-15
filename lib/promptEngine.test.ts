@@ -1,15 +1,16 @@
 // lib/promptEngine.test.ts
+import { describe, it, expect } from "bun:test";
 import { buildPrompt } from './promptEngine';
 
 describe('promptEngine', () => {
-  it('should include the correct style and lyrics in the generated prompt', async () => {
+  it('should include the correct style and lyrics in the generated prompt', () => {
     const config = {
       genre: 'Synthwave',
       mood: 'Retro', // mood is used in buildStyle
       lyrics: 'Some lyrics',
     };
 
-    const prompt = await buildPrompt(config);
+    const prompt = buildPrompt(config);
 
     // Verify style contains expected descriptors from the real styleEngine
     expect(prompt.style).toContain('nostalgic 80s');
