@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2024-06-16 - Array Deduplication Performance
+**Learning:** For strictly bounded small arrays (under 10 items), an inline `.includes()` check is measurably faster than `Array.from(new Set())` because it avoids the object allocation overhead of creating a Set and an Iterator, despite the O(N^2) complexity tradeoff.
+**Action:** Use inline `.includes()` checks for deduplicating small, bounded lists of strings or numbers instead of relying on `Set`.
