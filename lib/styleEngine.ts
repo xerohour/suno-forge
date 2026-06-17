@@ -228,17 +228,16 @@ export function buildStyle(config: PromptDNA): string {
     config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined)
   ];
 
-  const parts: string[] = [];
+  // Optimization: use includes instead of Set for small array deduplication
+  const uniqueParts: string[] = [];
   for (const p of rawParts) {
     if (p) {
       const trimmed = p.trim();
-      if (trimmed.length > 0) {
-        parts.push(trimmed);
+      if (trimmed.length > 0 && !uniqueParts.includes(trimmed)) {
+        uniqueParts.push(trimmed);
       }
     }
   }
-
-  const uniqueParts = Array.from(new Set(parts));
 
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
