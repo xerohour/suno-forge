@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return createErrorResponse(
       "Failed to generate prompt",
       500,
-      errorMessage,
+      process.env.NODE_ENV === "development" ? errorMessage : undefined,
       "GENERATION_FAILED"
     );
   }
