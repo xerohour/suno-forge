@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-23 - Async Overhead on Synchronous Functions
+**Learning:** Defining a purely synchronous function (like `buildPrompt`) as `async` adds unnecessary overhead due to Promise object allocation and event loop microtask queuing. This becomes noticeable in hot paths, such as batch generation.
+**Action:** Remove `async` keywords and `Promise` return types from purely synchronous functions to eliminate this overhead. Ensure corresponding `await` keywords are removed from call sites.
