@@ -18,8 +18,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate prompt
-    const prompt = await buildPrompt(body);
+    // Generate prompt (Optimization: buildPrompt is now synchronous)
+    const prompt = buildPrompt(body);
 
     const response: GenerateResponse = { prompt };
     return Response.json(response);

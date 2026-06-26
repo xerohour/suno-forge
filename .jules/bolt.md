@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-19 - Synchronous Functions Returning Promises
+**Learning:** Purely synchronous functions returning Promises incur unnecessary state machine and object allocation overhead. In this project, Next.js `Response.json()` fails to automatically await unresolved promises passed as object properties.
+**Action:** Remove `async` and `Promise` return types from functions that do not actually perform asynchronous operations, avoiding overhead and potential issues with non-awaited promises.
