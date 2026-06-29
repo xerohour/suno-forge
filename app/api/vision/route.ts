@@ -26,11 +26,11 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Vision processing failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    // 🔒 Security: Do not expose raw error messages to the client to prevent info leakage
     return createErrorResponse(
       "Vision processing failed",
       500,
-      errorMessage,
+      "An internal server error occurred.",
       "VISION_FAILED"
     );
   }
