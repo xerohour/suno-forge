@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-02-27 - Remove Promise Overhead for Synchronous CPU Tasks
+**Learning:** Purely synchronous string generation tasks wrapped in `async` introduce unnecessary state machine and `Promise` object allocation overhead. In Node.js/Bun environments, this adds measurable micro-delays that scale poorly under high throughput (e.g., in batch iteration logic or high concurrency APIs).
+**Action:** Always verify if a function actually utilizes asynchronous I/O (`await`) before marking it `async`. When optimizing performance, eagerly strip out `async` / `Promise` return types from CPU-bound or synchronous computation loops to reduce garbage collection pressure and eliminate state machine latency.
