@@ -19,7 +19,8 @@ export async function POST(req: Request) {
     }
 
     // Generate prompt
-    const prompt = await buildPrompt(body);
+    // Optimization: buildPrompt is synchronous, removing unnecessary await overhead
+    const prompt = buildPrompt(body);
 
     const response: GenerateResponse = { prompt };
     return Response.json(response);
