@@ -27,3 +27,4 @@ node_modules/
 
 .gemini/
 gha-creds-*.json
+venv/
