@@ -29,9 +29,8 @@ export async function POST(req: Request) {
     }
 
     // Generate prompts in parallel
-    const prompts = await Promise.all(
-      Array.from({ length: count }).map(() => buildPrompt(config))
-    );
+    // Optimization: Removed Promise.all as buildPrompt is now synchronous
+    const prompts = Array.from({ length: count }).map(() => buildPrompt(config));
 
     const response: BatchResponse = { prompts };
     return Response.json(response);
