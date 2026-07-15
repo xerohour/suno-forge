@@ -6,36 +6,19 @@
  * @param blueprintLyrics The raw lyrics, possibly with comments and extra whitespace.
  * @returns A production-ready lyric string.
  */
+const COMMENT_REGEX = /^\s*\/\/.*$/gm;
+const MULTI_BLANK_REGEX = /\n{3,}/g;
+
+// Optimization: Use single regex chain instead of split/loop array processing for better memory efficiency and speed
 export function cleanLyricsForProduction(blueprintLyrics: string): string {
   if (!blueprintLyrics) {
     return '';
   }
 
-  const lines = blueprintLyrics.split('\n');
-  const cleanedLines: string[] = [];
-  let lastLineWasBlank = false;
-
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-
-    // Rule 3: Remove Narrative Noise (by stripping comment lines)
-    if (trimmedLine.startsWith('//')) {
-      continue;
-    }
-
-    // Ensure blank lines are respected for model separation but not duplicated
-    if (trimmedLine === '') {
-      if (!lastLineWasBlank) {
-        cleanedLines.push('');
-        lastLineWasBlank = true;
-      }
-    } else {
-      // This is a content line
-      cleanedLines.push(trimmedLine);
-      lastLineWasBlank = false;
-    }
-  }
-
-  // Join the cleaned lines and trim any leading/trailing whitespace from the whole block
-  return cleanedLines.join('\n').trim();
+  return blueprintLyrics
+    .replace(COMMENT_REGEX, '')
+    .replace(/[ \t]+$/gm, '')
+    .replace(/^[ \t]+/gm, '')
+    .replace(MULTI_BLANK_REGEX, '\n\n')
+    .trim();
 }
