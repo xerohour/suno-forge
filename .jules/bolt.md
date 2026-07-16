@@ -21,3 +21,9 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-02-18 - String Cleaning Optimization
+**Learning:** `split('\n')` combined with iterative array mapping and joining is surprisingly slow for string cleaning tasks, as it causes massive object allocations for large strings. Native Regular Expressions (`replace` with global flags) are much faster and more memory-efficient.
+**Action:** Replace line-by-line string parsing loops with single-pass Regex replacements on the full string block in performance-critical text processing.
+## 2025-02-18 - Single Pass Loop String Building
+**Learning:** In highly called functions like `buildStyle`, building an array, filtering it, converting it to a `Set` for uniqueness, converting back to an array, and finally `.join()`ing is slow and creates many temporary objects.
+**Action:** Use a single `for` loop to build a string dynamically with a `Set` for tracking uniqueness to significantly reduce overhead in hot paths.

@@ -228,23 +228,32 @@ export function buildStyle(config: PromptDNA): string {
     config.production ? config.production : (!config.instrumental ? "studio quality, clear vocals" : undefined)
   ];
 
-  const parts: string[] = [];
-  for (const p of rawParts) {
+  // Optimization: use a single pass loop instead of array filtering, mapping, set conversion, and joining.
+  // This avoids intermediate array/set allocations and iterations, which is much faster on the hot path.
+  let result = "";
+  let isFirst = true;
+  let seen = new Set<string>();
+
+  for (let i = 0; i < rawParts.length; i++) {
+    const p = rawParts[i];
     if (p) {
       const trimmed = p.trim();
-      if (trimmed.length > 0) {
-        parts.push(trimmed);
+      if (trimmed.length > 0 && !seen.has(trimmed)) {
+        seen.add(trimmed);
+        if (!isFirst) {
+          result += ", ";
+        }
+        result += trimmed;
+        isFirst = false;
       }
     }
   }
 
-  const uniqueParts = Array.from(new Set(parts));
-
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && uniqueParts.length > 1) {
-      return `${uniqueParts.join(", ")}, ${config.genre}`;
+  if (config.genre && seen.size > 1) {
+      return `${result}, ${config.genre}`;
   }
 
-  return uniqueParts.join(", ");
+  return result;
 }
