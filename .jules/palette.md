@@ -5,3 +5,6 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+## 2024-07-25 - Custom interactive container nesting accessibility
+**Learning:** In Suno Forge's heavily stylized UI, complex custom containers often act as the primary clickable target. Making the outer container accessible with role="button" and tabIndex={0} creates a violation if nested elements are actual <button> tags.
+**Action:** When adding keyboard accessibility to an interactive parent container, verify and convert any purely presentational nested <button> elements into semantically neutral elements like <span> with identical styling.
