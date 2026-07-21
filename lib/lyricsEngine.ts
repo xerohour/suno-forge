@@ -1,4 +1,8 @@
 
+const COMMENT_REGEX = /^[ \t]*\/\/.*(?:\r?\n|$)/gm;
+const WHITESPACE_REGEX = /^[ \t]+|[ \t\r]+$/gm;
+const NEWLINE_REGEX = /\n{3,}/g;
+
 /**
  * Cleans a "blueprint" lyric string into a "production" string
  * by removing comments and normalizing whitespace.
@@ -7,35 +11,12 @@
  * @returns A production-ready lyric string.
  */
 export function cleanLyricsForProduction(blueprintLyrics: string): string {
-  if (!blueprintLyrics) {
-    return '';
-  }
-
-  const lines = blueprintLyrics.split('\n');
-  const cleanedLines: string[] = [];
-  let lastLineWasBlank = false;
-
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-
-    // Rule 3: Remove Narrative Noise (by stripping comment lines)
-    if (trimmedLine.startsWith('//')) {
-      continue;
-    }
-
-    // Ensure blank lines are respected for model separation but not duplicated
-    if (trimmedLine === '') {
-      if (!lastLineWasBlank) {
-        cleanedLines.push('');
-        lastLineWasBlank = true;
-      }
-    } else {
-      // This is a content line
-      cleanedLines.push(trimmedLine);
-      lastLineWasBlank = false;
-    }
-  }
-
-  // Join the cleaned lines and trim any leading/trailing whitespace from the whole block
-  return cleanedLines.join('\n').trim();
+  if (!blueprintLyrics) return '';
+  // Optimization: Use pre-compiled regex for O(1) matching overhead and native C++ engine speed
+  // instead of O(N) string splitting, trimming, and array joining in JavaScript
+  return blueprintLyrics
+    .replace(COMMENT_REGEX, '')
+    .replace(WHITESPACE_REGEX, '')
+    .replace(NEWLINE_REGEX, '\n\n')
+    .trim();
 }

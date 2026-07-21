@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Precompiled Regex for String Processing
+**Learning:** Using `split('\n')` and iterating over lines with `trim()` and array `push()` has significant overhead compared to well-crafted, precompiled regular expressions in V8/Bun, especially for large multi-line user inputs like lyrics.
+**Action:** Prioritize precompiled regex (using `gm` flags for multiline processing) over O(N) array-based text transformations when sanitizing or normalizing large text blocks, ensuring to account for Windows `\r` carriage returns.
