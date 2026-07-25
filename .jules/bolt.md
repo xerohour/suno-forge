@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-02-18 - RegExp Match Resolution Behavior
+**Learning:** Replacing an object property iteration (`for...in`) with a dynamic regular expression changes the resolution order. The iteration returns the first match based on object key order, while the regex returns the first match found linearly within the string. For heuristic mapping (like genre detection), this is acceptable or better, but could break strict ordering requirements in other contexts.
+**Action:** When migrating iterative object searches to regex, verify if the application relies on the strict priority order of the object keys or if position-in-string resolution is acceptable.
