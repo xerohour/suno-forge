@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Avoid multi-pass array deduping
+**Learning:** `buildStyle` was creating intermediate arrays and sets to dedupe raw inputs. In JS, single-pass filtering and deduping with a traditional `for` loop and a `Set` to track uniqueness avoids multiple O(N) conversions and garbage collection overhead.
+**Action:** Replace `Array.from(new Set(array.filter(...)))` with a single loop and a `seen` Set in hot paths for measurable memory and CPU improvements.
