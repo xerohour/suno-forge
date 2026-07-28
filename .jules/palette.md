@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2025-02-23 - Interactive Element Nesting in Custom Controls
+**Learning:** When converting a non-interactive custom container (like a custom file dropzone `div`) into a fully keyboard-accessible element with `role="button"` and `tabIndex={0}`, standard HTML semantics forbid nesting other interactive elements (like an actual `<button>`) inside it. This results in invalid accessibility structures and unpredictable screen reader behavior.
+**Action:** When adding button semantics to a parent container, always convert any inner semantic buttons into styled non-interactive spans (e.g. `<span className="group-hover:...">`) to maintain visual appearance while ensuring a single, valid accessible target.
