@@ -232,19 +232,17 @@ export function buildStyle(config: PromptDNA): string {
   for (const p of rawParts) {
     if (p) {
       const trimmed = p.trim();
-      if (trimmed.length > 0) {
+      if (trimmed.length > 0 && !parts.includes(trimmed)) {
         parts.push(trimmed);
       }
     }
   }
 
-  const uniqueParts = Array.from(new Set(parts));
-
   // 5. Join into a comma-separated list for balanced weighting.
   // Apply the Anchor-Repeat Strategy (3.3) for the main genre if it exists and there are other descriptors.
-  if (config.genre && uniqueParts.length > 1) {
-      return `${uniqueParts.join(", ")}, ${config.genre}`;
+  if (config.genre && parts.length > 1) {
+      return `${parts.join(", ")}, ${config.genre}`;
   }
 
-  return uniqueParts.join(", ");
+  return parts.join(", ");
 }
