@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2025-02-18 - Custom Shape Focus Outlines
+**Learning:** Standard focus rings (e.g., `focus-visible:ring-2`) on a container that uses `clip-path` (like a hexagon shape) will get clipped by the browser and become invisible, severely degrading keyboard accessibility.
+**Action:** For custom clipped shapes that act as interactive elements (e.g., buttons, dropzones), remove the default outline and apply focus styles to an unclipped *inner* element using the parent's `group-focus-visible` state (e.g., `group-focus-visible:border-primary`) so the focus ring is styled *within* the custom shape.
