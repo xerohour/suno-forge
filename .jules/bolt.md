@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-10-24 - Deduplication Loops vs Sets
+**Learning:** While replacing `Set` deduplication with an `.includes()` loop is faster for *very small* arrays due to avoiding allocation overhead, reviewers may reject it as an $O(N^2)$ algorithmic regression if the maximum array size isn't strictly bounded or if the loop is perceived as sacrificing readability.
+**Action:** Avoid proposing `.includes()` deduplication optimizations unless the array size is rigorously bounded and guaranteed to be extremely small (e.g., < 10), and ensure the justification emphasizes avoiding heap allocations over algorithmic complexity.
