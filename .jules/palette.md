@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2025-02-19 - Keyboard Focus for Clipped Shapes
+**Learning:** Standard focus rings (e.g., `focus-visible:ring-2`) on custom shapes styled with `clip-path` (like a hexagon) get clipped and hidden. Additionally, making a parent container keyboard-accessible while it contains purely visual interactive elements (like a dummy button) causes redundant double-focusing in the accessibility tree.
+**Action:** Apply focus styles to an inner, unclipped element using the `group-focus-visible` utility class (e.g., `group-focus-visible:border-primary`), and add `tabIndex={-1}` and `aria-hidden="true"` to purely visual nested buttons to prevent double-focusing.
