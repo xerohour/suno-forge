@@ -5,3 +5,7 @@
 ## 2025-02-18 - Syncing Visual and ARIA Labels
 **Learning:** When using a helper function to generate a dynamic visual label (e.g., "High", "Medium", "Low" for a range input), reuse that same helper for the `aria-valuetext` attribute to ensure the screen reader experience perfectly matches the visual experience and stays in sync during maintenance.
 **Action:** Extract label logic into a helper function and use it for both the visual element and the `aria-valuetext` prop.
+
+## 2024-08-16 - Focus Rings on Clipped Shapes
+**Learning:** When using CSS `clip-path` (e.g., a hexagon shape) on interactive elements, standard focus rings (`focus-visible:ring-2`) are often clipped and hidden by the browser. Additionally, converting a container to an interactive element requires removing nested buttons to prevent ARIA violations.
+**Action:** To maintain keyboard accessibility on custom-shaped elements, apply a `group` class to the outer accessible container (`role="button"`) and use `group-focus-visible` to style an unclipped inner element for the focus indicator. Replace any nested visual buttons with non-interactive elements like `<span>`.
