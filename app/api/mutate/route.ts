@@ -35,11 +35,10 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Mutation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return createErrorResponse(
       "Failed to mutate prompt",
       500,
-      errorMessage,
+      "An internal error occurred during prompt mutation",
       "MUTATION_FAILED"
     );
   }
