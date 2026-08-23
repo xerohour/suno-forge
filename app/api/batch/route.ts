@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Batch generation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = "An internal error occurred";
     return createErrorResponse(
       "Failed to generate batch prompts",
       500,
