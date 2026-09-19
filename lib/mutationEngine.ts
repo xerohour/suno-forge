@@ -48,24 +48,28 @@ const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
 
   'tempo-shift-up': (p) => {
     // Increase tempo references
-    const tempoMatch = p.match(/(\d+)\s*BPM/i);
-    if (tempoMatch) {
-      const currentTempo = parseInt(tempoMatch[1]);
+    // Optimization: avoids double string scanning by replacing match and replace with a single regex replace callback.
+    let replaced = false;
+    const result = p.replace(/(\d+)\s*BPM/i, (_, p1) => {
+      replaced = true;
+      const currentTempo = parseInt(p1);
       const newTempo = Math.min(currentTempo + 20, 200);
-      return p.replace(/\d+\s*BPM/i, `${newTempo} BPM`);
-    }
-    return `${p}, uptempo, faster pace`;
+      return `${newTempo} BPM`;
+    });
+    return replaced ? result : `${p}, uptempo, faster pace`;
   },
 
   'tempo-shift-down': (p) => {
     // Decrease tempo references
-    const tempoMatch = p.match(/(\d+)\s*BPM/i);
-    if (tempoMatch) {
-      const currentTempo = parseInt(tempoMatch[1]);
+    // Optimization: avoids double string scanning by replacing match and replace with a single regex replace callback.
+    let replaced = false;
+    const result = p.replace(/(\d+)\s*BPM/i, (_, p1) => {
+      replaced = true;
+      const currentTempo = parseInt(p1);
       const newTempo = Math.max(currentTempo - 20, 40);
-      return p.replace(/\d+\s*BPM/i, `${newTempo} BPM`);
-    }
-    return `${p}, downtempo, slower pace`;
+      return `${newTempo} BPM`;
+    });
+    return replaced ? result : `${p}, downtempo, slower pace`;
   },
 
   'mood-invert': (p) => {
