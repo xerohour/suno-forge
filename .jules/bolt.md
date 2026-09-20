@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - O(N) Substring Search vs Single Regex execution
+**Learning:** Using a loop with `String.prototype.includes()` over a dictionary of keywords (O(N*M) where M is string length) is slower than searching once with a pre-compiled regular expression containing the keywords `(?:word1|word2)`.
+**Action:** Prefer a single pre-compiled regex match over iterative `includes()` checks when finding the first matching keyword from a static map.
