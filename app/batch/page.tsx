@@ -139,7 +139,9 @@ export default function Batch() {
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono text-slate-500">#{job.id}</span>
-                <div className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
+                <div className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} title={`Status: ${job.status}`}>
+                  <span className="sr-only">Status: {job.status}</span>
+                </div>
               </div>
               <div className="flex gap-1">
                 <button aria-label="Duplicate job" className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors">
