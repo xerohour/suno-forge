@@ -9,3 +9,7 @@
 ## 2025-02-19 - Keyboard Focus on Clipped Elements & Nested Buttons
 **Learning:** When styling custom shapes using `clip-path` (like a hexagon dropzone), standard focus rings (e.g., `focus-visible:ring-2`) on the parent container get clipped and hidden. Additionally, nesting `<button>` elements inside a parent container that is turned into a keyboard-accessible interactive element (using `role="button"` and `tabIndex={0}`) violates ARIA validation rules.
 **Action:** To ensure keyboard accessibility is visually apparent on clipped elements, apply focus styles to an inner, unclipped element using the `group-focus-visible` utility class. Also, replace any nested purely visual buttons within interactive parent containers with non-interactive elements like `<span>`.
+
+## 2025-03-09 - Avoid Color-Only Status Indicators
+**Learning:** Using only color (like a green vs. amber dot) to convey a status like "processing" vs "ready" violates WCAG "Use of Color" rules because it is inaccessible to users with color vision deficiencies or those using screen readers.
+**Action:** Always pair a color-coded status indicator with a visually hidden text equivalent (e.g., `<span className="sr-only">Status: processing</span>`) for screen readers, and consider a `title` attribute so sighted users can verify the meaning via tooltip on hover.
