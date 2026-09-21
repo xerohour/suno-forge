@@ -85,7 +85,7 @@ export default function Vision() {
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h2 className="text-lg font-bold tracking-tight uppercase">Vision</h2>
-          <button className="text-white hover:text-primary transition-colors" aria-label="Vision Info">
+          <button className="text-white hover:text-primary transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-dark" aria-label="Vision Info">
             <Info className="w-6 h-6" />
           </button>
         </header>
@@ -185,7 +185,7 @@ export default function Vision() {
             onClick={generateMusic}
             disabled={status === 'analyzing' || !description}
             aria-busy={status === 'analyzing'}
-            className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-[0_0_25px_rgba(13,242,242,0.4)] disabled:opacity-50 disabled:shadow-none"
+            className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-[0_0_25px_rgba(13,242,242,0.4)] disabled:opacity-50 disabled:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-dark"
           >
             {status === 'analyzing' ? (
               <Loader2 className="w-5 h-5 animate-spin" />
