@@ -21,3 +21,6 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2026-03-02 - Replace multi-pass array filtering with Set logic
+**Learning:** Initializing an array, pushing elements, and then constructing a Set from that array involves multiple unnecessary iterations and memory allocations.
+**Action:** When deduplicating during a loop structure, add directly to a `Set` inside the loop to achieve a single-pass processing algorithm.
