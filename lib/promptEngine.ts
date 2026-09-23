@@ -10,7 +10,9 @@ function generatePromptTitle(config: PromptDNA): string {
 
 function generateTechnicalName(title: string): string {
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
+    // Optimization: avoid toISOString() + Regex allocations by manually constructing YYYYMMDDHHMMSS
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+    const timestamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`;
     const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
     return `${safeTitle}_${timestamp}`;
 }
