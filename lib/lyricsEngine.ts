@@ -7,35 +7,13 @@
  * @returns A production-ready lyric string.
  */
 export function cleanLyricsForProduction(blueprintLyrics: string): string {
-  if (!blueprintLyrics) {
-    return '';
-  }
+  if (!blueprintLyrics) return '';
 
-  const lines = blueprintLyrics.split('\n');
-  const cleanedLines: string[] = [];
-  let lastLineWasBlank = false;
-
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-
-    // Rule 3: Remove Narrative Noise (by stripping comment lines)
-    if (trimmedLine.startsWith('//')) {
-      continue;
-    }
-
-    // Ensure blank lines are respected for model separation but not duplicated
-    if (trimmedLine === '') {
-      if (!lastLineWasBlank) {
-        cleanedLines.push('');
-        lastLineWasBlank = true;
-      }
-    } else {
-      // This is a content line
-      cleanedLines.push(trimmedLine);
-      lastLineWasBlank = false;
-    }
-  }
-
-  // Join the cleaned lines and trim any leading/trailing whitespace from the whole block
-  return cleanedLines.join('\n').trim();
+  // Optimization: Use chained regex replacements instead of splitting, looping, and rejoining arrays
+  return blueprintLyrics
+    .replace(/\r\n/g, '\n')
+    .replace(/^[ \t]*\/\/.*(?:\n|$)/gm, '')
+    .replace(/^[ \t]+|[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }

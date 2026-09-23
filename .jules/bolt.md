@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2024-05-18 - Failed Regex Optimization
+**Learning:** Using a pre-compiled dynamic regex to replace a simple `.includes()` loop in `imageToPrompt` was surprisingly slower than the original implementation.
+**Action:** Avoid replacing fast, simple built-in string methods like `.includes()` with heavy regex lookups unless dealing with thousands of keys or complex string parsing. Always measure the impact of regex optimizations on cold paths.
