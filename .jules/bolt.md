@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Keyword Matching Complexity
+**Learning:** Iterating over object keys and using `String.prototype.includes()` in a loop inside hot code paths (like `imageToPrompt`) introduces O(N*M) algorithmic complexity.
+**Action:** Replace linear string matching loops over static keyword lists with pre-compiled O(1) Regular Expressions whenever applicable.

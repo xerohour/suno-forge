@@ -19,16 +19,15 @@ const KEYWORD_MAP: Record<string, { genre: string, mood: string }> = {
   'battle': { genre: 'metal', mood: 'aggressive' },
 };
 
+// Optimization: Pre-compiled regex for O(1) DFA lookup instead of O(N) loop
+const KEYWORD_REGEX = new RegExp(`(${Object.keys(KEYWORD_MAP).join('|')})`, 'i');
+
 export function imageToPrompt(description: string) {
-  const desc = description.toLowerCase();
   let bestMatch = { genre: 'ambient', mood: 'cinematic' };
   
-  // Find first keyword match
-  for (const key in KEYWORD_MAP) {
-    if (desc.includes(key)) {
-      bestMatch = KEYWORD_MAP[key];
-      break; // Or could collect multiple and combine? But keep simple for now.
-    }
+  const match = description.match(KEYWORD_REGEX);
+  if (match) {
+    bestMatch = KEYWORD_MAP[match[0].toLowerCase()];
   }
 
   return {
