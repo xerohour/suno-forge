@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - String Allocation Overhead in Parsing
+**Learning:** Using `String.prototype.split('\n')` and subsequent string manipulations like `.trim()` on large strings creates many intermediate short-lived strings, heavily taxing the garbage collector and reducing throughput. Iterating over the string with index tracking (`indexOf` and `charCodeAt`) to identify lines without allocating intermediate arrays can double performance.
+**Action:** For string processing on hot paths (like parsing lyrics or large texts), prefer zero-allocation index scanning methods over array-based `.split()` or regex-based manipulation.
