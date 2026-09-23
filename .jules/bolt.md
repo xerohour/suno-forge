@@ -21,3 +21,10 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+## 2025-02-18 - String Operation Performance
+**Learning:** Replacing simple iterative string operations (like `.split('\n')` and `.trim()`) with complex, multi-pass regular expressions can degrade performance due to regex engine overhead, especially on short strings.
+**Action:** Always benchmark regex-based string optimizations against the original iterative operations to verify a measurable speedup before implementation.
+
+## 2025-02-18 - Array Micro-optimizations
+**Learning:** Replacing single intermediate array allocations (e.g., from `.filter()`) or iterator overhead (e.g., `for...of`) with explicit index-based `for` loops on small data structures provides negligible real-world performance gains and sacrifices code readability.
+**Action:** Avoid micro-optimizing array iteration on small lists. Focus on higher-level algorithmic improvements (like avoiding O(N^2) complexity) or eliminating large/repeated allocations on critical hot paths.
