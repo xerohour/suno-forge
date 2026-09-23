@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2024-05-18 - Array.includes() vs Set() for Small Arrays
+**Learning:** For very small arrays (e.g., < 10 elements, like the prompt descriptors in styleEngine.ts), a single-pass `for` loop using `Array.prototype.includes()` is significantly faster than using `Array.from(new Set())`. `Set` introduces relatively high overhead for object allocation and iteration that isn't justified for tiny collections where O(n) array lookups are extremely cheap.
+**Action:** Always prefer `includes()` checks when deduplicating tiny, bounded arrays rather than defaulting to `Set`, but always benchmark to confirm the crossover point.
