@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Set vs Array.includes for Small Arrays
+**Learning:** For very small arrays (e.g., < 10 elements), a single-pass loop using `Array.prototype.includes()` is significantly faster than allocating `Set` objects and creating intermediate arrays, as it avoids memory allocation and iterator overhead.
+**Action:** Use `Array.prototype.includes()` for deduplication of small lists instead of `Array.from(new Set(arr))`.
