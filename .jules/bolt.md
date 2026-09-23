@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Escaping Dynamic Regex
+**Learning:** When pre-compiling regular expressions from dynamic data like object keys, it is critical to always escape the strings. Even if current keys only contain safe alphabetic characters, failing to escape them leaves a subtle regex injection vulnerability that can cause application errors or incorrect behavior if keys change in the future.
+**Action:** Always map strings through an escaping function (e.g., `string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`) before passing them to `new RegExp`.
