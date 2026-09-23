@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { PROMPT_PACKS } from "@/lib/promptPacks";
 import { getComplexityLabel } from "./helpers";
+import { MAX_LONG_TEXT_LENGTH } from "@/lib/validation";
 
 // Chips data defined outside component to avoid recreation on every render
 const STYLE_CHIPS = [
@@ -134,12 +135,19 @@ export default function Studio() {
           <div className="relative">
             <textarea
               aria-labelledby="lyrics-heading"
-              className="w-full rounded-xl border border-primary/20 bg-primary/5 p-4 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
+              className="w-full rounded-xl border border-primary/20 bg-primary/5 px-4 pt-4 pb-8 text-base focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
               placeholder="Paste your lyrics here or describe a story..."
               rows={6}
               value={lyrics}
               onChange={(e) => setLyrics(e.target.value)}
+              maxLength={MAX_LONG_TEXT_LENGTH}
             ></textarea>
+            <div
+              aria-live="polite"
+              className={`absolute bottom-3 right-4 text-xs ${lyrics.length >= MAX_LONG_TEXT_LENGTH * 0.9 ? 'text-red-500 font-bold' : 'text-slate-400 dark:text-slate-500'}`}
+            >
+              {lyrics.length} / {MAX_LONG_TEXT_LENGTH}
+            </div>
           </div>
         </section>
 
