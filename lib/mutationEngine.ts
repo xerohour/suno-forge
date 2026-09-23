@@ -17,7 +17,8 @@ const MOOD_MAP: Record<string, string> = {
   'gentle': 'intense',
 };
 
-const MOOD_REGEX = new RegExp(`\\b(${Object.keys(MOOD_MAP).join('|')})\\b`, 'gi');
+// Security: Escape object keys before building a regular expression to prevent regex injection, even if the keys are currently statically defined.
+const MOOD_REGEX = new RegExp(`\\b(${Object.keys(MOOD_MAP).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'gi');
 
 const MUTATION_HANDLERS: Record<MutationType, (p: string) => string> = {
   viral: (p) => {
