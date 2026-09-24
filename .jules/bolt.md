@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2024-05-18 - Avoid array conversion with Set in styleEngine deduplication
+**Learning:** When cleaning up arrays (filtering empty parts and removing duplicates), doing a single-pass loop utilizing an array to preserve order and a `Set` for O(1) deduplication lookups is more optimal than creating intermediate arrays or relying on full `Array.from(new Set(arr))` conversions. This eliminates intermediate allocations in a hot path.
+**Action:** Replace `Array.from(new Set(parts))` with a single loop and `Set` tracking when deduplicating strings while preserving order, which safely eliminates intermediate O(N) array allocation overhead.
