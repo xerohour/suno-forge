@@ -9,3 +9,7 @@
 ## 2025-02-19 - Keyboard Focus on Clipped Elements & Nested Buttons
 **Learning:** When styling custom shapes using `clip-path` (like a hexagon dropzone), standard focus rings (e.g., `focus-visible:ring-2`) on the parent container get clipped and hidden. Additionally, nesting `<button>` elements inside a parent container that is turned into a keyboard-accessible interactive element (using `role="button"` and `tabIndex={0}`) violates ARIA validation rules.
 **Action:** To ensure keyboard accessibility is visually apparent on clipped elements, apply focus styles to an inner, unclipped element using the `group-focus-visible` utility class. Also, replace any nested purely visual buttons within interactive parent containers with non-interactive elements like `<span>`.
+
+## 2025-02-20 - Visual Status Indicators & Keyboard Accessibility
+**Learning:** Purely visual status indicators (like colored dots for "processing" or "ready") are invisible to screen readers, and icon-only buttons need proper keyboard focus states.
+**Action:** When creating visual status dots, hide them from screen readers with `aria-hidden="true"` and provide adjacent `sr-only` text that updates dynamically based on the state. Additionally, always ensure icon-only utility buttons have robust `focus-visible` styles (`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2`) for keyboard users.
