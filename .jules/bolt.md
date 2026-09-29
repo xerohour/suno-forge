@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Dictionary Matching Optimizations
+**Learning:** When matching a string against a static dictionary of keywords, replacing an O(N) loop of `includes()` checks with a single, pre-compiled regular expression provides a measurable performance improvement. Additionally, combining array filtering and deduplication in a single pass is a measurable optimization over multiple passes.
+**Action:** Pre-compile regular expressions for static dictionary lookups, and combine filtering and deduplication loops where possible to avoid intermediate allocations.
