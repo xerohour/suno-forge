@@ -9,3 +9,7 @@
 ## 2025-02-19 - Keyboard Focus on Clipped Elements & Nested Buttons
 **Learning:** When styling custom shapes using `clip-path` (like a hexagon dropzone), standard focus rings (e.g., `focus-visible:ring-2`) on the parent container get clipped and hidden. Additionally, nesting `<button>` elements inside a parent container that is turned into a keyboard-accessible interactive element (using `role="button"` and `tabIndex={0}`) violates ARIA validation rules.
 **Action:** To ensure keyboard accessibility is visually apparent on clipped elements, apply focus styles to an inner, unclipped element using the `group-focus-visible` utility class. Also, replace any nested purely visual buttons within interactive parent containers with non-interactive elements like `<span>`.
+
+## 2025-02-21 - Ghost Focus Traps in Hidden Elements
+**Learning:** Using `opacity-0` and `pointer-events-none` on a container (like a quick action toast) hides it visually and from pointer events, but interactive child elements (like `<button>`) remain in the keyboard tab order. This creates a confusing "ghost focus" where keyboard users tab into an invisible element.
+**Action:** When hiding elements visually with opacity, always add `aria-hidden="true"` to the container and apply `tabIndex={-1}` to any interactive children, or completely unmount the component when not needed.

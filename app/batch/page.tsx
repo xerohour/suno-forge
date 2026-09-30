@@ -88,10 +88,10 @@ export default function Batch() {
             <h1 className="text-xl font-bold tracking-tight">Batch Forge</h1>
           </div>
           <div className="flex gap-2">
-            <button aria-label="View history" className="p-2 hover:bg-primary/10 rounded-full transition-colors">
+            <button aria-label="View history" title="View history" className="p-2 hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
               <History className="text-slate-400 w-5 h-5" />
             </button>
-            <button aria-label="More options" className="p-2 hover:bg-primary/10 rounded-full transition-colors">
+            <button aria-label="More options" title="More options" className="p-2 hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
               <MoreVertical className="text-slate-400 w-5 h-5" />
             </button>
           </div>
@@ -142,10 +142,10 @@ export default function Batch() {
                 <div className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
               </div>
               <div className="flex gap-1">
-                <button aria-label="Duplicate job" className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors">
+                <button aria-label="Duplicate job" title="Duplicate job" className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <Copy className="w-4 h-4" />
                 </button>
-                <button aria-label="Delete job" className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors">
+                <button aria-label="Delete job" title="Delete job" className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -182,7 +182,7 @@ export default function Batch() {
           <span className="text-white text-[10px] font-medium uppercase tracking-wider">Batch</span>
         </Link>
         <div className="relative -top-5">
-          <button aria-label="Create new batch" className="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 ring-4 ring-background-dark active:scale-95 transition-all">
+          <button aria-label="Create new batch" title="Create new batch" className="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 ring-4 ring-background-dark active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-dark">
             <Plus className="w-6 h-6" />
           </button>
         </div>
@@ -197,9 +197,9 @@ export default function Batch() {
       </nav>
 
       {/* Quick Action Toast (Mobile UI detail) */}
-      <div className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity">
+      <div className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity" aria-hidden="true">
         <p className="text-xs font-medium text-primary">Job #SF-9012 duplicated</p>
-        <button className="text-xs font-bold text-primary uppercase">Undo</button>
+        <button tabIndex={-1} className="text-xs font-bold text-primary uppercase">Undo</button>
       </div>
     </div>
   );
