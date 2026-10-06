@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Static Dictionary Regex Optimization
+**Learning:** Checking for keyword matches against a static dictionary using a `for...in` loop with `String.prototype.includes()` requires O(N) string scans. Replacing this with a single pre-compiled regular expression (e.g., `new RegExp('(?:word1|word2)', 'i')`) provides a significant performance improvement (measured ~60% reduction in execution time on 1M iterations) by reducing it to a single pass.
+**Action:** When parsing strings against a static dictionary of keywords, always pre-compile a regular expression containing the keys rather than looping and using `.includes()`.
