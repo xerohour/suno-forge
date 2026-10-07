@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-10-24 - Single-Pass Filtering and Deduplication
+**Learning:** Using `Array.from(new Set(array))` after a filtering loop creates unnecessary intermediate arrays and O(N) conversions. Combining filtering and deduplication into a single pass using an array (for order) and a `Set` (for O(1) lookups) provides a measurable performance boost.
+**Action:** Replace two-step filter-then-deduplicate patterns with a single-pass `seen` Set approach in hot paths.
