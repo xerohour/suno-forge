@@ -21,3 +21,7 @@
 ## 2025-02-18 - Object Allocation in Hot Paths
 **Learning:** Re-allocating static configuration objects (like `MUTATION_HANDLERS` in `mutatePrompt`) inside functions called frequently wastes CPU cycles and stresses the garbage collector.
 **Action:** Extract static configuration objects and maps to module-level constants.
+
+## 2025-02-18 - Regex Optimization for Static Dictionary Search
+**Learning:** Optimizing string parsing against a static dictionary of keywords in JavaScript/TypeScript by replacing an O(N) loop of `String.prototype.includes()` checks with a single, pre-compiled regular expression (e.g., `new RegExp('(?:word1|word2)', 'i')`) provides a measurable performance improvement and is a valid Bolt optimization.
+**Action:** Use pre-compiled regex for static dictionary searches instead of iterative `includes()` loops, being mindful of word boundary requirements to match existing behavior.
