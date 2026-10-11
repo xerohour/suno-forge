@@ -197,9 +197,12 @@ export default function Batch() {
       </nav>
 
       {/* Quick Action Toast (Mobile UI detail) */}
-      <div className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity">
+      <div
+        className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity"
+        aria-hidden="true"
+      >
         <p className="text-xs font-medium text-primary">Job #SF-9012 duplicated</p>
-        <button className="text-xs font-bold text-primary uppercase">Undo</button>
+        <button tabIndex={-1} className="text-xs font-bold text-primary uppercase">Undo</button>
       </div>
     </div>
   );
