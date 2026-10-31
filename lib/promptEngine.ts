@@ -8,10 +8,25 @@ function generatePromptTitle(config: PromptDNA): string {
   return `${genre.charAt(0).toUpperCase() + genre.slice(1)} - ${mood.charAt(0).toUpperCase() + mood.slice(1)}`;
 }
 
+// Module-level pre-compiled regexes to avoid recompilation overhead
+const NON_ALPHANUM_REGEX = /[^a-z0-9_\s-]/g;
+const WHITESPACE_REGEX = /\s+/g;
+
 function generateTechnicalName(title: string): string {
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/[-:T]/g, ''); // YYYYMMDDHHMMSS
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9_\s-]/g, ' ').trim().replace(/\s+/g, '_');
+
+    // Manual date extraction avoids intermediate string allocations and regex parsing
+    // Preserves original YYYYMMDDHHMMSS format strictly.
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth() + 1;
+    const day = now.getUTCDate();
+    const hours = now.getUTCHours();
+    const minutes = now.getUTCMinutes();
+    const seconds = now.getUTCSeconds();
+
+    const timestamp = `${year}${month < 10 ? '0' : ''}${month}${day < 10 ? '0' : ''}${day}${hours < 10 ? '0' : ''}${hours}${minutes < 10 ? '0' : ''}${minutes}${seconds < 10 ? '0' : ''}${seconds}`;
+
+    const safeTitle = title.toLowerCase().replace(NON_ALPHANUM_REGEX, ' ').trim().replace(WHITESPACE_REGEX, '_');
     return `${safeTitle}_${timestamp}`;
 }
 
