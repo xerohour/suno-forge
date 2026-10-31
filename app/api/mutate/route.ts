@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       return createErrorResponse(
         "Invalid prompt",
         400,
-        "Prompt must be a non-empty string",
+        "Prompt must be a non-empty string under 5000 characters",
         "INVALID_PROMPT"
       );
     }
