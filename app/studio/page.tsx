@@ -80,7 +80,7 @@ export default function Studio() {
     <div className="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4">
-        <button aria-label="Go back" className="text-primary p-1">
+        <button aria-label="Go back" className="text-primary p-1 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-xl font-bold tracking-tight text-center flex-1 pr-6">Studio</h1>
@@ -192,12 +192,13 @@ export default function Studio() {
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span id="experimental-mode-label" className="text-sm font-medium">Experimental Mode</span>
-                <span className="text-xs text-slate-500">Unstable but creative rhythms</span>
+                <span id="experimental-mode-description" className="text-xs text-slate-500">Unstable but creative rhythms</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   id="experimental-toggle"
                   aria-labelledby="experimental-mode-label"
+                  aria-describedby="experimental-mode-description"
                   type="checkbox"
                   className="sr-only peer"
                   checked={experimental}
