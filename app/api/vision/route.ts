@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return createErrorResponse(
       "Vision processing failed",
       500,
-      errorMessage,
+      undefined, // Don't leak details to client
       "VISION_FAILED"
     );
   }

@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     return createErrorResponse(
       "Failed to mutate prompt",
       500,
-      errorMessage,
+      undefined, // Don't leak details to client
       "MUTATION_FAILED"
     );
   }
