@@ -199,7 +199,7 @@ export default function Batch() {
       {/* Quick Action Toast (Mobile UI detail) */}
       <div className="absolute bottom-28 left-4 right-4 bg-primary/10 border border-primary/30 backdrop-blur-md px-4 py-2 rounded-lg flex items-center justify-between pointer-events-none opacity-0 transition-opacity">
         <p className="text-xs font-medium text-primary">Job #SF-9012 duplicated</p>
-        <button className="text-xs font-bold text-primary uppercase">Undo</button>
+        <button className="text-xs font-bold text-primary uppercase" aria-label="Undo duplicate job">Undo</button>
       </div>
     </div>
   );
