@@ -13,3 +13,7 @@
 ## 2025-02-19 - Ghost Focus Traps on Visually Hidden Components
 **Learning:** When visually hiding interactive UI components (like a toast notification) using CSS utilities like `opacity-0` and `pointer-events-none`, they create a 'ghost focus trap' because they remain in the keyboard tab order.
 **Action:** To properly remove them from the accessibility tree and keyboard navigation, always apply `aria-hidden="true"` to the container and `tabIndex={-1}` to any interactive child elements.
+
+## 2025-02-19 - Drag-and-Drop Visual Feedback and ARIA Live Regions
+**Learning:** Custom file upload zones often lack interactive visual feedback during drag events (like a subtle background glow change) and screen reader announcements when file status changes upon dropping.
+**Action:** Implement an `isDragging` state hooked into `onDragOver`, `onDragLeave`, and `onDrop` to conditionally apply Tailwind styling (e.g. `bg-primary/20 scale-105`), and wrap status indicators in `aria-live="polite"` regions so assistive tech users know when a file is processing.

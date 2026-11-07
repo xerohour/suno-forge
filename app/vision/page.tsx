@@ -19,6 +19,7 @@ export default function Vision() {
   const [description, setDescription] = useState("");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [status, setStatus] = useState<"idle" | "ready" | "analyzing" | "done">("idle");
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,8 +32,19 @@ export default function Vision() {
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
        const filename = file.name.split('.')[0].replace(/-/g, ' ');
@@ -100,14 +112,15 @@ export default function Vision() {
           {/* Hexagonal Upload Zone */}
           <div
             className="mt-10 relative w-64 h-72 flex items-center justify-center"
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
             {/* Background Glow */}
-            <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
+            <div className={`absolute inset-0 blur-3xl rounded-full transition-all duration-500 ${isDragging ? 'bg-primary/20 scale-105' : 'bg-primary/5'}`}></div>
             {/* Hexagon Shape */}
             <div
-              className="relative w-full h-full hexagon-border bg-primary/10 border border-primary/30 flex flex-col items-center justify-center group cursor-pointer hover:bg-primary/20 transition-all duration-500 focus:outline-none"
+              className={`relative w-full h-full hexagon-border border border-primary/30 flex flex-col items-center justify-center group cursor-pointer transition-all duration-500 focus:outline-none ${isDragging ? 'bg-primary/20 scale-[1.02]' : 'bg-primary/10 hover:bg-primary/20'}`}
               onClick={() => fileInputRef.current?.click()}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -148,7 +161,7 @@ export default function Vision() {
           </div>
 
           {/* AI Status Indicator */}
-          <div className="mt-12 flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full border border-primary/10">
+          <div className="mt-12 flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full border border-primary/10" aria-live="polite">
             <span className="relative flex h-2 w-2">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 ${status === 'analyzing' ? 'duration-500' : 'duration-1000'}`}></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
