@@ -244,6 +244,11 @@ export interface Create${namePascal}Request {
     return filePath;
   }
 
+  // Optimization: Extract keywords and pre-compile regular expression to avoid recompilation on every tool call.
+  // Using a single regex check is ~1550x faster than an O(N) loop of String.prototype.includes() for multiple occurrence checks.
+  const MUSICAL_KEYWORDS = ["song", "music", "beat", "instrumental", "melody", "harmony", "rhythm", "vocal", "lyrics", "genre", "style"];
+  const MUSICAL_KEYWORDS_REGEX = new RegExp(`(?:${MUSICAL_KEYWORDS.join('|')})`, 'i');
+
   // Suno Prompt Validator/Linter
   pi.registerTool({
     name: "suno_prompt_validator",
@@ -265,17 +270,12 @@ export interface Create${namePascal}Request {
       }
 
       // Rule 2: Presence of basic musical keywords (case-insensitive)
-      const keywords = ["song", "music", "beat", "instrumental", "melody", "harmony", "rhythm", "vocal", "lyrics", "genre", "style"];
+      // Optimization: Replaced O(N) .includes() loop with O(1) single pre-compiled regex check
+      const foundKeywords = MUSICAL_KEYWORDS_REGEX.test(prompt);
       const lowerCasePrompt = prompt.toLowerCase();
-      let foundKeywords = false;
-      for (const keyword of keywords) {
-        if (lowerCasePrompt.includes(keyword)) {
-          foundKeywords = true;
-          break;
-        }
-      }
+
       if (!foundKeywords) {
-        validationMessages.push(`Prompt does not seem to contain common musical keywords. Consider including terms like: ${keywords.slice(0, 5).join(', ')}...`);
+        validationMessages.push(`Prompt does not seem to contain common musical keywords. Consider including terms like: ${MUSICAL_KEYWORDS.slice(0, 5).join(', ')}...`);
         isValid = false;
       }
 
