@@ -17,3 +17,7 @@
 ## 2025-02-19 - Drag-and-Drop Visual Feedback and ARIA Live Regions
 **Learning:** Custom file upload zones often lack interactive visual feedback during drag events (like a subtle background glow change) and screen reader announcements when file status changes upon dropping.
 **Action:** Implement an `isDragging` state hooked into `onDragOver`, `onDragLeave`, and `onDrop` to conditionally apply Tailwind styling (e.g. `bg-primary/20 scale-105`), and wrap status indicators in `aria-live="polite"` regions so assistive tech users know when a file is processing.
+
+## 2025-02-24 - Contextualizing List Items and Visual Cues
+**Learning:** When rendering lists of items (like batch jobs), purely visual status indicators (like colored dots) are completely missed by screen readers, and identical action buttons (e.g., 'Delete job') lack context, causing confusion about which item will be affected.
+**Action:** Always pair purely visual status indicators with a visually hidden `<span className="sr-only">` equivalent, and append unique item identifiers to the `aria-label` of action buttons within lists to ensure screen reader users have full context.

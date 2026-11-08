@@ -139,13 +139,14 @@ export default function Batch() {
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono text-slate-500">#{job.id}</span>
-                <div className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
+                <div aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${job.status === 'processing' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
+                <span className="sr-only">Status: {job.status === 'processing' ? 'Processing' : 'Ready'}</span>
               </div>
               <div className="flex gap-1">
-                <button aria-label="Duplicate job" className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+                <button aria-label={`Duplicate job ${job.id}`} className="p-1 hover:bg-primary/10 rounded text-slate-400 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
                   <Copy className="w-4 h-4" />
                 </button>
-                <button aria-label="Delete job" className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+                <button aria-label={`Delete job ${job.id}`} className="p-1 hover:bg-red-500/10 rounded text-slate-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
